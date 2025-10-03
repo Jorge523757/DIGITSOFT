@@ -1,0 +1,9 @@
+{% extends 'DigitSoft/base.html' %}
+{% block title %}Inicio | Digit Soft{% endblock %}
+{% block content %}
+<div class="home-container">
+    <h1>Bienvenido a Digit Soft</h1>
+    <p>Soluciones integrales que transforman la experiencia digital de tu empresa.</p>
+    <a href="{% url 'main:dashboard' %}" class="btn btn-primary">Ir al Dashboard</a>
+</div>
+{% endblock %}

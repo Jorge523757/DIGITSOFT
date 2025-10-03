@@ -1,0 +1,41 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Órdenes de Servicio | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Órdenes de Servicio{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Órdenes de Servicio</h1>
+    <button class="btn-primary">+ Nueva Orden</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>N° Orden</th>
+                    <th>Cliente</th>
+                    <th>Equipo</th>
+                    <th>Técnico</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>OS-001</td>
+                    <td>Juan Pérez</td>
+                    <td>HP Pavilion</td>
+                    <td>Carlos López</td>
+                    <td><span class="status pending">En Proceso</span></td>
+                    <td>03/10/2025</td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

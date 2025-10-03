@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - Digit Soft{% endblock %}</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'images/logo.png' %}" alt="Digit Soft" class="sidebar-logo">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span>☰</span>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="{% url 'administrador:dashboard' %}" class="nav-item active">
+                        <i class="icon">🏠</i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:cliente_list' %}" class="nav-item">
+                        <i class="icon">👥</i>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:equipo_list' %}" class="nav-item">
+                        <i class="icon">💻</i>
+                        <span>Equipos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:facturacion_list' %}" class="nav-item">
+                        <i class="icon">📄</i>
+                        <span>Facturación</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:garantia_list' %}" class="nav-item">
+                        <i class="icon">🛡️</i>
+                        <span>Garantías</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:marca_list' %}" class="nav-item">
+                        <i class="icon">🏷️</i>
+                        <span>Marcas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:orden_servicio_list' %}" class="nav-item">
+                        <i class="icon">📋</i>
+                        <span>Órdenes de Servicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:proveedor_list' %}" class="nav-item">
+                        <i class="icon">🏢</i>
+                        <span>Proveedores</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:servicio_tecnico_list' %}" class="nav-item">
+                        <i class="icon">🔧</i>
+                        <span>Servicios Técnicos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:tecnico_list' %}" class="nav-item">
+                        <i class="icon">👨‍🔧</i>
+                        <span>Técnicos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:venta_list' %}" class="nav-item">
+                        <i class="icon">🛒</i>
+                        <span>Ventas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'administrador:producto_list' %}" class="nav-item">
+                        <i class="icon">📦</i>
+                        <span>Productos</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{% url 'main:home' %}" class="nav-item">
+                <i class="icon">🌐</i>
+                <span>Ir al Sitio Web</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="icon">🚪</i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <span>☰</span>
+                </button>
+                <h2>{% block page_header %}Dashboard{% endblock %}</h2>
+            </div>
+
+            <div class="topbar-right">
+                <button class="theme-toggle-btn" id="themeToggleDashboard">
+                    <i class="icon">🌙</i>
+                </button>
+
+                <div class="user-menu">
+                    <button class="user-button" id="userButton">
+                        <img src="{% static 'images/user-avatar.svg' %}" alt="Usuario" class="user-avatar">
+                        <span>{{ request.user.username|default:"Admin" }}</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#">Mi Perfil</a>
+                        <a href="#">Configuración</a>
+                        <a href="#">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

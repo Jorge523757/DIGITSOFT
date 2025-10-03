@@ -1,0 +1,48 @@
+{% extends 'DigitSoft/base.html' %}
+{% block title %}Dashboard | Digit Soft{% endblock %}
+{% block content %}
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+            <h3>125</h3>
+            <p>Clientes</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">💻</div>
+        <div class="stat-info">
+            <h3>89</h3>
+            <p>Equipos</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+            <h3>234</h3>
+            <p>Facturas</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🔧</div>
+        <div class="stat-info">
+            <h3>45</h3>
+            <p>Servicios Activos</p>
+        </div>
+    </div>
+</div>
+
+<div class="recent-activity">
+    <h2>Actividad Reciente</h2>
+    <div class="activity-list">
+        <div class="activity-item">
+            <span class="activity-time">Hace 2 horas</span>
+            <span class="activity-text">Nueva orden de servicio creada #OS-2025-001</span>
+        </div>
+        <div class="activity-item">
+            <span class="activity-time">Hace 4 horas</span>
+            <span class="activity-text">Cliente Juan Pérez registrado</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

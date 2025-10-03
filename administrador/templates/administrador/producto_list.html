@@ -1,0 +1,109 @@
+{% load static %}
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Productos | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Productos{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Productos</h1>
+    <button class="btn-primary">+ Nuevo Producto</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PRD-001</td>
+                    <td><img src="{% static 'images/laptop-hp.jpg' %}" alt="Laptop HP" class="product-thumb"></td>
+                    <td>Laptop HP Pavilion 15</td>
+                    <td>HP</td>
+                    <td>Laptops</td>
+                    <td>$2.200.000</td>
+                    <td>15</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PRD-002</td>
+                    <td><img src="{% static 'images/mouse-logitech.jpg' %}" alt="Mouse Logitech" class="product-thumb"></td>
+                    <td>Mouse Logitech MX Master 3</td>
+                    <td>Logitech</td>
+                    <td>Accesorios</td>
+                    <td>$280.000</td>
+                    <td>25</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PRD-003</td>
+                    <td><img src="{% static 'images/monitor-dell.jpg' %}" alt="Monitor Dell" class="product-thumb"></td>
+                    <td>Monitor Dell 24" 4K</td>
+                    <td>Dell</td>
+                    <td>Monitores</td>
+                    <td>$750.000</td>
+                    <td>8</td>
+                    <td><span class="status low-stock">Stock Bajo</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PRD-004</td>
+                    <td><img src="{% static 'images/teclado-mecanico.jpg' %}" alt="Teclado Mecánico" class="product-thumb"></td>
+                    <td>Teclado Mecánico RGB</td>
+                    <td>Corsair</td>
+                    <td>Accesorios</td>
+                    <td>$320.000</td>
+                    <td>0</td>
+                    <td><span class="status out-of-stock">Agotado</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.product-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.status.low-stock {
+    background: #ff9800;
+    color: white;
+}
+.status.out-of-stock {
+    background: #f44336;
+    color: white;
+}
+</style>
+{% endblock %}

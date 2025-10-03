@@ -1,0 +1,69 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Técnicos | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Técnicos{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Técnicos</h1>
+    <button class="btn-primary">+ Nuevo Técnico</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Especialidad</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Servicios Activos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>TEC-001</td>
+                    <td>Carlos López</td>
+                    <td>Hardware y Redes</td>
+                    <td>carlos.lopez@digitsoft.com</td>
+                    <td>+57 300 456 7890</td>
+                    <td>3</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TEC-002</td>
+                    <td>Ana García</td>
+                    <td>Software y Sistemas</td>
+                    <td>ana.garcia@digitsoft.com</td>
+                    <td>+57 301 567 8901</td>
+                    <td>2</td>
+                    <td><span class="status busy">Ocupado</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TEC-003</td>
+                    <td>Miguel Rodríguez</td>
+                    <td>Mantenimiento</td>
+                    <td>miguel.rodriguez@digitsoft.com</td>
+                    <td>+57 302 678 9012</td>
+                    <td>1</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

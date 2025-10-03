@@ -1,0 +1,41 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Proveedores | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Proveedores{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Proveedores</h1>
+    <button class="btn-primary">+ Nuevo Proveedor</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Productos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>TechSupply SAS</td>
+                    <td>ventas@techsupply.com</td>
+                    <td>+57 1 234 5678</td>
+                    <td>Componentes, Accesorios</td>
+                    <td><span class="status active">Activo</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

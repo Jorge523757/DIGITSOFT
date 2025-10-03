@@ -1,0 +1,47 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Marcas | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Marcas{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Marcas</h1>
+    <button class="btn-primary">+ Nueva Marca</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>HP</td>
+                    <td>Hewlett-Packard</td>
+                    <td><span class="status active">Activo</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Dell</td>
+                    <td>Dell Technologies</td>
+                    <td><span class="status active">Activo</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

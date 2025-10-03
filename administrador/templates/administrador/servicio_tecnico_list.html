@@ -1,0 +1,65 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Servicios Técnicos | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Servicios Técnicos{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Servicios Técnicos</h1>
+    <button class="btn-primary">+ Nuevo Servicio</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Servicio</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Duración</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ST-001</td>
+                    <td>Mantenimiento Preventivo</td>
+                    <td>Limpieza y optimización del sistema</td>
+                    <td>$80.000</td>
+                    <td>2 horas</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ST-002</td>
+                    <td>Reparación de Hardware</td>
+                    <td>Diagnóstico y reparación de componentes</td>
+                    <td>$150.000</td>
+                    <td>4 horas</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ST-003</td>
+                    <td>Instalación de Software</td>
+                    <td>Instalación y configuración de programas</td>
+                    <td>$50.000</td>
+                    <td>1 hora</td>
+                    <td><span class="status active">Disponible</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

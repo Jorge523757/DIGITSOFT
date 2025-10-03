@@ -1,0 +1,50 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Clientes | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Clientes{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Clientes</h1>
+    <button class="btn-primary">+ Nuevo Cliente</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Juan Pérez</td>
+                    <td>juan@email.com</td>
+                    <td>+57 300 123 4567</td>
+                    <td>03/10/2025</td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>María García</td>
+                    <td>maria@email.com</td>
+                    <td>+57 301 234 5678</td>
+                    <td>02/10/2025</td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

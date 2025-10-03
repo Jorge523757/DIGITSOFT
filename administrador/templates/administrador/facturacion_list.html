@@ -1,0 +1,39 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Facturación | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Facturación{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Facturas</h1>
+    <button class="btn-primary">+ Nueva Factura</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>N° Factura</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>FAC-001</td>
+                    <td>Juan Pérez</td>
+                    <td>03/10/2025</td>
+                    <td>$250.000</td>
+                    <td><span class="status paid">Pagada</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

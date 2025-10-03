@@ -1,0 +1,41 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Garantías | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Garantías{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Garantías</h1>
+    <button class="btn-primary">+ Nueva Garantía</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Equipo</th>
+                    <th>Cliente</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>GAR-001</td>
+                    <td>HP Pavilion</td>
+                    <td>Juan Pérez</td>
+                    <td>01/10/2025</td>
+                    <td>01/10/2026</td>
+                    <td><span class="status active">Vigente</span></td>
+                    <td>
+                        <button class="btn-view">Ver</button>
+                        <button class="btn-edit">Editar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

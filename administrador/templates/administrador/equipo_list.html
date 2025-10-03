@@ -1,0 +1,41 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}Equipos | Dashboard - Digit Soft{% endblock %}
+{% block page_header %}Gestión de Equipos{% endblock %}
+{% block content %}
+<div class="content-header">
+    <h1>Lista de Equipos</h1>
+    <button class="btn-primary">+ Nuevo Equipo</button>
+</div>
+
+<div class="content-body">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Serie</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>HP</td>
+                    <td>Pavilion</td>
+                    <td>HP123456</td>
+                    <td>Juan Pérez</td>
+                    <td><span class="status active">Activo</span></td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
