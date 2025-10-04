@@ -1,41 +1,65 @@
 {% extends 'administrador/base_dashboard.html' %}
-{% block title %}Órdenes de Servicio | Dashboard - Digit Soft{% endblock %}
+{% load static %}
+{% block title %}Órdenes de Servicio | Digit Soft{% endblock %}
 {% block page_header %}Gestión de Órdenes de Servicio{% endblock %}
 {% block content %}
-<div class="content-header">
+<div class="dashboard-header">
     <h1>Lista de Órdenes de Servicio</h1>
-    <button class="btn-primary">+ Nueva Orden</button>
+    <button class="btn-primary">
+        <span>➕</span>
+        Nueva Orden
+    </button>
 </div>
-
-<div class="content-body">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>N° Orden</th>
-                    <th>Cliente</th>
-                    <th>Equipo</th>
-                    <th>Técnico</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>OS-001</td>
-                    <td>Juan Pérez</td>
-                    <td>HP Pavilion</td>
-                    <td>Carlos López</td>
-                    <td><span class="status pending">En Proceso</span></td>
-                    <td>03/10/2025</td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3>Órdenes Activas</h3>
+        <div class="card-actions">
+            <input type="text" placeholder="Buscar orden..." class="search-input">
+            <button class="btn-icon" title="Filtros">🔍</button>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>Equipo</th>
+                        <th>Técnico</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OS-2025-001</td>
+                        <td>Juan Pérez</td>
+                        <td>Laptop HP</td>
+                        <td>Carlos Tech</td>
+                        <td>2025-01-15</td>
+                        <td><span class="status-badge in-progress">En Proceso</span></td>
+                        <td>
+                            <button class="btn-edit">✏️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>OS-2025-002</td>
+                        <td>María González</td>
+                        <td>Desktop Dell</td>
+                        <td>Ana Repair</td>
+                        <td>2025-01-10</td>
+                        <td><span class="status-badge completed">Completado</span></td>
+                        <td>
+                            <button class="btn-edit">✏️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

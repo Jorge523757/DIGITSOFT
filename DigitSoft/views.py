@@ -9,6 +9,14 @@ def home(request):
     }
     return render(request, 'DigitSoft/home.html', context)
 
+def pagina_principal(request):
+    """Vista para el módulo de página principal del dashboard"""
+    context = {
+        'page_title': 'Página Principal - Digit Soft',
+        'meta_description': 'Página principal del sistema de gestión Digit Soft',
+    }
+    return render(request, 'DigitSoft/pagina_principal.html', context)
+
 def portafolio(request):
     """Vista para la página de portafolio"""
     context = {

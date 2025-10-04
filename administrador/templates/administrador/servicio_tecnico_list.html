@@ -1,65 +1,112 @@
-{% extends 'administrador/base_dashboard.html' %}
-{% block title %}Servicios Técnicos | Dashboard - Digit Soft{% endblock %}
+{% extends 'DigitSoft/base.html' %}
+{% load static %}
+{% block title %}Servicios Técnicos | Digit Soft{% endblock %}
+
 {% block page_header %}Gestión de Servicios Técnicos{% endblock %}
+
 {% block content %}
-<div class="content-header">
+<div class="dashboard-header">
     <h1>Lista de Servicios Técnicos</h1>
-    <button class="btn-primary">+ Nuevo Servicio</button>
+    <button class="btn-primary">
+        <span>➕</span>
+        Nuevo Servicio
+    </button>
 </div>
 
-<div class="content-body">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Servicio</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Duración</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ST-001</td>
-                    <td>Mantenimiento Preventivo</td>
-                    <td>Limpieza y optimización del sistema</td>
-                    <td>$80.000</td>
-                    <td>2 horas</td>
-                    <td><span class="status active">Disponible</span></td>
-                    <td>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>ST-002</td>
-                    <td>Reparación de Hardware</td>
-                    <td>Diagnóstico y reparación de componentes</td>
-                    <td>$150.000</td>
-                    <td>4 horas</td>
-                    <td><span class="status active">Disponible</span></td>
-                    <td>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>ST-003</td>
-                    <td>Instalación de Software</td>
-                    <td>Instalación y configuración de programas</td>
-                    <td>$50.000</td>
-                    <td>1 hora</td>
-                    <td><span class="status active">Disponible</span></td>
-                    <td>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3>Servicios Disponibles</h3>
+        <div class="card-actions">
+            <input type="text" placeholder="Buscar servicio..." class="search-input">
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <h3>Reparación Hardware</h3>
+                <p>Diagnóstico y reparación de componentes físicos</p>
+                <div class="service-price">$80.000</div>
+                <div class="service-actions">
+                    <button class="btn-edit">✏️</button>
+                    <button class="btn-delete" data-name="Reparación Hardware">🗑️</button>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">💻</div>
+                <h3>Instalación Software</h3>
+                <p>Instalación y configuración de programas</p>
+                <div class="service-price">$40.000</div>
+                <div class="service-actions">
+                    <button class="btn-edit">✏️</button>
+                    <button class="btn-delete" data-name="Instalación Software">🗑️</button>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧹</div>
+                <h3>Limpieza y Mantenimiento</h3>
+                <p>Limpieza interna y mantenimiento preventivo</p>
+                <div class="service-price">$50.000</div>
+                <div class="service-actions">
+                    <button class="btn-edit">✏️</button>
+                    <button class="btn-delete" data-name="Limpieza y Mantenimiento">🗑️</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.service-card {
+    background: var(--hover-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.service-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.service-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.service-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.service-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.service-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+</style>
 {% endblock %}

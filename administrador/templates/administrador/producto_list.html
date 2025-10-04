@@ -1,109 +1,302 @@
-{% load static %}
 {% extends 'administrador/base_dashboard.html' %}
-{% block title %}Productos | Dashboard - Digit Soft{% endblock %}
-{% block page_header %}Gestión de Productos{% endblock %}
-{% block content %}
-<div class="content-header">
-    <h1>Lista de Productos</h1>
-    <button class="btn-primary">+ Nuevo Producto</button>
-</div>
+{% load static %}
 
-<div class="content-body">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Imagen</th>
-                    <th>Nombre</th>
-                    <th>Marca</th>
-                    <th>Categoría</th>
-                    <th>Precio</th>
-                    <th>Stock</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>PRD-001</td>
-                    <td><img src="{% static 'images/laptop-hp.jpg' %}" alt="Laptop HP" class="product-thumb"></td>
-                    <td>Laptop HP Pavilion 15</td>
-                    <td>HP</td>
-                    <td>Laptops</td>
-                    <td>$2.200.000</td>
-                    <td>15</td>
-                    <td><span class="status active">Disponible</span></td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>PRD-002</td>
-                    <td><img src="{% static 'images/mouse-logitech.jpg' %}" alt="Mouse Logitech" class="product-thumb"></td>
-                    <td>Mouse Logitech MX Master 3</td>
-                    <td>Logitech</td>
-                    <td>Accesorios</td>
-                    <td>$280.000</td>
-                    <td>25</td>
-                    <td><span class="status active">Disponible</span></td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>PRD-003</td>
-                    <td><img src="{% static 'images/monitor-dell.jpg' %}" alt="Monitor Dell" class="product-thumb"></td>
-                    <td>Monitor Dell 24" 4K</td>
-                    <td>Dell</td>
-                    <td>Monitores</td>
-                    <td>$750.000</td>
-                    <td>8</td>
-                    <td><span class="status low-stock">Stock Bajo</span></td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>PRD-004</td>
-                    <td><img src="{% static 'images/teclado-mecanico.jpg' %}" alt="Teclado Mecánico" class="product-thumb"></td>
-                    <td>Teclado Mecánico RGB</td>
-                    <td>Corsair</td>
-                    <td>Accesorios</td>
-                    <td>$320.000</td>
-                    <td>0</td>
-                    <td><span class="status out-of-stock">Agotado</span></td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                        <button class="btn-delete">Eliminar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <i class="fas fa-plus"></i> Registrar Producto
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Barra de búsqueda -->
+                    <div class="search-bar mb-3">
+                        <div class="input-group">
+                            <input type="text" id="search-input" class="form-control" placeholder="Buscar producto por nombre, código o categoría..." oninput="searchProducts()">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="searchProducts()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de productos -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover data-table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Categoría</th>
+                                    <th>Stock</th>
+                                    <th>Precio Venta</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table">
+                                {% for producto in productos %}
+                                <tr>
+                                    <td><strong>{{ producto.codigo_producto }}</strong></td>
+                                    <td>{{ producto.nombre }}</td>
+                                    <td>{{ producto.marca.nombre|default:"N/A" }}</td>
+                                    <td>
+                                        <span class="badge badge-info">
+                                            {{ producto.get_categoria_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge
+                                            {% if producto.stock_actual <= producto.stock_minimo %}badge-danger
+                                            {% elif producto.stock_actual <= producto.stock_maximo %}badge-warning
+                                            {% else %}badge-success{% endif %}">
+                                            {{ producto.stock_actual }}
+                                        </span>
+                                    </td>
+                                    <td>${{ producto.precio_venta|floatformat:2 }}</td>
+                                    <td>
+                                        <span class="badge {% if producto.activo %}badge-success{% else %}badge-danger{% endif %}">
+                                            {% if producto.activo %}Activo{% else %}Inactivo{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-info" onclick="viewProduct('{{ producto.id }}')" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning" onclick="editProduct('{{ producto.id }}')" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ producto.id }}')" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="empty-state">
+                                            <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">No hay productos registrados</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<style>
-.product-thumb {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
+<!-- Modal para agregar/editar producto -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Registrar Producto</h5>
+                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="product-form" method="post" action="{% url 'administrador:producto_list' %}">
+                {% csrf_token %}
+                <input type="hidden" id="productId" name="producto_id">
+
+                <div class="modal-body">
+                    <!-- Información Básica -->
+                    <h6 class="border-bottom pb-2 mb-3">Información Básica</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="codigo_producto">Código del Producto</label>
+                                <input type="text" id="codigo_producto" name="codigo_producto" class="form-control" required placeholder="PRD-001">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre del Producto</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Nombre del producto">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Descripción detallada del producto"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="marca">Marca</label>
+                                <select id="marca" name="marca" class="form-control">
+                                    <option value="">Seleccione marca</option>
+                                    <!-- Se llenará dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="categoria">Categoría</label>
+                                <select id="categoria" name="categoria" class="form-control" required>
+                                    <option value="">Seleccione categoría</option>
+                                    <option value="COMPUTADORES">Computadores</option>
+                                    <option value="LAPTOPS">Laptops</option>
+                                    <option value="ACCESORIOS">Accesorios</option>
+                                    <option value="COMPONENTES">Componentes</option>
+                                    <option value="PERIFERICOS">Periféricos</option>
+                                    <option value="SOFTWARE">Software</option>
+                                    <option value="SERVICIOS">Servicios</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="proveedor_principal">Proveedor Principal</label>
+                                <select id="proveedor_principal" name="proveedor_principal" class="form-control">
+                                    <option value="">Seleccione proveedor</option>
+                                    <!-- Se llenará dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de Precios y Stock -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Precios y Stock</h6>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="precio_compra">Precio de Compra</label>
+                                <input type="number" id="precio_compra" name="precio_compra" class="form-control" step="0.01" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="precio_venta">Precio de Venta</label>
+                                <input type="number" id="precio_venta" name="precio_venta" class="form-control" step="0.01" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="stock_actual">Stock Actual</label>
+                                <input type="number" id="stock_actual" name="stock_actual" class="form-control" required placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="stock_minimo">Stock Mínimo</label>
+                                <input type="number" id="stock_minimo" name="stock_minimo" class="form-control" required placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="stock_maximo">Stock Máximo</label>
+                                <input type="number" id="stock_maximo" name="stock_maximo" class="form-control" required placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Especificaciones -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Especificaciones Técnicas</h6>
+                    <div class="form-group">
+                        <label for="especificaciones_tecnicas">Especificaciones</label>
+                        <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="4" placeholder="Especificaciones técnicas del producto"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Alert container -->
+<div id="alert-container" class="position-fixed" style="top: 20px; right: 20px; z-index: 9999;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function searchProducts() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const rows = document.querySelectorAll('#products-table tr');
+
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm) || searchTerm === '') {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
-.status.low-stock {
-    background: #ff9800;
-    color: white;
+
+function viewProduct(id) {
+    window.location.href = `/administrador/productos/${id}/`;
 }
-.status.out-of-stock {
-    background: #f44336;
-    color: white;
+
+function editProduct(id) {
+    showAlert('Funcionalidad de edición en desarrollo');
 }
-</style>
+
+function deleteProduct(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        showAlert('Producto eliminado correctamente');
+    }
+}
+
+function openModal() {
+    document.getElementById('productModal').style.display = 'block';
+    document.getElementById('modal-title').textContent = 'Registrar Producto';
+    document.getElementById('product-form').reset();
+    $('#productModal').modal('show');
+}
+
+function closeModal() {
+    $('#productModal').modal('hide');
+    document.getElementById('product-form').reset();
+}
+
+function showAlert(message, type = 'success') {
+    const container = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="close" onclick="this.parentElement.remove()">
+            <span>&times;</span>
+        </button>
+    `;
+    container.appendChild(alert);
+
+    setTimeout(() => {
+        if (alert.parentElement) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
+// Mostrar mensajes de Django
+{% if messages %}
+    window.addEventListener('load', function() {
+        {% for message in messages %}
+            showAlert('{{ message }}', '{{ message.tags }}');
+        {% endfor %}
+    });
+{% endif %}
+</script>
 {% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+{% block title %}Página Principal | Digit Soft{% endblock %}
+{% block page_header %}Página Principal{% endblock %}
+
+{# No mostrar barra de accesos rápidos ni accesos rápidos en el contenido #}
+{% block extra_header %}{% endblock %}
+
+{% block content %}
+<!-- Bienvenida -->
+<div class="welcome-section">
+    <div class="welcome-card">
+        <div class="welcome-content">
+            <h1>¡Bienvenido a Digit Soft!</h1>
+            <p>Sistema integral de gestión empresarial</p>
+            <div class="welcome-stats">
+                <div class="welcome-stat">
+                    <span class="stat-number">5+</span>
+                    <span class="stat-label">Años de experiencia</span>
+                </div>
+                <div class="welcome-stat">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">Clientes satisfechos</span>
+                </div>
+                <div class="welcome-stat">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Soporte técnico</span>
+                </div>
+            </div>
+        </div>
+        <div class="welcome-image">
+            <div class="welcome-icon">💼</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Estilos específicos para página principal */
+.welcome-section {
+    margin-bottom: 2rem;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    border-radius: 16px;
+    padding: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-hover);
+}
+
+.welcome-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+.welcome-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.welcome-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.welcome-image {
+    display: flex;
+    align-items: center;
+}
+
+.welcome-icon {
+    font-size: 4rem;
+    opacity: 0.3;
+}
+
+/* Barra de accesos rápidos fija superior */
+.fixed-quick-access-bar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    z-index: 1000;
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.fixed-quick-access-bar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+.fixed-quick-access-bar a:hover {
+    transform: scale(1.2);
+    color: var(--info-color);
+}
+.quick-bar-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .welcome-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .welcome-stats {
+        justify-content: center;
+    }
+
+    .company-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .fixed-quick-access-bar {
+        font-size: 1.1rem;
+        gap: 0.7rem;
+        top: 56px;
+    }
+}
+</style>
+{% endblock %}

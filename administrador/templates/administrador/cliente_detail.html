@@ -1,0 +1,105 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:cliente_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información Personal</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Tipo de Documento:</strong></td>
+                                    <td>{{ cliente.get_tipo_documento_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Número de Documento:</strong></td>
+                                    <td>{{ cliente.numero_documento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombres:</strong></td>
+                                    <td>{{ cliente.nombres }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Apellidos:</strong></td>
+                                    <td>{{ cliente.apellidos|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Razón Social:</strong></td>
+                                    <td>{{ cliente.razon_social|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tipo de Cliente:</strong></td>
+                                    <td>{{ cliente.get_tipo_cliente_display }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Información de Contacto</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Teléfono:</strong></td>
+                                    <td>{{ cliente.telefono }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ cliente.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dirección:</strong></td>
+                                    <td>{{ cliente.direccion }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ciudad:</strong></td>
+                                    <td>{{ cliente.ciudad }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Departamento:</strong></td>
+                                    <td>{{ cliente.departamento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        {% if cliente.activo %}
+                                            <span class="badge badge-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Información del Sistema</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Fecha de Registro:</strong></td>
+                                    <td>{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Última Actualización:</strong></td>
+                                    <td>{{ cliente.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

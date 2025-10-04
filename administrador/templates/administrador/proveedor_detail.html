@@ -1,0 +1,214 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+{% extends 'administrador/base_dashboard.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:proveedor_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información del Proveedor</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Tipo de Documento:</strong></td>
+                                    <td>{{ proveedor.get_tipo_documento_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Número de Documento:</strong></td>
+                                    <td>{{ proveedor.numero_documento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Razón Social:</strong></td>
+                                    <td>{{ proveedor.razon_social }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombre Comercial:</strong></td>
+                                    <td>{{ proveedor.nombre_comercial|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Categoría Principal:</strong></td>
+                                    <td>{{ proveedor.get_categoria_principal_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Teléfono:</strong></td>
+                                    <td>{{ proveedor.telefono }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ proveedor.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sitio Web:</strong></td>
+                                    <td>
+                                        {% if proveedor.sitio_web %}
+                                            <a href="{{ proveedor.sitio_web }}" target="_blank">{{ proveedor.sitio_web }}</a>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Información de Contacto y Comercial</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Dirección:</strong></td>
+                                    <td>{{ proveedor.direccion }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ciudad:</strong></td>
+                                    <td>{{ proveedor.ciudad }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Departamento:</strong></td>
+                                    <td>{{ proveedor.departamento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Contacto Principal:</strong></td>
+                                    <td>{{ proveedor.contacto_principal }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Teléfono Contacto:</strong></td>
+                                    <td>{{ proveedor.telefono_contacto|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email Contacto:</strong></td>
+                                    <td>{{ proveedor.email_contacto|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Condiciones de Pago:</strong></td>
+                                    <td>{{ proveedor.condiciones_pago|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tiempo de Entrega:</strong></td>
+                                    <td>{{ proveedor.tiempo_entrega_dias }} días</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Productos del Proveedor</h5>
+                            {% if productos_proveedor %}
+                                <div class="list-group">
+                                    {% for producto in productos_proveedor %}
+                                    <div class="list-group-item">
+                                        <h6>{{ producto.nombre }}</h6>
+                                        <small class="text-muted">{{ producto.codigo_producto }} - ${{ producto.precio_compra }}</small>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No hay productos asociados a este proveedor.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Compras Recientes</h5>
+                            {% if compras_proveedor %}
+                                <div class="list-group">
+                                    {% for compra in compras_proveedor %}
+                                    <div class="list-group-item">
+                                        <h6>{{ compra.numero_compra }}</h6>
+                                        <small class="text-muted">{{ compra.fecha_solicitud|date:"d/m/Y" }} - ${{ compra.total }}</small>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No hay compras registradas con este proveedor.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:marca_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información de la Marca</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Nombre:</strong></td>
+                                    <td>{{ marca.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Descripción:</strong></td>
+                                    <td>{{ marca.descripcion|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>País de Origen:</strong></td>
+                                    <td>{{ marca.pais_origen|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sitio Web:</strong></td>
+                                    <td>
+                                        {% if marca.sitio_web %}
+                                            <a href="{{ marca.sitio_web }}" target="_blank">{{ marca.sitio_web }}</a>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        {% if marca.activa %}
+                                            <span class="badge badge-success">Activa</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Inactiva</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Productos Asociados</h5>
+                            {% if productos_marca %}
+                                <div class="list-group">
+                                    {% for producto in productos_marca %}
+                                    <div class="list-group-item">
+                                        <h6>{{ producto.nombre }}</h6>
+                                        <small class="text-muted">{{ producto.codigo_producto }}</small>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No hay productos asociados a esta marca.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

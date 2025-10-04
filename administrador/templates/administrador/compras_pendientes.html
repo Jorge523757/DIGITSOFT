@@ -1,0 +1,64 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if compras %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Número</th>
+                                        <th>Proveedor</th>
+                                        <th>Fecha Solicitud</th>
+                                        <th>Estado</th>
+                                        <th>Total</th>
+                                        <th>Días Pendiente</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for compra in compras %}
+                                    <tr>
+                                        <td>{{ compra.numero_compra }}</td>
+                                        <td>{{ compra.proveedor.razon_social }}</td>
+                                        <td>{{ compra.fecha_solicitud|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <span class="badge
+                                                {% if compra.estado == 'SOLICITUD' %}badge-info
+                                                {% elif compra.estado == 'COTIZACION' %}badge-warning
+                                                {% elif compra.estado == 'APROBADA' %}badge-primary
+                                                {% else %}badge-secondary{% endif %}">
+                                                {{ compra.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>${{ compra.total|floatformat:2 }}</td>
+                                        <td>{{ compra.fecha_solicitud|timesince }}</td>
+                                        <td>
+                                            <a href="{% url 'administrador:compra_detail' compra.id %}" class="btn btn-sm btn-info">Ver</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No hay compras pendientes en este momento.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

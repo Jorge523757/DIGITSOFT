@@ -8,8 +8,6 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
-
     {% block extra_css %}{% endblock %}
 </head>
 <body class="dashboard-body">
@@ -25,9 +23,15 @@
         <nav class="sidebar-nav">
             <ul>
                 <li>
-                    <a href="{% url 'main:dashboard' %}" class="nav-item active">
+                    <a href="{% url 'main:dashboard' %}" class="nav-item">
                         <i class="icon">🏠</i>
                         <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'main:pagina_principal' %}" class="nav-item">
+                        <i class="icon">🌐</i>
+                        <span>Página Principal</span>
                     </a>
                 </li>
                 <li>
@@ -90,12 +94,6 @@
                         <span>Ventas</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{% url 'administrador:producto_list' %}" class="nav-item">
-                        <i class="icon">📦</i>
-                        <span>Productos</span>
-                    </a>
-                </li>
             </ul>
         </nav>
 
@@ -123,7 +121,8 @@
             </div>
 
             <div class="topbar-right">
-                <button class="theme-toggle-btn" id="themeToggleDashboard">
+                <!-- BOTÓN DE MODO OSCURO/CLARO ARREGLADO -->
+                <button class="theme-toggle-btn" id="themeToggleDashboard" title="Cambiar tema">
                     <i class="icon">🌙</i>
                 </button>
 

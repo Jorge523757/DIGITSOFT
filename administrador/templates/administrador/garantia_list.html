@@ -1,41 +1,68 @@
-{% extends 'administrador/base_dashboard.html' %}
-{% block title %}Garantías | Dashboard - Digit Soft{% endblock %}
+{% extends 'DigitSoft/base.html' %}
+{% load static %}
+{% block title %}Garantías | Digit Soft{% endblock %}
+
 {% block page_header %}Gestión de Garantías{% endblock %}
+
 {% block content %}
-<div class="content-header">
+<div class="dashboard-header">
     <h1>Lista de Garantías</h1>
-    <button class="btn-primary">+ Nueva Garantía</button>
+    <button class="btn-primary">
+        <span>➕</span>
+        Nueva Garantía
+    </button>
 </div>
 
-<div class="content-body">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Equipo</th>
-                    <th>Cliente</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Fin</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>GAR-001</td>
-                    <td>HP Pavilion</td>
-                    <td>Juan Pérez</td>
-                    <td>01/10/2025</td>
-                    <td>01/10/2026</td>
-                    <td><span class="status active">Vigente</span></td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3>Garantías Activas</h3>
+        <div class="card-actions">
+            <input type="text" placeholder="Buscar garantía..." class="search-input">
+            <button class="btn-icon" title="Filtros">🔍</button>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Equipo</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>G001</td>
+                        <td>Juan Pérez</td>
+                        <td>Laptop HP</td>
+                        <td>2025-01-15</td>
+                        <td>2026-01-15</td>
+                        <td><span class="status-badge completed">Activa</span></td>
+                        <td>
+                            <button class="btn-edit">✏️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>G002</td>
+                        <td>María González</td>
+                        <td>Desktop Dell</td>
+                        <td>2024-06-10</td>
+                        <td>2025-06-10</td>
+                        <td><span class="status-badge warning">Por Vencer</span></td>
+                        <td>
+                            <button class="btn-edit">✏️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

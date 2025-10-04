@@ -1,69 +1,84 @@
-{% extends 'administrador/base_dashboard.html' %}
-{% block title %}Ventas | Dashboard - Digit Soft{% endblock %}
+{% extends 'DigitSoft/base.html' %}
+{% load static %}
+{% block title %}Ventas | Digit Soft{% endblock %}
+
 {% block page_header %}Gestión de Ventas{% endblock %}
+
 {% block content %}
-<div class="content-header">
+<div class="dashboard-header">
     <h1>Lista de Ventas</h1>
-    <button class="btn-primary">+ Nueva Venta</button>
+    <button class="btn-primary">
+        <span>➕</span>
+        Nueva Venta
+    </button>
 </div>
 
-<div class="content-body">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>N° Venta</th>
-                    <th>Cliente</th>
-                    <th>Productos</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Vendedor</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>VT-001</td>
-                    <td>Juan Pérez</td>
-                    <td>Laptop HP, Mouse Logitech</td>
-                    <td>03/10/2025</td>
-                    <td>$2.500.000</td>
-                    <td><span class="status paid">Completada</span></td>
-                    <td>Carlos López</td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>VT-002</td>
-                    <td>María García</td>
-                    <td>Teclado Mecánico, Cámara Web</td>
-                    <td>02/10/2025</td>
-                    <td>$350.000</td>
-                    <td><span class="status pending">Pendiente</span></td>
-                    <td>Ana García</td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>VT-003</td>
-                    <td>Luis Martínez</td>
-                    <td>Monitor 24", Parlantes</td>
-                    <td>01/10/2025</td>
-                    <td>$800.000</td>
-                    <td><span class="status paid">Completada</span></td>
-                    <td>Miguel Rodríguez</td>
-                    <td>
-                        <button class="btn-view">Ver</button>
-                        <button class="btn-edit">Editar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3>Ventas Registradas</h3>
+        <div class="card-actions">
+            <input type="text" placeholder="Buscar venta..." class="search-input">
+            <button class="btn-icon" title="Filtros">🔍</button>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Venta</th>
+                        <th>Cliente</th>
+                        <th>Producto/Servicio</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>V-2025-001</td>
+                        <td>Juan Pérez</td>
+                        <td>Reparación Laptop</td>
+                        <td>1</td>
+                        <td>2025-01-15</td>
+                        <td>$150.000</td>
+                        <td><span class="status-badge completed">Completada</span></td>
+                        <td>
+                            <button class="btn-edit">👁️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>V-2025-002</td>
+                        <td>María González</td>
+                        <td>Mouse Inalámbrico</td>
+                        <td>2</td>
+                        <td>2025-01-10</td>
+                        <td>$80.000</td>
+                        <td><span class="status-badge completed">Completada</span></td>
+                        <td>
+                            <button class="btn-edit">👁️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>V-2025-003</td>
+                        <td>Carlos López</td>
+                        <td>Instalación Software</td>
+                        <td>1</td>
+                        <td>2025-01-08</td>
+                        <td>$40.000</td>
+                        <td><span class="status-badge pending">Pendiente</span></td>
+                        <td>
+                            <button class="btn-edit">👁️</button>
+                            <button class="btn-icon">🖨️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

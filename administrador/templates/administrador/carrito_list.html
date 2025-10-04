@@ -1,0 +1,74 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if carritos %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID Carrito</th>
+                                        <th>Cliente</th>
+                                        <th>Estado</th>
+                                        <th>Total Items</th>
+                                        <th>Total Valor</th>
+                                        <th>Fecha Creación</th>
+                                        <th>Última Actividad</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for carrito in carritos %}
+                                    <tr>
+                                        <td>#{{ carrito.id }}</td>
+                                        <td>
+                                            {% if carrito.cliente %}
+                                                {{ carrito.cliente.nombre_completo }}
+                                            {% else %}
+                                                <span class="text-muted">Cliente invitado</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge
+                                                {% if carrito.estado == 'ACTIVO' %}badge-success
+                                                {% elif carrito.estado == 'ABANDONADO' %}badge-warning
+                                                {% elif carrito.estado == 'CONVERTIDO' %}badge-primary
+                                                {% else %}badge-secondary{% endif %}">
+                                                {{ carrito.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ carrito.total_items|default:0 }}</td>
+                                        <td>${{ carrito.total_valor|default:0|floatformat:2 }}</td>
+                                        <td>{{ carrito.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ carrito.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <a href="{% url 'administrador:carrito_detail' carrito.id %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-shopping-cart"></i> No hay carritos registrados en el sistema.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

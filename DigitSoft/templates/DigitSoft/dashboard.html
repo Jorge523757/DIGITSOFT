@@ -1,26 +1,38 @@
 {% extends 'DigitSoft/base.html' %}
+{% load static %}
 {% block title %}Dashboard | Digit Soft{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/charts.css' %}">
+{% endblock %}
+
+{% block page_header %}Dashboard Principal{% endblock %}
+
 {% block content %}
+<!-- Estadísticas Principales -->
 <div class="dashboard-stats">
     <div class="stat-card">
         <div class="stat-icon">👥</div>
         <div class="stat-info">
             <h3>125</h3>
-            <p>Clientes</p>
+            <p>Clientes Activos</p>
+            <small class="stat-change positive">+12% este mes</small>
         </div>
     </div>
     <div class="stat-card">
         <div class="stat-icon">💻</div>
         <div class="stat-info">
             <h3>89</h3>
-            <p>Equipos</p>
+            <p>Equipos en Servicio</p>
+            <small class="stat-change negative">-3% este mes</small>
         </div>
     </div>
     <div class="stat-card">
         <div class="stat-icon">📄</div>
         <div class="stat-info">
             <h3>234</h3>
-            <p>Facturas</p>
+            <p>Facturas Emitidas</p>
+            <small class="stat-change positive">+8% este mes</small>
         </div>
     </div>
     <div class="stat-card">
@@ -28,21 +40,147 @@
         <div class="stat-info">
             <h3>45</h3>
             <p>Servicios Activos</p>
+            <small class="stat-change positive">+15% este mes</small>
         </div>
     </div>
 </div>
 
-<div class="recent-activity">
-    <h2>Actividad Reciente</h2>
-    <div class="activity-list">
-        <div class="activity-item">
-            <span class="activity-time">Hace 2 horas</span>
-            <span class="activity-text">Nueva orden de servicio creada #OS-2025-001</span>
+<!-- Contenido Principal -->
+<div class="dashboard-grid">
+    <!-- Gráfico de Ingresos -->
+    <div class="dashboard-card chart-card">
+        <div class="card-header">
+            <h3>Ingresos Mensuales</h3>
+            <div class="card-actions">
+                <button class="btn-icon" title="Actualizar">🔄</button>
+                <button class="btn-icon" title="Configurar">⚙️</button>
+            </div>
         </div>
-        <div class="activity-item">
-            <span class="activity-time">Hace 4 horas</span>
-            <span class="activity-text">Cliente Juan Pérez registrado</span>
+        <div class="card-content">
+            <canvas id="incomeChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Servicios Recientes -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Servicios Recientes</h3>
+            <a href="{% url 'administrador:orden_servicio_list' %}" class="btn-link">Ver todos</a>
+        </div>
+        <div class="card-content">
+            <div class="service-list">
+                <div class="service-item">
+                    <div class="service-info">
+                        <h4>Reparación Laptop HP</h4>
+                        <p>Cliente: Juan Pérez</p>
+                        <small>OS-2025-001</small>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge in-progress">En Proceso</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <h4>Mantenimiento PC Gaming</h4>
+                        <p>Cliente: María González</p>
+                        <small>OS-2025-002</small>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge completed">Completado</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <h4>Instalación Software</h4>
+                        <p>Cliente: Carlos López</p>
+                        <small>OS-2025-003</small>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge pending">Pendiente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Actividad Reciente</h3>
+            <button class="btn-icon" title="Actualizar">🔄</button>
+        </div>
+        <div class="card-content">
+            <div class="activity-timeline">
+                <div class="activity-item">
+                    <div class="activity-time">Hace 2 horas</div>
+                    <div class="activity-content">
+                        <strong>Nueva orden de servicio</strong>
+                        <p>OS-2025-001 creada para Juan Pérez</p>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Hace 4 horas</div>
+                    <div class="activity-content">
+                        <strong>Cliente registrado</strong>
+                        <p>María González añadida al sistema</p>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Hace 6 horas</div>
+                    <div class="activity-content">
+                        <strong>Factura generada</strong>
+                        <p>Factura #F-2025-089 por $250.000</p>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Hace 1 día</div>
+                    <div class="activity-content">
+                        <strong>Servicio completado</strong>
+                        <p>Reparación de impresora Canon finalizada</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendario de Tareas -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Tareas Pendientes</h3>
+            <a href="#" class="btn-link">Ver calendario</a>
+        </div>
+        <div class="card-content">
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-priority high"></div>
+                    <div class="task-info">
+                        <h4>Entrega de Laptop reparada</h4>
+                        <p>Cliente: Ana Martínez</p>
+                        <small>📅 Hoy - 15:00</small>
+                    </div>
+                </div>
+                <div class="task-item">
+                    <div class="task-priority medium"></div>
+                    <div class="task-info">
+                        <h4>Revisión técnica programada</h4>
+                        <p>Equipo: Server Dell R740</p>
+                        <small>📅 Mañana - 10:00</small>
+                    </div>
+                </div>
+                <div class="task-item">
+                    <div class="task-priority low"></div>
+                    <div class="task-info">
+                        <h4>Actualización de inventario</h4>
+                        <p>Componentes y repuestos</p>
+                        <small>📅 03/10 - 09:00</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
 {% endblock %}

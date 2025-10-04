@@ -30,19 +30,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'DigitSoft',  # Tu aplicación principal
-    'administrador',
-    'cliente',
-    'tecnico',
-    'proveedor',
-    'compra',
-    'venta',
-    'facturacion',
-    'servicio_tecnico',
-    'orden_servicio',
-    'marca',
-    'equipo',
-    'garantia',
-    'carrito',
+    'administrador',  # Módulo consolidado con todos los modelos
+    # MÓDULOS INDIVIDUALES DESACTIVADOS - AHORA TODO ESTÁ EN 'administrador'
+    # 'cliente',
+    # 'tecnico',
+    # 'proveedor',
+    # 'compra',
+    # 'venta',
+    # 'facturacion',
+    # 'servicio_tecnico',
+    # 'orden_servicio',
+    # 'marca',
+    # 'equipo',
+    # 'garantia',
+    # 'carrito',
+    # 'producto',
 ]
 
 MIDDLEWARE = [

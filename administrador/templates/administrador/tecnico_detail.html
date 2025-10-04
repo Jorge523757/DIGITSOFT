@@ -1,0 +1,98 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:tecnico_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información Personal</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Tipo de Documento:</strong></td>
+                                    <td>{{ tecnico.get_tipo_documento_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Número de Documento:</strong></td>
+                                    <td>{{ tecnico.numero_documento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombres:</strong></td>
+                                    <td>{{ tecnico.nombres }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Apellidos:</strong></td>
+                                    <td>{{ tecnico.apellidos }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Teléfono:</strong></td>
+                                    <td>{{ tecnico.telefono }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ tecnico.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dirección:</strong></td>
+                                    <td>{{ tecnico.direccion }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Información Técnica</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Especialidades:</strong></td>
+                                    <td>{{ tecnico.especialidades }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nivel de Experiencia:</strong></td>
+                                    <td>{{ tecnico.get_nivel_experiencia_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Certificaciones:</strong></td>
+                                    <td>{{ tecnico.certificaciones|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado Actual:</strong></td>
+                                    <td>
+                                        <span class="badge
+                                            {% if tecnico.estado_actual == 'DISPONIBLE' %}badge-success
+                                            {% elif tecnico.estado_actual == 'OCUPADO' %}badge-warning
+                                            {% else %}badge-secondary{% endif %}">
+                                            {{ tecnico.get_estado_actual_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha de Ingreso:</strong></td>
+                                    <td>{{ tecnico.fecha_ingreso|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Calificación Promedio:</strong></td>
+                                    <td>{{ tecnico.calificacion_promedio }}/5.0</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Servicios Completados:</strong></td>
+                                    <td>{{ tecnico.servicios_completados }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

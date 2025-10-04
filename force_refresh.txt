@@ -1,0 +1,4 @@
+FORZAR ACTUALIZACIÓN - 2025-01-03
+Los enlaces de Productos y Compras están configurados correctamente.
+Si no aparecen, es un problema de caché del navegador.
+

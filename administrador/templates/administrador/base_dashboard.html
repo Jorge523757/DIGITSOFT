@@ -9,12 +9,16 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     {% block extra_css %}{% endblock %}
 </head>
 <body class="dashboard-body">
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" style="height: 100vh; overflow-y: auto;">
         <div class="sidebar-header">
             <img src="{% static 'images/logo.png' %}" alt="Digit Soft" class="sidebar-logo">
             <button class="sidebar-toggle" id="sidebarToggle">
@@ -25,82 +29,99 @@
         <nav class="sidebar-nav">
             <ul>
                 <li>
-                    <a href="{% url 'administrador:dashboard' %}" class="nav-item active">
-                        <i class="icon">🏠</i>
-                        <span>Dashboard</span>
+                    <a href="{% url 'main:pagina_principal' %}" class="nav-item {% if request.resolver_match.url_name == 'pagina_principal' %}active{% endif %}">
+                        <i class="icon">🌐</i>
+                        <span>Página Principal</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{% url 'administrador:cliente_list' %}" class="nav-item">
-                        <i class="icon">👥</i>
-                        <span>Clientes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:equipo_list' %}" class="nav-item">
-                        <i class="icon">💻</i>
-                        <span>Equipos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:facturacion_list' %}" class="nav-item">
-                        <i class="icon">📄</i>
-                        <span>Facturación</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:garantia_list' %}" class="nav-item">
-                        <i class="icon">🛡️</i>
-                        <span>Garantías</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:marca_list' %}" class="nav-item">
-                        <i class="icon">🏷️</i>
-                        <span>Marcas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:orden_servicio_list' %}" class="nav-item">
-                        <i class="icon">📋</i>
-                        <span>Órdenes de Servicio</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:proveedor_list' %}" class="nav-item">
-                        <i class="icon">🏢</i>
-                        <span>Proveedores</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:servicio_tecnico_list' %}" class="nav-item">
-                        <i class="icon">🔧</i>
-                        <span>Servicios Técnicos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:tecnico_list' %}" class="nav-item">
-                        <i class="icon">👨‍🔧</i>
-                        <span>Técnicos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:venta_list' %}" class="nav-item">
-                        <i class="icon">🛒</i>
-                        <span>Ventas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'administrador:producto_list' %}" class="nav-item">
-                        <i class="icon">📦</i>
-                        <span>Productos</span>
-                    </a>
+                <li class="sidebar-category">
+                    <span class="category-title">Módulos Administrador</span>
+                    <ul class="category-list">
+                        <li>
+                            <a href="{% url 'administrador:producto_list' %}" class="nav-item {% if request.resolver_match.url_name == 'producto_list' %}active{% endif %}">
+                                <i class="icon">📦</i>
+                                <span>Productos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:compra_list' %}" class="nav-item {% if request.resolver_match.url_name == 'compra_list' %}active{% endif %}">
+                                <i class="icon">💰</i>
+                                <span>Compras</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:carrito_list' %}" class="nav-item {% if request.resolver_match.url_name == 'carrito_list' %}active{% endif %}">
+                                <i class="icon">🛒</i>
+                                <span>Carrito</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:cliente_list' %}" class="nav-item {% if request.resolver_match.url_name == 'cliente_list' %}active{% endif %}">
+                                <i class="icon">👥</i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:equipo_list' %}" class="nav-item {% if request.resolver_match.url_name == 'equipo_list' %}active{% endif %}">
+                                <i class="icon">💻</i>
+                                <span>Equipos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:facturacion_list' %}" class="nav-item {% if request.resolver_match.url_name == 'facturacion_list' %}active{% endif %}">
+                                <i class="icon">📄</i>
+                                <span>Facturación</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:garantia_list' %}" class="nav-item {% if request.resolver_match.url_name == 'garantia_list' %}active{% endif %}">
+                                <i class="icon">🛡️</i>
+                                <span>Garantías</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:marca_list' %}" class="nav-item {% if request.resolver_match.url_name == 'marca_list' %}active{% endif %}">
+                                <i class="icon">🏷️</i>
+                                <span>Marcas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:orden_servicio_list' %}" class="nav-item {% if request.resolver_match.url_name == 'orden_servicio_list' %}active{% endif %}">
+                                <i class="icon">📋</i>
+                                <span>Órdenes de Servicio</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:proveedor_list' %}" class="nav-item {% if request.resolver_match.url_name == 'proveedor_list' %}active{% endif %}">
+                                <i class="icon">🏢</i>
+                                <span>Proveedores</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:servicio_tecnico_list' %}" class="nav-item {% if request.resolver_match.url_name == 'servicio_tecnico_list' %}active{% endif %}">
+                                <i class="icon">🔧</i>
+                                <span>Servicios Técnicos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:tecnico_list' %}" class="nav-item {% if request.resolver_match.url_name == 'tecnico_list' %}active{% endif %}">
+                                <i class="icon">👨‍🔧</i>
+                                <span>Técnicos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:venta_list' %}" class="nav-item {% if request.resolver_match.url_name == 'venta_list' %}active{% endif %}">
+                                <i class="icon">🛒</i>
+                                <span>Ventas</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
 
         <div class="sidebar-footer">
-            <a href="{% url 'main:home' %}" class="nav-item">
+            <a href="/" class="nav-item">
                 <i class="icon">🌐</i>
                 <span>Ir al Sitio Web</span>
             </a>
@@ -140,7 +161,7 @@
                 </div>
             </div>
         </header>
-
+        {% block extra_header %}{% endblock %}
         <!-- Page Content -->
         <main class="content">
             {% block content %}{% endblock %}
@@ -149,6 +170,79 @@
 
     <!-- JavaScript -->
     <script src="{% static 'js/dashboard.js' %}"></script>
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+<script>
+function toggleSubmenu() {
+    var submenu = document.getElementById('submenu-modulos');
+    var arrow = document.getElementById('submenu-arrow');
+    if (submenu.style.display === 'none') {
+        submenu.style.display = 'block';
+        arrow.classList.add('rotated');
+    } else {
+        submenu.style.display = 'none';
+        arrow.classList.remove('rotated');
+    }
+}
+</script>
+<style>
+.submenu-principal > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.submenu-arrow {
+    margin-left: 8px;
+    transition: transform 0.2s;
+}
+.submenu-arrow.rotated {
+    transform: rotate(180deg);
+}
+.submenu-modulos {
+    background: #23395d;
+    border-radius: 0 0 8px 8px;
+    margin-top: 0.2rem;
+    padding-left: 0;
+}
+.submenu-modulos li {
+    list-style: none;
+}
+.submenu-modulos a {
+    padding-left: 2.2rem;
+    font-size: 1rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border-left: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+.submenu-modulos a:hover {
+    border-left: 2px solid var(--primary-color);
+    background: #1a2a45;
+}
+.sidebar-category {
+    margin-top: 1.5rem;
+}
+.category-title {
+    font-weight: bold;
+    color: #b0c4de;
+    font-size: 1.1rem;
+    margin-left: 1.2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+.category-list {
+    padding-left: 0;
+}
+.category-list li {
+    list-style: none;
+}
+.category-list .nav-item {
+    padding-left: 2.2rem;
+}
+</style>
+{% endblock %}
+    <!-- Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

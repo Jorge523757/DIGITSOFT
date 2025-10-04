@@ -1,0 +1,93 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:compra_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información de la Compra</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Número de Compra:</strong></td>
+                                    <td>{{ compra.numero_compra }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Proveedor:</strong></td>
+                                    <td>{{ compra.proveedor.razon_social }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha de Solicitud:</strong></td>
+                                    <td>{{ compra.fecha_solicitud|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        <span class="badge
+                                            {% if compra.estado == 'SOLICITUD' %}badge-info
+                                            {% elif compra.estado == 'COTIZACION' %}badge-warning
+                                            {% elif compra.estado == 'APROBADA' %}badge-primary
+                                            {% elif compra.estado == 'RECIBIDA' %}badge-success
+                                            {% else %}badge-secondary{% endif %}">
+                                            {{ compra.get_estado_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Método de Pago:</strong></td>
+                                    <td>{{ compra.metodo_pago|default:"No especificado" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Información Financiera</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Subtotal:</strong></td>
+                                    <td>${{ compra.subtotal|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Impuestos:</strong></td>
+                                    <td>${{ compra.impuestos|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total:</strong></td>
+                                    <td><strong>${{ compra.total|floatformat:2 }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Solicitado por:</strong></td>
+                                    <td>{{ compra.solicitado_por.nombre_completo|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha de Registro:</strong></td>
+                                    <td>{{ compra.fecha_registro|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% if compra.observaciones %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Observaciones</h5>
+                            <p class="text-muted">{{ compra.observaciones }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

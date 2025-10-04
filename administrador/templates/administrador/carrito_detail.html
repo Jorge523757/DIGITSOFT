@@ -1,0 +1,85 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:carrito_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información del Carrito</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>ID del Carrito:</strong></td>
+                                    <td>#{{ carrito.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cliente:</strong></td>
+                                    <td>
+                                        {% if carrito.cliente %}
+                                            {{ carrito.cliente.nombre_completo }}
+                                        {% else %}
+                                            <span class="text-muted">Cliente invitado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        <span class="badge
+                                            {% if carrito.estado == 'ACTIVO' %}badge-success
+                                            {% elif carrito.estado == 'ABANDONADO' %}badge-warning
+                                            {% elif carrito.estado == 'CONVERTIDO' %}badge-primary
+                                            {% else %}badge-secondary{% endif %}">
+                                            {{ carrito.get_estado_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha de Creación:</strong></td>
+                                    <td>{{ carrito.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Última Actualización:</strong></td>
+                                    <td>{{ carrito.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Resumen del Carrito</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Total de Items:</strong></td>
+                                    <td>{{ carrito.total_items|default:0 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Valor Total:</strong></td>
+                                    <td><strong>${{ carrito.total_valor|default:0|floatformat:2 }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Descuento Aplicado:</strong></td>
+                                    <td>${{ carrito.descuento_aplicado|default:0|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sesión:</strong></td>
+                                    <td><small class="text-muted">{{ carrito.session_key|default:"N/A" }}</small></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

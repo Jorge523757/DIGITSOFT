@@ -1,0 +1,89 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <a href="{% url 'administrador:producto_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Información del Producto</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Código:</strong></td>
+                                    <td>{{ producto.codigo_producto }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nombre:</strong></td>
+                                    <td>{{ producto.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Descripción:</strong></td>
+                                    <td>{{ producto.descripcion|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Marca:</strong></td>
+                                    <td>{{ producto.marca.nombre|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Categoría:</strong></td>
+                                    <td>{{ producto.get_categoria_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Proveedor Principal:</strong></td>
+                                    <td>{{ producto.proveedor_principal.razon_social|default:"N/A" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Información de Stock y Precios</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Precio Compra:</strong></td>
+                                    <td>${{ producto.precio_compra|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Precio Venta:</strong></td>
+                                    <td>${{ producto.precio_venta|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stock Actual:</strong></td>
+                                    <td>{{ producto.stock_actual }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stock Mínimo:</strong></td>
+                                    <td>{{ producto.stock_minimo }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stock Máximo:</strong></td>
+                                    <td>{{ producto.stock_maximo }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        {% if producto.activo %}
+                                            <span class="badge badge-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
