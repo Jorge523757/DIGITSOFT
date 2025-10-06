@@ -25,6 +25,7 @@
             padding: 0 1rem;
         }
 
+        /* Header */
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -55,29 +56,17 @@
             align-items: center;
         }
 
-        nav button, nav a {
-            background: none;
-            border: none;
+        nav a {
             color: white;
-            cursor: pointer;
-            font-size: 1rem;
+            text-decoration: none;
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
             border-radius: 8px;
-            text-decoration: none;
         }
 
-        nav button:hover, nav a:hover, nav button.active {
+        nav a:hover {
             background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
-        }
-
-        .admin-btn {
-            background: rgba(255,255,255,0.15) !important;
-            border: 1px solid rgba(255,255,255,0.3) !important;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .header-actions {
@@ -91,234 +80,44 @@
             background: rgba(255,255,255,0.1);
             border: none;
             color: white;
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-
-        .cart-button:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.05);
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .mobile-menu {
-            display: none;
-            background: #5a67d8;
-            padding: 1rem;
-        }
-
-        .mobile-menu.active {
-            display: block;
-        }
-
-        .mobile-menu button, .mobile-menu a {
-            display: block;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            color: white;
-            padding: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .mobile-menu button:hover, .mobile-menu a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .cart-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            display: none;
-        }
-
-        .cart-overlay.active {
-            display: block;
-        }
-
-        .cart-sidebar {
-            position: fixed;
-            right: -100%;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            max-width: 450px;
-            background: white;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            z-index: 2001;
-        }
-
-        .cart-sidebar.active {
-            right: 0;
-        }
-
-        .cart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .cart-close {
-            background: #f7fafc;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .cart-items {
-            padding: 1.5rem;
-        }
-
-        .cart-item {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .cart-item-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-        }
-
-        .cart-item-info {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .cart-item-image {
-            font-size: 2rem;
-        }
-
-        .remove-item {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-        }
-
-        .quantity-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .quantity-buttons {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .quantity-btn {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
+        .cart-button:hover {
+            background: rgba(255,255,255,0.2);
         }
 
-        .cart-total {
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .cart-count {
+            background: #ef4444;
             color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1rem;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
         }
 
+        /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 6rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 300px;
-            height: 300px;
-            background: rgba(102, 126, 234, 0.3);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            width: 400px;
-            height: 400px;
-            background: rgba(118, 75, 162, 0.3);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            max-width: 800px;
+            padding: 4rem 0;
+            text-align: center;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInDown 1s;
         }
 
         .hero p {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             margin-bottom: 2rem;
             opacity: 0.9;
         }
@@ -326,990 +125,540 @@
         .cta-button {
             background: white;
             color: #667eea;
-            border: none;
             padding: 1rem 2rem;
+            border: none;
             border-radius: 8px;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .cta-button:hover {
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .services {
-            padding: 5rem 0;
-            background: white;
+        /* Productos Destacados */
+        .productos-section {
+            padding: 4rem 0;
         }
 
-        .section-header {
+        .section-title {
             text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
             font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            font-size: 1.2rem;
-            color: #718096;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2rem;
-        }
-
-        .service-card {
-            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-        }
-
-        .service-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .service-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-        }
-
-        .service-card ul {
-            list-style: none;
-            font-size: 0.9rem;
-            color: #718096;
-        }
-
-        .service-card ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .store {
-            padding: 5rem 0;
-            background: #f7fafc;
-        }
-
-        .category-filters {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
             margin-bottom: 3rem;
+            color: #2d3748;
         }
 
-        .category-btn {
-            background: white;
-            border: 2px solid #e2e8f0;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .category-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
-
-        .products-grid {
+        .productos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        }
-
-        .product-image {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .product-image:hover img {
-            transform: scale(1.1);
-        }
-
-        .product-image-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .product-image:hover .product-image-placeholder {
-            transform: scale(1.1);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 1;
-        }
-
-        .product-badge.new {
-            background: rgba(16, 185, 129, 0.9);
-        }
-
-        .product-badge.sale {
-            background: rgba(245, 158, 11, 0.9);
-        }
-
-        .product-body {
-            padding: 1.5rem;
-        }
-
-        .product-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-description {
-            font-size: 0.9rem;
-            color: #718096;
-            margin-bottom: 1rem;
-        }
-
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .add-to-cart {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .add-to-cart:hover {
-            transform: scale(1.05);
-        }
-
-        .portfolio {
-            padding: 5rem 0;
-            background: white;
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .portfolio-card {
-            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .portfolio-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-        }
-
-        .portfolio-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-        }
-
-        .portfolio-card ul {
-            list-style: none;
-        }
-
-        .portfolio-card li {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            color: #718096;
-        }
-
-        .team {
-            padding: 5rem 0;
-            background: #f7fafc;
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .team-member {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .team-member:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-
-        .team-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .contact {
-            padding: 5rem 0;
-            background: white;
-        }
-
-        .contact-content {
-            max-width: 600px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
-            padding: 3rem;
-            border-radius: 12px;
-        }
-
-        .contact-info {
             margin-bottom: 2rem;
         }
 
-        .contact-item {
+        .producto-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .producto-imagen {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .producto-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .producto-info {
+            padding: 1.5rem;
+        }
+
+        .producto-categoria {
+            color: #667eea;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .producto-nombre {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .producto-marca {
+            color: #718096;
+            font-size: 0.875rem;
             margin-bottom: 1rem;
         }
 
-        .contact-icon {
+        .producto-precio {
+            font-size: 1.75rem;
+            font-weight: bold;
             color: #667eea;
-            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
 
+        .producto-stock {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .stock-disponible {
+            color: #48bb78;
+        }
+
+        .stock-bajo {
+            color: #f59e0b;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Ver más productos */
+        .ver-mas {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .ver-mas-btn {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ver-mas-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: #f7fafc;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
         footer {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            background: #2d3748;
             color: white;
             padding: 3rem 0 1rem;
         }
 
-        .footer-grid {
+        .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        .footer-column h4 {
+        .footer-section h3 {
             margin-bottom: 1rem;
         }
 
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column li {
+        .footer-section a {
+            color: #cbd5e0;
+            text-decoration: none;
+            display: block;
             margin-bottom: 0.5rem;
-            opacity: 0.8;
         }
 
-        .footer-column button {
-            background: none;
-            border: none;
+        .footer-section a:hover {
             color: white;
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        .footer-column button:hover {
-            opacity: 1;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .social-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 2rem;
             text-align: center;
-            opacity: 0.7;
+            padding-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #cbd5e0;
         }
 
-        .whatsapp-float {
+        /* Notificación */
+        .notification {
             position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            background: #25d366;
-            color: white;
-            border: none;
+            top: 80px;
+            right: 20px;
+            background: white;
             padding: 1rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
             align-items: center;
-            gap: 0.5rem;
-            z-index: 1000;
-            font-weight: 600;
-            text-decoration: none;
+            gap: 1rem;
+            animation: slideInRight 0.3s ease;
         }
 
-        .whatsapp-float:hover {
-            transform: scale(1.1);
+        .notification.success {
+            border-left: 4px solid #48bb78;
         }
 
+        .notification.show {
+            display: flex;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
             .hero h1 {
                 font-size: 2rem;
             }
 
-            .hero p {
-                font-size: 1.2rem;
+            .productos-grid {
+                grid-template-columns: 1fr;
             }
-        }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .empty-cart {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #a0aec0;
-        }
-
-        .empty-cart i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            nav {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-laptop-code"></i>
-                    DIGIT SOFT
+                    Digit Soft
                 </div>
-
-                <nav id="desktopNav">
-                    <button onclick="showSection('home')" class="nav-btn active">Inicio</button>
-                    <button onclick="showSection('services')" class="nav-btn">Servicios</button>
-                    <button onclick="showSection('store')" class="nav-btn">Tienda Digital</button>
-                    <button onclick="showSection('portfolio')" class="nav-btn">Portafolio</button>
-                    <button onclick="showSection('team')" class="nav-btn">Equipo</button>
-                    <button onclick="showSection('contact')" class="nav-btn">Contacto</button>
-                    <a href="/administrador/" class="admin-btn">
-                        <i class="fas fa-user-shield"></i> Admin
-                    </a>
+                <nav>
+                    <a href="{% url 'main:pagina_principal' %}">Inicio</a>
+                    <a href="{% url 'main:tienda' %}">Tienda</a>
+                    <a href="{% url 'main:servicios' %}">Servicios</a>
+                    <a href="{% url 'main:nosotros' %}">Nosotros</a>
+                    <a href="{% url 'main:contacto' %}">Contacto</a>
                 </nav>
-
                 <div class="header-actions">
-                    <button class="cart-button" onclick="toggleCart()">
+                    <button class="cart-button" onclick="window.location.href='{% url 'main:carrito' %}'">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-count" id="cartCount">0</span>
                     </button>
-                    <button class="menu-toggle" onclick="toggleMobileMenu()">
-                        <i class="fas fa-bars" id="menuIcon"></i>
-                    </button>
+                    <a href="{% url 'administrador:dashboard' %}" class="cta-button" style="background: rgba(255,255,255,0.15); color: white; padding: 0.75rem 1rem; text-decoration: none;">
+                        <i class="fas fa-user-shield"></i>
+                        Admin
+                    </a>
                 </div>
             </div>
-        </div>
-
-        <div class="mobile-menu" id="mobileMenu">
-            <button onclick="showSection('home'); toggleMobileMenu();">Inicio</button>
-            <button onclick="showSection('services'); toggleMobileMenu();">Servicios</button>
-            <button onclick="showSection('store'); toggleMobileMenu();">Tienda Digital</button>
-            <button onclick="showSection('portfolio'); toggleMobileMenu();">Portafolio</button>
-            <button onclick="showSection('team'); toggleMobileMenu();">Equipo</button>
-            <button onclick="showSection('contact'); toggleMobileMenu();">Contacto</button>
-            <a href="/administrador/" style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                <i class="fas fa-user-shield"></i> Panel Administrador
-            </a>
         </div>
     </header>
 
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h2>Carrito de Compras</h2>
-            <button class="cart-close" onclick="toggleCart()">
-                <i class="fas fa-times"></i>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🚀 Soluciones Digitales Innovadoras</h1>
+            <p>Transformamos tu negocio con tecnología de última generación</p>
+            <button class="cta-button" onclick="window.location.href='{% url 'main:tienda' %}'">
+                <i class="fas fa-store"></i>
+                Explorar Tienda
             </button>
         </div>
-        <div class="cart-items" id="cartItems">
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <p>Tu carrito está vacío</p>
-            </div>
-        </div>
-        <div class="cart-total" id="cartTotal" style="display: none;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                <span style="font-size: 1.2rem; font-weight: 600;">Total:</span>
-                <span style="font-size: 1.5rem; font-weight: bold; color: #667eea;" id="totalAmount">$0</span>
-            </div>
-            <button class="checkout-btn">
-                <i class="fas fa-check"></i> Proceder al Pago
-            </button>
-        </div>
-    </div>
-
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Proporcionamos soluciones integrales que transforman la experiencia digital de empresas</h1>
-                <p>Creamos, conectamos y evolucionamos</p>
-                <button class="cta-button" onclick="showSection('contact')">CONTÁCTANOS</button>
-            </div>
-        </div>
     </section>
 
-    <section class="services hidden" id="services">
+    <!-- Productos Destacados -->
+    <section class="productos-section">
         <div class="container">
-            <div class="section-header">
-                <h2>¿Cómo podemos ayudarte?</h2>
-                <p>Creamos, conectamos y evolucionamos</p>
-            </div>
+            <h2 class="section-title">
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                Productos Destacados
+            </h2>
 
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🖥️</div>
-                    <h3>Infraestructura</h3>
-                    <ul>
-                        <li>Hosting - Dominio</li>
-                        <li>Correo Corporativo</li>
-                        <li>Configuración de servidores</li>
-                        <li>Cableado Estructurado</li>
-                        <li>Seguridad Informática</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <h3>Soporte Técnico</h3>
-                    <ul>
-                        <li>CCTV y Cámaras</li>
-                        <li>Presencial y Remoto</li>
-                        <li>Backups y Respaldos</li>
-                        <li>Mantenimiento Preventivo</li>
-                        <li>Equipos de Cómputo</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">💻</div>
-                    <h3>Software</h3>
-                    <ul>
-                        <li>Desarrollo a la Medida</li>
-                        <li>Servicios Cloud</li>
-                        <li>Data Analytics</li>
-                        <li>Business Intelligence (BI)</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🌐</div>
-                    <h3>Diseño Web</h3>
-                    <ul>
-                        <li>Landing Page - Blogs</li>
-                        <li>Sitios Web Informativos</li>
-                        <li>Corporativos</li>
-                        <li>Tiendas Online</li>
-                        <li>Posicionamiento SEO y SEM</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🛒</div>
-                    <h3>Venta</h3>
-                    <ul>
-                        <li>PC y Portátiles</li>
-                        <li>Equipos Corporativos</li>
-                        <li>Impresoras</li>
-                        <li>Cámaras de Seguridad</li>
-                        <li>Accesorios PC</li>
-                        <li>UPS - Biométricos</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="store hidden" id="store">
-        <div class="container">
-            <div class="section-header">
-                <h2>Tienda Digital</h2>
-                <p>Compra online - Productos digitales y servicios</p>
-            </div>
-
-            <div class="category-filters" id="categoryFilters">
-                <button class="category-btn active" onclick="filterCategory('all')">📦 Todos</button>
-            </div>
-
-            <div class="products-grid" id="productsGrid"></div>
-        </div>
-    </section>
-
-    <section class="portfolio hidden" id="portfolio">
-        <div class="container">
-            <div class="section-header">
-                <h2>Portafolio</h2>
-                <p>Proyectos exitosos con nuestros clientes</p>
-            </div>
-
-            <div class="portfolio-grid">
-                <div class="portfolio-card">
-                    <h3>Almacén Mojica</h3>
-                    <ul>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Soporte Técnico</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Cableado</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Cámaras</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> VPN</li>
-                    </ul>
-                </div>
-
-                <div class="portfolio-card">
-                    <h3>Amale</h3>
-                    <ul>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Software POS</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Infraestructura</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Soporte</li>
-                    </ul>
-                </div>
-
-                <div class="portfolio-card">
-                    <h3>Super Metro</h3>
-                    <ul>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Soporte Pos ICG</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Software Caja</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Verificador</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Cotizador</li>
-                    </ul>
-                </div>
-
-                <div class="portfolio-card">
-                    <h3>Controlar Proyectos</h3>
-                    <ul>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> App Web</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Gestión proyectos</li>
-                        <li><i class="fas fa-check" style="color: #48bb78;"></i> Construcción</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="team hidden" id="team">
-        <div class="container">
-            <div class="section-header">
-                <h2>Nuestro Equipo</h2>
-                <p>Creamos, conectamos y evolucionamos</p>
-            </div>
-
-            <div class="team-grid">
-                <div class="team-member">
-                    <div class="team-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">OP</div>
-                    <h3>Oscar Pérez</h3>
-                    <p style="color: #718096;">Unidad de Diseño Web</p>
-                </div>
-
-                <div class="team-member">
-                    <div class="team-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">CM</div>
-                    <h3>Cristian Manrique</h3>
-                    <p style="color: #718096;">Unidad de Desarrollo</p>
-                </div>
-
-                <div class="team-member">
-                    <div class="team-avatar" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">FR</div>
-                    <h3>Fabian Ríos</h3>
-                    <p style="color: #718096;">Unidad de Infraestructura</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact hidden" id="contact">
-        <div class="container">
-            <div class="section-header">
-                <h2>Contáctanos</h2>
-                <p>Estamos aquí para ayudarte</p>
-            </div>
-
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <span>Calle 15 # 14 - 26, Duitama - Boyacá</span>
+            {% if productos_destacados %}
+            <div class="productos-grid">
+                {% for producto in productos_destacados %}
+                <div class="producto-card" onclick="window.location.href='{% url 'main:producto_detalle' producto.id %}'">
+                    <div class="producto-imagen">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                        {% else %}
+                            <i class="fas fa-laptop"></i>
+                        {% endif %}
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone contact-icon"></i>
-                        <span>+57 3215434380</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <span>info@digitsoft.com.co</span>
+                    <div class="producto-info">
+                        <div class="producto-categoria">{{ producto.get_categoria_display }}</div>
+                        <div class="producto-nombre">{{ producto.nombre }}</div>
+                        <div class="producto-marca">
+                            <i class="fas fa-tag"></i> {{ producto.marca.nombre|default:"Digit Soft" }}
+                        </div>
+                        <div class="producto-precio">
+                            ${{ producto.precio_venta|floatformat:0 }}
+                        </div>
+                        <div class="producto-stock {% if producto.stock_actual > 10 %}stock-disponible{% else %}stock-bajo{% endif %}">
+                            <i class="fas fa-boxes"></i>
+                            {% if producto.stock_actual > 0 %}
+                                {{ producto.stock_actual }} disponibles
+                            {% else %}
+                                Sin stock
+                            {% endif %}
+                        </div>
+                        <button class="add-to-cart-btn"
+                                onclick="event.stopPropagation(); agregarAlCarrito({{ producto.id }})"
+                                {% if producto.stock_actual == 0 %}disabled{% endif %}>
+                            <i class="fas fa-cart-plus"></i>
+                            {% if producto.stock_actual > 0 %}
+                                Agregar al carrito
+                            {% else %}
+                                Agotado
+                            {% endif %}
+                        </button>
                     </div>
                 </div>
-                <button class="checkout-btn">
-                    <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                {% endfor %}
+            </div>
+
+            <div class="ver-mas">
+                <button class="ver-mas-btn" onclick="window.location.href='{% url 'main:tienda' %}'">
+                    Ver todos los productos
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem; color: #718096;">
+                <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p style="font-size: 1.25rem;">No hay productos disponibles en este momento</p>
+            </div>
+            {% endif %}
         </div>
     </section>
 
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="feature-title">Envío Rápido</div>
+                    <p>Entrega en 24-48 horas en toda Colombia</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-title">Compra Segura</div>
+                    <p>Tus datos están protegidos con encriptación SSL</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="feature-title">Soporte 24/7</div>
+                    <p>Estamos aquí para ayudarte cuando lo necesites</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="feature-title">Garantía Total</div>
+                    <p>30 días de garantía en todos nuestros productos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <h4>DIGIT SOFT</h4>
-                    <p style="opacity: 0.8;">Creamos, conectamos y evolucionamos</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Digit Soft</h3>
+                    <p>Soluciones digitales innovadoras para transformar tu negocio.</p>
                 </div>
-
-                <div class="footer-column">
-                    <h4>Compañía</h4>
-                    <ul>
-                        <li><button onclick="showSection('home')">Inicio</button></li>
-                        <li><button onclick="showSection('services')">Servicios</button></li>
-                        <li><button onclick="showSection('store')">Tienda</button></li>
-                        <li><button onclick="showSection('contact')">Contacto</button></li>
-                    </ul>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <a href="{% url 'main:tienda' %}">Tienda</a>
+                    <a href="{% url 'main:servicios' %}">Servicios</a>
+                    <a href="{% url 'main:nosotros' %}">Nosotros</a>
+                    <a href="{% url 'main:contacto' %}">Contacto</a>
                 </div>
-
-                <div class="footer-column">
-                    <h4>Servicios</h4>
-                    <ul>
-                        <li>Desarrollo de Software</li>
-                        <li>Diseño Web</li>
-                        <li>Tienda Online</li>
-                        <li>Soporte Técnico</li>
-                    </ul>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-envelope"></i> info@digitsoft.com</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Bogotá, Colombia</p>
                 </div>
-
-                <div class="footer-column">
-                    <h4>Contacto</h4>
-                    <ul style="margin-bottom: 1rem;">
-                        <li>Calle 15 # 14 - 26</li>
-                        <li>Duitama - Boyacá</li>
-                        <li>+57 3215434380</li>
-                        <li>info@digitsoft.com.co</li>
-                    </ul>
-                    <div class="social-links">
-                        <button class="social-btn"><i class="fab fa-facebook-f"></i></button>
-                        <button class="social-btn"><i class="fab fa-instagram"></i></button>
-                        <button class="social-btn"><i class="fab fa-linkedin-in"></i></button>
-                        <button class="social-btn"><i class="fab fa-twitter"></i></button>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#"><i class="fab fa-linkedin fa-2x"></i></a>
                     </div>
                 </div>
             </div>
-
             <div class="footer-bottom">
-                <p>Copyright © 2025 Digit Soft - Todos los derechos reservados</p>
+                <p>&copy; 2025 Digit Soft. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <a href="https://wa.me/573215434380" target="_blank" rel="noopener noreferrer" class="whatsapp-float">
-        <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i>
-        <span>Llámanos</span>
-    </a>
+    <!-- Notificación -->
+    <div class="notification success" id="notification">
+        <i class="fas fa-check-circle" style="color: #48bb78; font-size: 1.5rem;"></i>
+        <span id="notificationMessage">Producto agregado al carrito</span>
+    </div>
 
     <script>
-        const productos = {{ productos_json|safe }};
-        let currentSection = 'home';
-        let cart = JSON.parse(localStorage.getItem('digitsoft_cart')) || [];
-        let selectedCategory = 'all';
-
-        function showSection(section) {
-            const sections = ['home', 'services', 'store', 'portfolio', 'team', 'contact'];
-            sections.forEach(s => {
-                const element = document.getElementById(s);
-                if (element) element.classList.add('hidden');
-            });
-
-            const selectedElement = document.getElementById(section);
-            if (selectedElement) selectedElement.classList.remove('hidden');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            if (event?.target) event.target.classList.add('active');
-
-            currentSection = section;
-            if (section === 'store') loadProducts();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const icon = document.getElementById('menuIcon');
-
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
-                icon.className = 'fas fa-bars';
-            } else {
-                menu.classList.add('active');
-                icon.className = 'fas fa-times';
-            }
-        }
-
-        function toggleCart() {
-            document.getElementById('cartOverlay').classList.toggle('active');
-            document.getElementById('cartSidebar').classList.toggle('active');
-        }
-
-        function loadProducts() {
-            const grid = document.getElementById('productsGrid');
-            const filters = document.getElementById('categoryFilters');
-            const categories = [...new Set(productos.map(p => p.categoria))];
-
-            let filtersHTML = '<button class="category-btn active" onclick="filterCategory(\'all\')">📦 Todos</button>';
-            categories.forEach(cat => {
-                const product = productos.find(p => p.categoria === cat);
-                const icon = getCategoryIcon(cat);
-                filtersHTML += `<button class="category-btn" onclick="filterCategory('${cat}')">${icon} ${product.categoria_display}</button>`;
-            });
-            filters.innerHTML = filtersHTML;
-            renderProducts();
-        }
-
-        function getCategoryIcon(categoria) {
-            const icons = {
-                'COMPUTADORES': '💻', 'LAPTOPS': '🖥️', 'IMPRESORAS': '🖨️',
-                'CAMARAS': '📹', 'ACCESORIOS': '🎧', 'SERVICIOS': '🛠️'
-            };
-            return icons[categoria] || '📦';
-        }
-
-        function filterCategory(category) {
-            selectedCategory = category;
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            const filtered = selectedCategory === 'all' ? productos : productos.filter(p => p.categoria === selectedCategory);
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: #a0aec0;"><p>No hay productos disponibles</p></div>';
-                return;
-            }
-
-            grid.innerHTML = filtered.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.imagen
-                            ? `<img src="${product.imagen}" alt="${product.nombre}" onerror="this.parentElement.innerHTML='<div class=\\'product-image-placeholder\\'>${getCategoryIcon(product.categoria)}</div>'">`
-                            : `<div class="product-image-placeholder">${getCategoryIcon(product.categoria)}</div>`
-                        }
-                    </div>
-                    <div class="product-body">
-                        <h3 class="product-title">${product.nombre}</h3>
-                        <p class="product-description">${product.descripcion}</p>
-                        <div class="product-footer">
-                            <span class="product-price">$${product.precio_venta.toLocaleString('es-CO')}</span>
-                            <button class="add-to-cart" onclick="addToCart(${product.id})">
-                                <i class="fas fa-shopping-cart"></i> Agregar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function addToCart(productId) {
-            const product = productos.find(p => p.id === productId);
-            if (!product) return;
-
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id: product.id,
-                    nombre: product.nombre,
-                    precio: product.precio_venta,
-                    imagen: getCategoryIcon(product.categoria),
-                    quantity: 1
+        // Actualizar contador del carrito
+        function actualizarContadorCarrito() {
+            fetch('{% url "main:carrito" %}')
+                .then(response => response.text())
+                .then(() => {
+                    // Obtener del localStorage
+                    const carrito = JSON.parse(localStorage.getItem('carrito') || '{}');
+                    const totalItems = Object.values(carrito).reduce((sum, item) => sum + item.cantidad, 0);
+                    document.getElementById('cartCount').textContent = totalItems;
                 });
-            }
-
-            updateCart();
-            event.target.innerHTML = '<i class="fas fa-check"></i> Agregado';
-            setTimeout(() => {
-                event.target.innerHTML = '<i class="fas fa-shopping-cart"></i> Agregar';
-            }, 1500);
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCart();
+        // Agregar al carrito
+        function agregarAlCarrito(productoId) {
+            fetch('{% url "main:agregar_al_carrito" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    producto_id: productoId,
+                    cantidad: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar contador
+                    document.getElementById('cartCount').textContent = data.total_items;
+
+                    // Mostrar notificación
+                    const notification = document.getElementById('notification');
+                    document.getElementById('notificationMessage').textContent = data.message;
+                    notification.classList.add('show');
+
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    alert('Error al agregar el producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el producto al carrito');
+            });
         }
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (!item) return;
-
-            item.quantity += change;
-            if (item.quantity <= 0) {
-                removeFromCart(productId);
-            } else {
-                updateCart();
-            }
-        }
-
-        function updateCart() {
-            localStorage.setItem('digitsoft_cart', JSON.stringify(cart));
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartCount').textContent = count;
-
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<div class="empty-cart"><i class="fas fa-shopping-cart"></i><p>Tu carrito está vacío</p></div>';
-                cartTotal.style.display = 'none';
-            } else {
-                cartItems.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <div class="cart-item-header">
-                            <div class="cart-item-info">
-                                <span class="cart-item-image">${item.imagen}</span>
-                                <div>
-                                    <h3 style="font-weight: 600; margin-bottom: 0.25rem;">${item.nombre}</h3>
-                                    <p style="color: #718096; font-size: 0.9rem;">$${item.precio.toLocaleString('es-CO')}</p>
-                                </div>
-                            </div>
-                            <button class="remove-item" onclick="removeFromCart(${item.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="quantity-controls">
-                            <div class="quantity-buttons">
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <span style="min-width: 30px; text-align: center; font-weight: 600;">${item.quantity}</span>
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <span style="font-weight: bold; color: #667eea;">
-                                $${(item.precio * item.quantity).toLocaleString('es-CO')}
-                            </span>
-                        </div>
-                    </div>
-                `).join('');
-
-                const total = cart.reduce((sum, item) => sum + (item.precio * item.quantity), 0);
-                document.getElementById('totalAmount').textContent = `$${total.toLocaleString('es-CO')}`;
-                cartTotal.style.display = 'block';
-            }
-        }
-
-        updateCart();
+        // Cargar contador al inicio
+        document.addEventListener('DOMContentLoaded', actualizarContadorCarrito);
     </script>
 </body>
 </html>
+

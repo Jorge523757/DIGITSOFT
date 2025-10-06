@@ -1,10 +1,9 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGIT SOFT - Soluciones Digitales</title>
+    <title>{{ page_title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,503 +12,389 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --indigo-900: #312e81;
-            --indigo-800: #3730a3;
-            --indigo-600: #4f46e5;
-            --blue-900: #1e3a8a;
-            --blue-600: #2563eb;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-600: #4b5563;
-            --gray-800: #1f2937;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--gray-50);
-            min-height: 100vh;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, #312e81 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            padding: 1rem 0;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-box {
-            width: 48px;
-            height: 48px;
-            background: white;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-box span {
+        .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #312e81;
-        }
-
-        .logo-text h1 {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-        }
-
-        .logo-text p {
-            font-size: 0.75rem;
-            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
         }
 
         nav {
-            display: none;
-        }
-
-        nav.desktop {
             display: flex;
             gap: 1.5rem;
-        }
-
-        nav button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-
-        nav button:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
-
-        .cart-btn {
-            position: relative;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .cart-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.05);
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #ef4444;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
         }
 
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #312e81 0%, #2563eb 100%);
+        nav a {
             color: white;
-            padding: 6rem 2rem;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .cart-button {
             position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(59, 130, 246, 0.3);
-            border-radius: 50%;
-            filter: blur(100px);
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            max-width: 800px;
-        }
-
-        .hero p {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .hero-btn {
-            background: white;
-            color: #312e81;
+            background: rgba(255,255,255,0.1);
             border: none;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 10px;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .hero-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: clamp(2rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: var(--gray-800);
-            margin-bottom: 1rem;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            color: var(--gray-600);
-            margin-bottom: 3rem;
-        }
-
-        /* Services Grid */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .service-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-
-        .service-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .service-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--gray-800);
-        }
-
-        .service-card ul {
-            list-style: none;
-            text-align: left;
-            color: var(--gray-600);
-            font-size: 0.9rem;
-        }
-
-        .service-card li {
-            padding: 0.25rem 0;
-        }
-
-        /* Category Filter */
-        .category-filter {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        .category-btn {
-            background: white;
-            border: 2px solid #e5e7eb;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .category-btn:hover,
-        .category-btn.active {
-            background: linear-gradient(135deg, #4f46e5, #312e81);
-            color: white;
-            border-color: #4f46e5;
-            transform: scale(1.05);
+        .cart-button:hover {
+            background: rgba(255,255,255,0.2);
         }
 
-        /* Products Grid */
-        .products-grid {
+        .cart-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Tienda Layout */
+        .tienda-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        /* Sidebar Filtros */
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .clear-filters {
+            width: 100%;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters:hover {
+            background: #e2e8f0;
+        }
+
+        /* Productos */
+        .productos-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .productos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .productos-count {
+            color: #718096;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .productos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
         }
 
-        .product-card {
+        .producto-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
         }
 
-        .product-image {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            padding: 3rem;
-            text-align: center;
-            font-size: 4rem;
-            height: 200px;
+        .producto-imagen {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
         }
 
-        .product-image img {
+        .producto-imagen img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .product-info {
+        .producto-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .producto-info {
             padding: 1.5rem;
         }
 
-        .product-info h3 {
-            font-size: 1.1rem;
+        .producto-categoria {
+            color: #667eea;
+            font-size: 0.875rem;
             font-weight: 600;
+            text-transform: uppercase;
             margin-bottom: 0.5rem;
-            color: var(--gray-800);
         }
 
-        .product-info p {
-            font-size: 0.9rem;
-            color: var(--gray-600);
+        .producto-nombre {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .producto-marca {
+            color: #718096;
+            font-size: 0.875rem;
             margin-bottom: 1rem;
         }
 
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .producto-precio {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
         }
 
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #4f46e5;
+        .producto-stock {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .stock-disponible {
+            color: #48bb78;
         }
 
         .add-to-cart-btn {
-            background: linear-gradient(135deg, #4f46e5, #312e81);
+            width: 100%;
+            background: #667eea;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem;
             border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .add-to-cart-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Hidden sections */
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(135deg, #312e81 0%, #2563eb 100%);
-            color: white;
-            padding: 3rem 2rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-section h3,
-        .footer-section h4 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section li {
-            padding: 0.5rem 0;
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        .footer-section button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            text-align: left;
-            padding: 0;
-            opacity: 0.9;
-            transition: opacity 0.3s;
-        }
-
-        .footer-section button:hover {
-            opacity: 1;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .social-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        /* WhatsApp Button */
-        .whatsapp-btn {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            background: #25d366;
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-            transition: all 0.3s;
-            z-index: 1000;
-            text-decoration: none;
         }
 
-        .whatsapp-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        .add-to-cart-btn:hover {
+            background: #5568d3;
         }
 
-        @media (min-width: 768px) {
-            nav {
-                display: flex;
+        .add-to-cart-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Sin resultados */
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            color: #718096;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Notificación */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification.success {
+            border-left: 4px solid #48bb78;
+        }
+
+        .notification.show {
+            display: flex;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .tienda-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
             }
         }
 
         @media (max-width: 768px) {
-            .whatsapp-btn span {
-                display: none;
+            .productos-grid {
+                grid-template-columns: 1fr;
             }
-            .whatsapp-btn {
-                padding: 1rem;
-                border-radius: 50%;
+
+            nav {
+                display: none;
             }
         }
     </style>
@@ -517,371 +402,245 @@
 <body>
     <!-- Header -->
     <header>
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo-box">
-                    <span>DS</span>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="window.location.href='{% url 'main:pagina_principal' %}'">
+                    <i class="fas fa-laptop-code"></i>
+                    Digit Soft
                 </div>
-                <div class="logo-text">
-                    <h1>DIGIT SOFT</h1>
-                    <p>Soluciones Digitales</p>
+                <nav>
+                    <a href="{% url 'main:pagina_principal' %}">Inicio</a>
+                    <a href="{% url 'main:tienda' %}" class="active">Tienda</a>
+                    <a href="{% url 'main:servicios' %}">Servicios</a>
+                    <a href="{% url 'main:nosotros' %}">Nosotros</a>
+                    <a href="{% url 'main:contacto' %}">Contacto</a>
+                </nav>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="cart-button" onclick="window.location.href='{% url 'main:carrito' %}'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <a href="{% url 'administrador:dashboard' %}" style="background: rgba(255,255,255,0.15); color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none;">
+                        <i class="fas fa-user-shield"></i>
+                    </a>
                 </div>
-            </div>
-
-            <nav class="desktop">
-                <button onclick="showSection('home')">Inicio</button>
-                <button onclick="showSection('services')">Servicios</button>
-                <button onclick="showSection('store')">Tienda</button>
-                <button onclick="showSection('portfolio')">Portafolio</button>
-                <button onclick="showSection('team')">Equipo</button>
-                <button onclick="showSection('contact')">Contacto</button>
-            </nav>
-
-            <div>
-                <button class="cart-btn" onclick="alert('Carrito en desarrollo')">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count" id="cartCount">0</span>
-                </button>
             </div>
         </div>
     </header>
 
-    <!-- Home Section -->
-    <div id="home" class="section active">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>Proporcionamos soluciones integrales que transforman la experiencia digital de empresas</h1>
-                <p>Creamos, conectamos y evolucionamos</p>
-                <button class="hero-btn" onclick="showSection('contact')">CONTÁCTANOS</button>
-            </div>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <a href="{% url 'main:pagina_principal' %}"><i class="fas fa-home"></i> Inicio</a>
+            <span> / </span>
+            <span>Tienda</span>
         </div>
     </div>
 
-    <!-- Services Section -->
-    <div id="services" class="section">
-        <div class="container">
-            <h2 class="section-title">¿Cómo podemos ayudarte?</h2>
-            <p class="section-subtitle">Creamos, conectamos y evolucionamos</p>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🖥️</div>
-                    <h3>Infraestructura</h3>
-                    <ul>
-                        <li>Hosting - Dominio</li>
-                        <li>Correo Corporativo</li>
-                        <li>Configuración de servidores</li>
-                        <li>Cableado Estructurado</li>
-                        <li>Seguridad Informática</li>
-                    </ul>
+    <!-- Tienda -->
+    <div class="container">
+        <div class="tienda-layout">
+            <!-- Sidebar Filtros -->
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Buscar productos..."
+                           value="{{ search_query }}" id="searchInput">
                 </div>
 
-                <div class="service-card">
-                    <div class="service-icon">🛠️</div>
-                    <h3>Soporte Técnico</h3>
-                    <ul>
-                        <li>CCTV y Cámaras</li>
-                        <li>Presencial y Remoto</li>
-                        <li>Backups y Respaldos</li>
-                        <li>Mantenimiento Preventivo</li>
-                        <li>Equipos de Cómputo</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">💻</div>
-                    <h3>Software</h3>
-                    <ul>
-                        <li>Desarrollo a la Medida</li>
-                        <li>Servicios Cloud</li>
-                        <li>Data Analytics</li>
-                        <li>Business Intelligence (BI)</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🌐</div>
-                    <h3>Diseño Web</h3>
-                    <ul>
-                        <li>Landing Page - Blogs</li>
-                        <li>Sitios Web Informativos</li>
-                        <li>Corporativos</li>
-                        <li>Tiendas Online</li>
-                        <li>Posicionamiento SEO y SEM</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🛍️</div>
-                    <h3>Venta</h3>
-                    <ul>
-                        <li>PC y Portátiles</li>
-                        <li>Equipos Corporativos</li>
-                        <li>Impresoras</li>
-                        <li>Cámaras de Seguridad</li>
-                        <li>Accesorios PC</li>
-                        <li>UPS - Biométricos</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Store Section -->
-    <div id="store" class="section">
-        <div class="container">
-            <h2 class="section-title">Nuestra Tienda</h2>
-            <p class="section-subtitle">Productos y servicios para impulsar tu negocio</p>
-
-            <div class="category-filter">
-                <button class="category-btn active" onclick="filterProducts('all')">
-                    <span>🏢</span> Todos
-                </button>
-                <button class="category-btn" onclick="filterProducts('HARDWARE')">
-                    <span>💻</span> Hardware
-                </button>
-                <button class="category-btn" onclick="filterProducts('SOFTWARE')">
-                    <span>💾</span> Software
-                </button>
-                <button class="category-btn" onclick="filterProducts('SERVICIOS')">
-                    <span>🛠️</span> Servicios
-                </button>
-                <button class="category-btn" onclick="filterProducts('ACCESORIOS')">
-                    <span>🔌</span> Accesorios
-                </button>
-            </div>
-
-            <div class="products-grid" id="productsGrid">
-                <!-- Los productos se cargarán aquí dinámicamente -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Portfolio Section -->
-    <div id="portfolio" class="section">
-        <div class="container">
-            <h2 class="section-title">Portafolio</h2>
-            <p class="section-subtitle">Proyectos exitosos que hemos desarrollado</p>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <h3>Almacén Mojica</h3>
-                    <ul>
-                        <li>✓ Soporte Técnico</li>
-                        <li>✓ Cableado</li>
-                        <li>✓ Cámaras</li>
-                        <li>✓ VPN</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <h3>Amale</h3>
-                    <ul>
-                        <li>✓ Software POS</li>
-                        <li>✓ Infraestructura</li>
-                        <li>✓ Soporte</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <h3>Super Metro</h3>
-                    <ul>
-                        <li>✓ Soporte Pos ICG</li>
-                        <li>✓ Software Caja</li>
-                        <li>✓ Verificador</li>
-                        <li>✓ Cotizador</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <h3>Controlar Proyectos</h3>
-                    <ul>
-                        <li>✓ App Web</li>
-                        <li>✓ Gestión proyectos</li>
-                        <li>✓ Construcción</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Team Section -->
-    <div id="team" class="section">
-        <div class="container">
-            <h2 class="section-title">Nuestro Equipo</h2>
-            <p class="section-subtitle">Creamos, conectamos y evolucionamos</p>
-
-            <div class="services-grid" style="max-width: 900px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <div class="service-card">
-                    <div style="width: 120px; height: 120px; margin: 0 auto 1rem; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #312e81); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 700;">OP</div>
-                    <h3>Oscar Pérez</h3>
-                    <p style="color: #6b7280;">Unidad de Diseño Web</p>
-                </div>
-
-                <div class="service-card">
-                    <div style="width: 120px; height: 120px; margin: 0 auto 1rem; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #ec4899); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 700;">CM</div>
-                    <h3>Cristian Manrique</h3>
-                    <p style="color: #6b7280;">Unidad de Desarrollo</p>
-                </div>
-
-                <div class="service-card">
-                    <div style="width: 120px; height: 120px; margin: 0 auto 1rem; border-radius: 50%; background: linear-gradient(135deg, #10b981, #14b8a6); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 700;">FR</div>
-                    <h3>Fabian Ríos</h3>
-                    <p style="color: #6b7280;">Unidad de Infraestructura</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact Section -->
-    <div id="contact" class="section">
-        <div class="container">
-            <h2 class="section-title">Contáctanos</h2>
-            <p class="section-subtitle">Estamos aquí para ayudarte</p>
-
-            <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 2rem; border-radius: 15px;">
-                <div style="margin-bottom: 2rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem 0; color: #312e81;">
-                        <i class="fas fa-map-marker-alt" style="font-size: 1.5rem;"></i>
-                        <span>Calle 15 # 14 - 26, Duitama - Boyacá</span>
+                <form method="GET" id="filterForm">
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-layer-group"></i>
+                            Categorías
+                        </div>
+                        {% for cat in categorias %}
+                        <div class="filter-option">
+                            <input type="radio" name="categoria" value="{{ cat.categoria }}"
+                                   id="cat_{{ cat.categoria }}"
+                                   {% if categoria_selected == cat.categoria %}checked{% endif %}>
+                            <label for="cat_{{ cat.categoria }}">
+                                {{ cat.categoria|title }}
+                            </label>
+                        </div>
+                        {% endfor %}
                     </div>
-                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem 0; color: #312e81;">
-                        <i class="fas fa-phone" style="font-size: 1.5rem;"></i>
-                        <span>+57 3215434380</span>
+
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-tag"></i>
+                            Marcas
+                        </div>
+                        {% for marca in marcas %}
+                        <div class="filter-option">
+                            <input type="radio" name="marca" value="{{ marca.id }}"
+                                   id="marca_{{ marca.id }}"
+                                   {% if marca_selected == marca.id|stringformat:"s" %}checked{% endif %}>
+                            <label for="marca_{{ marca.id }}">
+                                {{ marca.nombre }}
+                            </label>
+                        </div>
+                        {% endfor %}
                     </div>
-                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem 0; color: #312e81;">
-                        <i class="fas fa-envelope" style="font-size: 1.5rem;"></i>
-                        <span>info@digitsoft.com.co</span>
+
+                    <button type="button" class="clear-filters" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </button>
+                </form>
+            </aside>
+
+            <!-- Productos -->
+            <div class="productos-container">
+                <div class="productos-header">
+                    <div>
+                        <h1>Catálogo de Productos</h1>
+                        <p class="productos-count">
+                            {{ productos.count }} producto{{ productos.count|pluralize }}
+                        </p>
                     </div>
+                    <select class="sort-select" onchange="sortProducts(this.value)">
+                        <option value="">Ordenar por...</option>
+                        <option value="precio_asc">Precio: Menor a Mayor</option>
+                        <option value="precio_desc">Precio: Mayor a Menor</option>
+                        <option value="nombre">Nombre: A-Z</option>
+                        <option value="reciente">Más recientes</option>
+                    </select>
                 </div>
-                <button style="width: 100%; background: linear-gradient(135deg, #4f46e5, #312e81); color: white; border: none; padding: 1rem; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
-                    Enviar Mensaje
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>DIGIT SOFT</h3>
-                <p style="opacity: 0.9; font-size: 0.9rem;">Creamos, conectamos y evolucionamos</p>
-            </div>
-
-            <div class="footer-section">
-                <h4>Compañía</h4>
-                <ul>
-                    <li><button onclick="showSection('home')">Inicio</button></li>
-                    <li><button onclick="showSection('services')">Servicios</button></li>
-                    <li><button onclick="showSection('store')">Tienda</button></li>
-                    <li><button onclick="showSection('contact')">Contacto</button></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4>Servicios</h4>
-                <ul>
-                    <li>Desarrollo de Software</li>
-                    <li>Diseño Web</li>
-                    <li>Tienda Online</li>
-                    <li>Soporte Técnico</li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4>Contacto</h4>
-                <ul style="margin-bottom: 1rem;">
-                    <li>Calle 15 # 14 - 26</li>
-                    <li>Duitama - Boyacá</li>
-                    <li>+57 3215434380</li>
-                    <li>info@digitsoft.com.co</li>
-                </ul>
-                <div class="social-links">
-                    <button class="social-btn"><i class="fab fa-facebook"></i></button>
-                    <button class="social-btn"><i class="fab fa-instagram"></i></button>
-                    <button class="social-btn"><i class="fab fa-linkedin"></i></button>
-                    <button class="social-btn"><i class="fab fa-twitter"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>Copyright © 2025 Digit Soft - Todos los derechos reservados</p>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/573215434380" target="_blank" class="whatsapp-btn">
-        <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i>
-        <span>Llámanos</span>
-    </a>
-
-    <script>
-        // Datos de productos desde Django
-        const productos = {{ productos_json|safe }};
-
-        // Mostrar/ocultar secciones
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        // Filtrar productos por categoría
-        let currentCategory = 'all';
-
-        function filterProducts(category) {
-            currentCategory = category;
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.category-btn').classList.add('active');
-            renderProducts();
-        }
-
-        // Renderizar productos
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            const filtered = currentCategory === 'all'
-                ? productos
-                : productos.filter(p => p.categoria === currentCategory);
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #6b7280;">No hay productos disponibles en esta categoría</p>';
-                return;
-            }
-
-            grid.innerHTML = filtered.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.imagen
-                            ? `<img src="${product.imagen}" alt="${product.nombre}">`
-                            : `<span style="font-size: 4rem;">📦</span>`
-                        }
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.nombre}</h3>
-                        <p>${product.descripcion || 'Sin descripción'}</p>
-                        <div class="product-footer">
-                            <span class="product-price">$${Number(product.precio_venta).toLocaleString()}</span>
-                            <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span>Agregar</span>
+                {% if productos %}
+                <div class="productos-grid" id="productosGrid">
+                    {% for producto in productos %}
+                    <div class="producto-card" onclick="window.location.href='{% url 'main:producto_detalle' producto.id %}'">
+                        <div class="producto-imagen">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                                <i class="fas fa-laptop"></i>
+                            {% endif %}
+                            {% if producto.stock_actual < 5 and producto.stock_actual > 0 %}
+                                <span class="producto-badge">¡Últimas unidades!</span>
+                            {% endif %}
+                        </div>
+                        <div class="producto-info">
+                            <div class="producto-categoria">{{ producto.get_categoria_display }}</div>
+                            <div class="producto-nombre">{{ producto.nombre }}</div>
+                            <div class="producto-marca">
+                                <i class="fas fa-tag"></i> {{ producto.marca.nombre|default:"Digit Soft" }}
+                            </div>
+                            <div class="producto-precio">
+                                ${{ producto.precio_venta|floatformat:0 }}
+                            </div>
+                            <div class="producto-stock stock-disponible">
+                                <i class="fas fa-boxes"></i>
+                                {{ producto.stock_actual }} disponibles
+                            </div>
+                            <button class="add-to-cart-btn"
+                                    onclick="event.stopPropagation(); agregarAlCarrito({{ producto.id }})"
+                                    {% if producto.stock_actual == 0 %}disabled{% endif %}>
+                                <i class="fas fa-cart-plus"></i>
+                                Agregar al carrito
                             </button>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-            `).join('');
+                {% else %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h2>No se encontraron productos</h2>
+                    <p>Intenta con otros filtros o búsqueda</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification success" id="notification">
+        <i class="fas fa-check-circle" style="color: #48bb78; font-size: 1.5rem;"></i>
+        <span id="notificationMessage">Producto agregado al carrito</span>
+    </div>
+
+    <script>
+        // Actualizar contador del carrito
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(sessionStorage.getItem('carrito') || '{}');
+            const totalItems = Object.values(carrito).reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('cartCount').textContent = totalItems;
         }
 
         // Agregar al carrito
-        function addToCart(productId) {
-            alert('Producto agregado al carrito (funcionalidad en desarrollo)');
+        function agregarAlCarrito(productoId) {
+            fetch('{% url "main:agregar_al_carrito" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    producto_id: productoId,
+                    cantidad: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('cartCount').textContent = data.total_items;
+
+                    const notification = document.getElementById('notification');
+                    document.getElementById('notificationMessage').textContent = data.message;
+                    notification.classList.add('show');
+
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    alert('Error al agregar el producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el producto al carrito');
+            });
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', function() {
-            renderProducts();
+        // Filtros
+        document.querySelectorAll('input[name="categoria"], input[name="marca"]').forEach(input => {
+            input.addEventListener('change', () => {
+                document.getElementById('filterForm').submit();
+            });
         });
+
+        // Búsqueda
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const form = document.getElementById('filterForm');
+                const searchInput = document.createElement('input');
+                searchInput.type = 'hidden';
+                searchInput.name = 'search';
+                searchInput.value = this.value;
+                form.appendChild(searchInput);
+                form.submit();
+            }, 500);
+        });
+
+        // Limpiar filtros
+        function clearFilters() {
+            window.location.href = '{% url "main:tienda" %}';
+        }
+
+        // Ordenar
+        function sortProducts(sortType) {
+            if (!sortType) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', sortType);
+            window.location.href = url.toString();
+        }
+
+        // Cargar contador al inicio
+        document.addEventListener('DOMContentLoaded', actualizarContadorCarrito);
     </script>
 </body>
 </html>
+
