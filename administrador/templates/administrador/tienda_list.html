@@ -1,0 +1,333 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Tienda Online | Digit Soft{% endblock %}
+{% block page_header %}Tienda Online{% endblock %}
+
+{% block extra_css %}
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stat-card.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stat-card.warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card.info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.product-image-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+}
+
+.product-body {
+    padding: 1.5rem;
+}
+
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+}
+
+.product-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.product-stock {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.badge-warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.badge-danger {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Gestión de Tienda Online</h1>
+        <p style="color: #718096;">Administra los productos visibles en la tienda web</p>
+    </div>
+    <a href="{% url 'administrador:producto_list' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Agregar Producto
+    </a>
+</div>
+
+<!-- Estadísticas -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_productos }}</div>
+        <div class="stat-label">Total Productos en Tienda</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-value">{{ stats.productos_bajo_stock }}</div>
+        <div class="stat-label">Productos Bajo Stock</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-value">{{ stats.productos_sin_stock }}</div>
+        <div class="stat-label">Productos Sin Stock</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-value">${{ stats.valor_inventario|floatformat:0 }}</div>
+        <div class="stat-label">Valor Total Inventario</div>
+    </div>
+</div>
+
+<!-- Mensajes -->
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem; padding: 1rem; border-radius: 8px; background: {% if message.tags == 'success' %}rgba(40, 167, 69, 0.1){% else %}rgba(220, 53, 69, 0.1){% endif %};">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Búsqueda -->
+<div class="search-box">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="searchInput" class="search-input" placeholder="Buscar productos...">
+</div>
+
+<!-- Grid de Productos -->
+<div class="products-grid" id="productsGrid">
+    {% if productos %}
+        {% for producto in productos %}
+        <div class="product-card" data-name="{{ producto.nombre|lower }}" data-category="{{ producto.categoria }}">
+            <div class="product-image-placeholder">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    📦
+                {% endif %}
+            </div>
+            <div class="product-body">
+                <h3 class="product-title">{{ producto.nombre }}</h3>
+                <p style="font-size: 0.9rem; color: #718096; margin-bottom: 0.5rem;">
+                    {{ producto.marca.nombre|default:"Sin marca" }}
+                </p>
+                <div class="product-info">
+                    <div class="product-price">${{ producto.precio_venta|floatformat:0 }}</div>
+                    <div class="product-stock">
+                        {% if producto.stock_actual <= 0 %}
+                            <span class="badge badge-danger">Sin stock</span>
+                        {% elif producto.stock_actual <= producto.stock_minimo %}
+                            <span class="badge badge-warning">Stock: {{ producto.stock_actual }}</span>
+                        {% else %}
+                            <span class="badge badge-success">Stock: {{ producto.stock_actual }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 1rem;">
+                    Categoría: {{ producto.get_categoria_display }}
+                </div>
+                <div class="product-actions">
+                    <a href="{% url 'administrador:producto_detail' producto.id %}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                    {% if producto.activo %}
+                    <form method="POST" action="{% url 'administrador:tienda_producto_toggle' producto.id %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" style="width: 100%;">
+                            <i class="fas fa-eye-slash"></i> Ocultar
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{% url 'administrador:tienda_producto_toggle' producto.id %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-eye"></i> Mostrar
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+            <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #e2e8f0; margin-bottom: 1rem;"></i>
+            <p style="color: #a0aec0; font-size: 1.2rem;">No hay productos en la tienda</p>
+            <a href="{% url 'administrador:producto_list' %}" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">
+                <i class="fas fa-plus"></i> Agregar Primer Producto
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Búsqueda en tiempo real
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.product-card');
+
+    cards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const category = card.getAttribute('data-category');
+
+        if (name.includes(searchTerm) || category.includes(searchTerm)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}
+

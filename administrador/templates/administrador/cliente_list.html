@@ -1,258 +1,139 @@
-{% extends 'administrador/base_dashboard.html' %}
+{% extends 'administrador/base_list.html' %}
 {% load static %}
 
-{% block title %}{{ titulo }}{% endblock %}
+{% block title %}Clientes | Digit Soft{% endblock %}
+{% block page_header %}Clientes{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">{{ titulo }}</h3>
-                    <button class="btn btn-primary" onclick="openModal()">
-                        <i class="fas fa-plus"></i> Registrar Cliente
-                    </button>
-                </div>
-                <div class="card-body">
-                    <!-- Barra de búsqueda -->
-                    <div class="search-bar mb-3">
-                        <div class="input-group">
-                            <input type="text" id="search-input" class="form-control" placeholder="Buscar cliente por nombre, documento o email..." oninput="searchClients()">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" onclick="searchClients()">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+{% block list_title %}Gestión de Clientes{% endblock %}
+{% block list_description %}Administra la información de tus clientes{% endblock %}
 
-                    <!-- Tabla de clientes -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover data-table">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Documento</th>
-                                    <th>Cliente</th>
-                                    <th>Tipo</th>
-                                    <th>Email</th>
-                                    <th>Teléfono</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for cliente in clientes %}
-                                <tr>
-                                    <td><strong>{{ cliente.numero_documento }}</strong></td>
-                                    <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
-                                    <td>
-                                        <span class="badge badge-info">
-                                            {{ cliente.get_tipo_cliente_display }}
-                                        </span>
-                                    </td>
-                                    <td>{{ cliente.email }}</td>
-                                    <td>{{ cliente.telefono }}</td>
-                                    <td>
-                                        <span class="badge {% if cliente.activo %}badge-success{% else %}badge-danger{% endif %}">
-                                            {% if cliente.activo %}Activo{% else %}Inactivo{% endif %}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-info" onclick="viewClient('{{ cliente.id }}')" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-warning" onclick="editClient('{{ cliente.id }}')" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteClient('{{ cliente.id }}')" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="7" class="text-center py-4">
-                                        <div class="empty-state">
-                                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                            <p class="text-muted">No hay clientes registrados</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para registrar cliente -->
-<div class="modal fade" id="clienteModal" tabindex="-1" role="dialog" aria-labelledby="clienteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="clienteModalLabel">Registrar Cliente</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" onclick="closeModal()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form method="post" action="{% url 'administrador:cliente_list' %}">
-        {% csrf_token %}
-        <div class="modal-body">
-          <!-- Aquí van los campos del formulario -->
-          <div class="form-group">
-            <label for="tipo_documento">Tipo de Documento</label>
-            <select id="tipo_documento" name="tipo_documento" class="form-control" required>
-              <option value="">Seleccione tipo</option>
-              <option value="CC">Cédula</option>
-              <option value="CE">Cédula de Extranjería</option>
-              <option value="PAS">Pasaporte</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="numero_documento">Número de Documento</label>
-            <input type="text" id="numero_documento" name="numero_documento" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="tipo_cliente">Tipo de Cliente</label>
-            <select id="tipo_cliente" name="tipo_cliente" class="form-control" required>
-              <option value="">Seleccione tipo</option>
-              <option value="NATURAL">Natural</option>
-              <option value="JURIDICO">Jurídico</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="nombres">Nombres</label>
-            <input type="text" id="nombres" name="nombres" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="apellidos">Apellidos</label>
-            <input type="text" id="apellidos" name="apellidos" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="telefono">Teléfono</label>
-            <input type="text" id="telefono" name="telefono" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="direccion">Dirección</label>
-            <input type="text" id="direccion" name="direccion" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="ciudad">Ciudad</label>
-            <input type="text" id="ciudad" name="ciudad" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="departamento">Departamento</label>
-            <input type="text" id="departamento" name="departamento" class="form-control" required>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar Cliente</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<script>
-function openModal() {
-    $('#clienteModal').modal('show');
-}
-function closeModal() {
-    $('#clienteModal').modal('hide');
-}
-function searchClients() {
-    var searchTerm = document.getElementById('search-input').value.toLowerCase();
-    var rows = document.querySelectorAll('.data-table tbody tr');
-    rows.forEach(function(row) {
-        var text = row.textContent.toLowerCase();
-        row.style.display = (text.includes(searchTerm) || searchTerm === '') ? '' : 'none';
-    });
-}
-
-// Mostrar mensajes de Django
-{% if messages %}
-    {% for message in messages %}
-        toastr.{{ message.tags }}('{{ message }}');
-    {% endfor %}
-{% endif %}
-</script>
+{% block table_headers %}
+<th>Documento</th>
+<th>Cliente</th>
+<th>Tipo</th>
+<th>Email</th>
+<th>Teléfono</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-function searchClients() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-    const rows = document.querySelectorAll('.data-table tbody tr');
-
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(searchTerm) || searchTerm === '') {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-function viewClient(id) {
-    window.location.href = `/administrador/clientes/${id}/`;
-}
-
-function editClient(id) {
-    // Implementar funcionalidad de edición
-    alert('Funcionalidad de edición en desarrollo');
-}
-
-function deleteClient(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-        // Implementar funcionalidad de eliminación
-        alert('Cliente eliminado correctamente');
-    }
-}
-
-function openModal() {
-    $('#clientModal').modal('show');
-    document.getElementById('modalTitle').textContent = 'Registrar Cliente';
-    document.getElementById('clientForm').reset();
-    toggleClientType();
-}
-
-function toggleClientType() {
-    const tipoCliente = document.getElementById('tipoCliente').value;
-    const naturalFields = document.getElementById('naturalFields');
-    const juridicaFields = document.getElementById('juridicaFields');
-    const nombres = document.getElementById('nombres');
-    const razonSocial = document.getElementById('razonSocial');
-
-    if (tipoCliente === 'JURIDICA') {
-        naturalFields.style.display = 'none';
-        juridicaFields.style.display = 'block';
-        nombres.required = false;
-        razonSocial.required = true;
-    } else {
-        naturalFields.style.display = 'block';
-        juridicaFields.style.display = 'none';
-        nombres.required = true;
-        razonSocial.required = false;
-    }
-}
-
-// Mostrar mensajes de Django
-{% if messages %}
-    {% for message in messages %}
-        toastr.{{ message.tags }}('{{ message }}');
+{% block table_body %}
+{% if clientes %}
+    {% for cliente in clientes %}
+    <tr>
+        <td><strong>{{ cliente.numero_documento }}</strong></td>
+        <td>{{ cliente.nombre_completo }}</td>
+        <td>
+            <span class="badge badge-info">
+                {{ cliente.get_tipo_cliente_display }}
+            </span>
+        </td>
+        <td>{{ cliente.email }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>
+            {% if cliente.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ cliente.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ cliente.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ cliente.id }}, '{{ cliente.nombre_completo }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ cliente.id }}, '{{ cliente.nombre_completo }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
     {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="7" class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>No hay clientes registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Cliente
+            </button>
+        </td>
+    </tr>
 {% endif %}
-</script>
+{% endblock %}
+
+{% block form_content %}
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Tipo de Documento *</label>
+        <select name="tipo_documento" class="form-control" required>
+            <option value="">Seleccione...</option>
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="CE">Cédula de Extranjería</option>
+            <option value="NIT">NIT</option>
+            <option value="PAS">Pasaporte</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Número de Documento *</label>
+        <input type="text" name="numero_documento" class="form-control" required placeholder="Ej: 1234567890">
+    </div>
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Nombres *</label>
+        <input type="text" name="nombres" class="form-control" required placeholder="Nombres completos">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Apellidos</label>
+        <input type="text" name="apellidos" class="form-control" placeholder="Apellidos">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Tipo de Cliente *</label>
+    <select name="tipo_cliente" class="form-control" required>
+        <option value="NATURAL">Persona Natural</option>
+        <option value="JURIDICA">Persona Jurídica</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Razón Social (Solo para empresas)</label>
+    <input type="text" name="razon_social" class="form-control" placeholder="Nombre de la empresa">
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input type="email" name="email" class="form-control" required placeholder="correo@ejemplo.com">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Teléfono *</label>
+        <input type="tel" name="telefono" class="form-control" required placeholder="3001234567">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Dirección *</label>
+    <textarea name="direccion" class="form-control" rows="2" required placeholder="Dirección completa"></textarea>
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Ciudad *</label>
+        <input type="text" name="ciudad" class="form-control" required placeholder="Ciudad">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Departamento *</label>
+        <input type="text" name="departamento" class="form-control" required placeholder="Departamento">
+    </div>
+</div>
 {% endblock %}

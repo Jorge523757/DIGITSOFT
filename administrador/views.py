@@ -1,20 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.db.models import F
+from django.db import models
+from django.db.models import F, Q
 from django.utils import timezone
+from django.http import JsonResponse
 from .models import (
     Cliente, Tecnico, Marca, Proveedor, Producto,
     Equipo, ServicioTecnico, OrdenServicio, Compra, Carrito,
-    Venta, Garantia, Factura, LogActividad, ConfiguracionGeneral
+    Venta, Garantia, Factura, Administrador
 )
 from .forms import (
-    ProveedorForm
+    ProductoForm, ClienteForm, ProveedorForm, MarcaForm, EquipoForm,
+    TecnicoForm, OrdenServicioForm, VentaForm, CompraForm,
+    GarantiaForm, ServicioTecnicoForm
 )
 
 # ========== DASHBOARD ========== #
 def dashboard(request):
     """Vista principal del dashboard del administrador"""
-    # Estadísticas generales
     stats = {
         'total_clientes': Cliente.objects.filter(activo=True).count(),
         'total_productos': Producto.objects.filter(activo=True).count(),
@@ -24,13 +27,8 @@ def dashboard(request):
         'tecnicos_disponibles': Tecnico.objects.filter(estado_actual='DISPONIBLE').count(),
     }
 
-    # Órdenes recientes
     ordenes_recientes = OrdenServicio.objects.select_related('cliente', 'tecnico_asignado')[:5]
-
-    # Productos con stock bajo
-    productos_stock_bajo = Producto.objects.filter(
-        stock_actual__lte=F('stock_minimo')
-    )[:5]
+    productos_stock_bajo = Producto.objects.filter(stock_actual__lte=F('stock_minimo'))[:5]
 
     context = {
         'stats': stats,
@@ -40,31 +38,25 @@ def dashboard(request):
     }
     return render(request, 'administrador/dashboard.html', context)
 
-# ========== CLIENTES ========== #
-def cliente_list(request):
-    """Vista para listar clientes"""
-    clientes = Cliente.objects.filter(activo=True)
-    context = {
-        'clientes': clientes,
-        'titulo': 'Gestión de Clientes'
-    }
-    return render(request, 'administrador/cliente_list.html', context)
-
-def cliente_detail(request, cliente_id):
-    """Vista de detalle de cliente"""
-    cliente = get_object_or_404(Cliente, id=cliente_id)
-    context = {
-        'cliente': cliente,
-        'titulo': f'Cliente: {cliente.nombres} {cliente.apellidos}'
-    }
-    return render(request, 'administrador/cliente_detail.html', context)
-
 # ========== PRODUCTOS ========== #
 def producto_list(request):
-    """Vista para listar productos"""
+    """Vista para listar y crear productos"""
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save()
+            messages.success(request, f'Producto "{producto.nombre}" registrado correctamente.')
+            return redirect('administrador:producto_list')
+        else:
+            messages.error(request, 'Error al guardar el producto. Verifica los datos.')
+    else:
+        form = ProductoForm()
+
     productos = Producto.objects.select_related('marca', 'proveedor_principal').filter(activo=True)
+
     context = {
         'productos': productos,
+        'form': form,
         'titulo': 'Gestión de Productos'
     }
     return render(request, 'administrador/producto_list.html', context)
@@ -78,108 +70,138 @@ def producto_detail(request, producto_id):
     }
     return render(request, 'administrador/producto_detail.html', context)
 
-# ========== EQUIPOS ========== #
-def equipo_list(request):
-    """Vista para listar equipos"""
+def producto_edit(request, producto_id):
+    """Vista para editar producto"""
+    producto = get_object_or_404(Producto, id=producto_id)
+
     if request.method == 'POST':
-        try:
-            equipo_id = request.POST.get('equipo_id')
-
-            # Datos del formulario
-            codigo_equipo = request.POST.get('codigo_equipo')
-            nombre = request.POST.get('nombre')
-            cliente_id = request.POST.get('cliente')
-            tipo_equipo = request.POST.get('tipo_equipo')
-            marca_id = request.POST.get('marca')
-            modelo = request.POST.get('modelo')
-            serial = request.POST.get('serial')
-            estado_fisico = request.POST.get('estado_fisico')
-            especificaciones = request.POST.get('especificaciones', '')
-
-            # Obtener objetos relacionados
-            cliente = get_object_or_404(Cliente, id=cliente_id)
-            marca = get_object_or_404(Marca, id=marca_id)
-
-            if equipo_id:  # Editar equipo existente
-                equipo = get_object_or_404(Equipo, id=equipo_id)
-                equipo.codigo_equipo = codigo_equipo
-                equipo.nombre = nombre
-                equipo.cliente = cliente
-                equipo.tipo_equipo = tipo_equipo
-                equipo.marca = marca
-                equipo.modelo = modelo
-                equipo.serial = serial
-                equipo.estado_fisico = estado_fisico
-                equipo.especificaciones = especificaciones
-                equipo.save()
-                messages.success(request, f'Equipo {equipo.codigo_equipo} actualizado correctamente.')
-            else:  # Crear nuevo equipo
-                equipo = Equipo.objects.create(
-                    codigo_equipo=codigo_equipo,
-                    nombre=nombre,
-                    cliente=cliente,
-                    tipo_equipo=tipo_equipo,
-                    marca=marca,
-                    modelo=modelo,
-                    serial=serial,
-                    estado_fisico=estado_fisico,
-                    especificaciones=especificaciones
-                )
-                messages.success(request, f'Equipo {equipo.codigo_equipo} registrado correctamente.')
-
-        except Exception as e:
-            messages.error(request, f'Error al guardar el equipo: {str(e)}')
-
-        return redirect('administrador:equipo_list')
-
-    # GET request - mostrar lista
-    equipos = Equipo.objects.select_related('cliente', 'marca').filter(activo=True)
-    clientes = Cliente.objects.filter(activo=True).order_by('nombres', 'apellidos')
-    marcas = Marca.objects.filter(activa=True).order_by('nombre')
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Producto "{producto.nombre}" actualizado correctamente.')
+            return redirect('administrador:producto_list')
+        else:
+            messages.error(request, 'Error al actualizar el producto.')
+    else:
+        form = ProductoForm(instance=producto)
 
     context = {
-        'equipos': equipos,
+        'form': form,
+        'producto': producto,
+        'titulo': f'Editar: {producto.nombre}'
+    }
+    return render(request, 'administrador/producto_form.html', context)
+
+def producto_delete(request, producto_id):
+    """Vista para eliminar producto (soft delete)"""
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id)
+        producto.activo = False
+        producto.save()
+        messages.success(request, f'Producto "{producto.nombre}" eliminado correctamente.')
+    return redirect('administrador:producto_list')
+
+# ========== CLIENTES ========== #
+def cliente_list(request):
+    """Vista para listar y crear clientes"""
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = form.save()
+            messages.success(request, f'Cliente "{cliente.nombres}" registrado correctamente.')
+            return redirect('administrador:cliente_list')
+        else:
+            messages.error(request, 'Error al guardar el cliente. Verifica los datos.')
+    else:
+        form = ClienteForm()
+
+    clientes = Cliente.objects.filter(activo=True)
+
+    context = {
         'clientes': clientes,
-        'marcas': marcas,
-        'titulo': 'Gestión de Equipos'
+        'form': form,
+        'titulo': 'Gestión de Clientes'
     }
-    return render(request, 'administrador/equipo_list.html', context)
+    return render(request, 'administrador/cliente_list.html', context)
 
-def equipo_detail(request, equipo_id):
-    """Vista de detalle de equipo"""
-    equipo = get_object_or_404(Equipo, id=equipo_id)
+def cliente_detail(request, cliente_id):
+    """Vista de detalle de cliente"""
+    cliente = get_object_or_404(Cliente, id=cliente_id)
     context = {
-        'equipo': equipo,
-        'titulo': f'Equipo: {equipo.nombre}'
+        'cliente': cliente,
+        'titulo': f'Cliente: {cliente.nombres} {cliente.apellidos}'
     }
-    return render(request, 'administrador/equipo_detail.html', context)
+    return render(request, 'administrador/cliente_detail.html', context)
 
-# ========== TÉCNICOS ========== #
-def tecnico_list(request):
-    """Vista para listar técnicos"""
-    tecnicos = Tecnico.objects.filter(activo=True).order_by('apellidos', 'nombres')
+def cliente_delete(request, cliente_id):
+    """Vista para eliminar cliente"""
+    if request.method == 'POST':
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        cliente.activo = False
+        cliente.save()
+        messages.success(request, f'Cliente "{cliente.nombres}" eliminado correctamente.')
+    return redirect('administrador:cliente_list')
+
+# ========== PROVEEDORES ========== #
+def proveedor_list(request):
+    """Vista para listar y crear proveedores"""
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            proveedor = form.save()
+            messages.success(request, f'Proveedor "{proveedor.razon_social}" registrado correctamente.')
+            return redirect('administrador:proveedor_list')
+        else:
+            messages.error(request, 'Error al guardar el proveedor. Verifica los datos.')
+    else:
+        form = ProveedorForm()
+
+    proveedores = Proveedor.objects.filter(activo=True)
 
     context = {
-        'tecnicos': tecnicos,
-        'titulo': 'Gestión de Técnicos'
+        'proveedores': proveedores,
+        'form': form,
+        'titulo': 'Gestión de Proveedores'
     }
-    return render(request, 'administrador/tecnico_list.html', context)
+    return render(request, 'administrador/proveedor_list.html', context)
 
-def tecnico_detail(request, tecnico_id):
-    """Vista de detalle de técnico"""
-    tecnico = get_object_or_404(Tecnico, id=tecnico_id)
+def proveedor_detail(request, proveedor_id):
+    """Vista de detalle de proveedor"""
+    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
     context = {
-        'tecnico': tecnico,
-        'titulo': f'Técnico: {tecnico.nombres} {tecnico.apellidos}'
+        'proveedor': proveedor,
+        'titulo': f'Proveedor: {proveedor.razon_social}'
     }
-    return render(request, 'administrador/tecnico_detail.html', context)
+    return render(request, 'administrador/proveedor_detail.html', context)
+
+def proveedor_delete(request, proveedor_id):
+    """Vista para eliminar proveedor"""
+    if request.method == 'POST':
+        proveedor = get_object_or_404(Proveedor, id=proveedor_id)
+        proveedor.activo = False
+        proveedor.save()
+        messages.success(request, f'Proveedor "{proveedor.razon_social}" eliminado correctamente.')
+    return redirect('administrador:proveedor_list')
 
 # ========== MARCAS ========== #
 def marca_list(request):
-    """Vista para listar marcas"""
+    """Vista para listar y crear marcas"""
+    if request.method == 'POST':
+        form = MarcaForm(request.POST, request.FILES)
+        if form.is_valid():
+            marca = form.save()
+            messages.success(request, f'Marca "{marca.nombre}" registrada correctamente.')
+            return redirect('administrador:marca_list')
+        else:
+            messages.error(request, 'Error al guardar la marca. Verifica los datos.')
+    else:
+        form = MarcaForm()
+
     marcas = Marca.objects.filter(activa=True)
+
     context = {
         'marcas': marcas,
+        'form': form,
         'titulo': 'Gestión de Marcas'
     }
     return render(request, 'administrador/marca_list.html', context)
@@ -195,64 +217,117 @@ def marca_detail(request, marca_id):
     }
     return render(request, 'administrador/marca_detail.html', context)
 
-# ========== PROVEEDORES ========== #
-def proveedor_list(request):
-    """Vista para listar proveedores"""
-    form = ProveedorForm()
-
+def marca_delete(request, marca_id):
+    """Vista para eliminar marca"""
     if request.method == 'POST':
-        proveedor_id = request.POST.get('proveedor_id')
+        marca = get_object_or_404(Marca, id=marca_id)
+        marca.activa = False
+        marca.save()
+        messages.success(request, f'Marca "{marca.nombre}" eliminada correctamente.')
+    return redirect('administrador:marca_list')
 
-        if proveedor_id:  # Editar proveedor existente
-            proveedor = get_object_or_404(Proveedor, id=proveedor_id)
-            form = ProveedorForm(request.POST, instance=proveedor)
-        else:  # Crear nuevo proveedor
-            form = ProveedorForm(request.POST)
-
+# ========== EQUIPOS ========== #
+def equipo_list(request):
+    """Vista para listar y crear equipos"""
+    if request.method == 'POST':
+        form = EquipoForm(request.POST)
         if form.is_valid():
-            proveedor = form.save()
-            if proveedor_id:
-                messages.success(request, f'✅ Proveedor "{proveedor.razon_social}" actualizado correctamente.')
-            else:
-                messages.success(request, f'✅ Proveedor "{proveedor.razon_social}" registrado correctamente.')
-            return redirect('administrador:proveedor_list')
+            equipo = form.save()
+            messages.success(request, f'Equipo "{equipo.nombre}" registrado correctamente.')
+            return redirect('administrador:equipo_list')
         else:
-            # Si hay errores, se mostrarán en el template
-            for field, errors in form.errors.items():
-                for error in errors:
-                    field_label = form.fields[field].label if field in form.fields else field
-                    messages.error(request, f'❌ Error en {field_label}: {error}')
+            messages.error(request, 'Error al guardar el equipo. Verifica los datos.')
+    else:
+        form = EquipoForm()
 
-    # GET request - mostrar lista
-    proveedores = Proveedor.objects.filter(activo=True).order_by('razon_social')
+    equipos = Equipo.objects.select_related('cliente', 'marca').filter(activo=True)
 
     context = {
-        'proveedores': proveedores,
+        'equipos': equipos,
         'form': form,
-        'titulo': 'Gestión de Proveedores'
+        'titulo': 'Gestión de Equipos'
     }
-    return render(request, 'administrador/proveedor_list.html', context)
+    return render(request, 'administrador/equipo_list.html', context)
 
-def proveedor_detail(request, proveedor_id):
-    """Vista de detalle de proveedor"""
-    proveedor = get_object_or_404(Proveedor, id=proveedor_id)
-    productos_proveedor = Producto.objects.filter(proveedor_principal=proveedor)
-    compras_proveedor = Compra.objects.filter(proveedor=proveedor)[:10]
+def equipo_detail(request, equipo_id):
+    """Vista de detalle de equipo"""
+    equipo = get_object_or_404(Equipo, id=equipo_id)
     context = {
-        'proveedor': proveedor,
-        'productos_proveedor': productos_proveedor,
-        'compras_proveedor': compras_proveedor,
-        'titulo': f'Proveedor: {proveedor.razon_social}'
+        'equipo': equipo,
+        'titulo': f'Equipo: {equipo.nombre}'
     }
-    return render(request, 'administrador/proveedor_detail.html', context)
+    return render(request, 'administrador/equipo_detail.html', context)
+
+def equipo_delete(request, equipo_id):
+    """Vista para eliminar equipo"""
+    if request.method == 'POST':
+        equipo = get_object_or_404(Equipo, id=equipo_id)
+        equipo.activo = False
+        equipo.save()
+        messages.success(request, f'Equipo "{equipo.nombre}" eliminado correctamente.')
+    return redirect('administrador:equipo_list')
+
+# ========== TÉCNICOS ========== #
+def tecnico_list(request):
+    """Vista para listar y crear técnicos"""
+    if request.method == 'POST':
+        form = TecnicoForm(request.POST)
+        if form.is_valid():
+            tecnico = form.save()
+            messages.success(request, f'Técnico "{tecnico.nombres}" registrado correctamente.')
+            return redirect('administrador:tecnico_list')
+        else:
+            messages.error(request, 'Error al guardar el técnico. Verifica los datos.')
+    else:
+        form = TecnicoForm()
+
+    tecnicos = Tecnico.objects.filter(activo=True).order_by('apellidos', 'nombres')
+
+    context = {
+        'tecnicos': tecnicos,
+        'form': form,
+        'titulo': 'Gestión de Técnicos'
+    }
+    return render(request, 'administrador/tecnico_list.html', context)
+
+def tecnico_detail(request, tecnico_id):
+    """Vista de detalle de técnico"""
+    tecnico = get_object_or_404(Tecnico, id=tecnico_id)
+    context = {
+        'tecnico': tecnico,
+        'titulo': f'Técnico: {tecnico.nombres} {tecnico.apellidos}'
+    }
+    return render(request, 'administrador/tecnico_detail.html', context)
+
+def tecnico_delete(request, tecnico_id):
+    """Vista para eliminar técnico"""
+    if request.method == 'POST':
+        tecnico = get_object_or_404(Tecnico, id=tecnico_id)
+        tecnico.activo = False
+        tecnico.save()
+        messages.success(request, f'Técnico "{tecnico.nombres}" eliminado correctamente.')
+    return redirect('administrador:tecnico_list')
 
 # ========== ÓRDENES DE SERVICIO ========== #
 def orden_servicio_list(request):
-    """Vista para listar órdenes de servicio"""
-    ordenes = OrdenServicio.objects.select_related('cliente', 'equipo', 'tecnico_asignado')
+    """Vista para listar y crear órdenes de servicio"""
+    if request.method == 'POST':
+        form = OrdenServicioForm(request.POST)
+        if form.is_valid():
+            orden = form.save()
+            messages.success(request, f'Orden de servicio #{orden.numero_orden} creada correctamente.')
+            return redirect('administrador:orden_servicio_list')
+        else:
+            messages.error(request, 'Error al guardar la orden. Verifica los datos.')
+    else:
+        form = OrdenServicioForm()
+
+    ordenes = OrdenServicio.objects.select_related('cliente', 'tecnico_asignado', 'equipo').all()
+
     context = {
         'ordenes': ordenes,
-        'titulo': 'Órdenes de Servicio'
+        'form': form,
+        'titulo': 'Gestión de Órdenes de Servicio'
     }
     return render(request, 'administrador/orden_servicio_list.html', context)
 
@@ -265,60 +340,31 @@ def orden_servicio_detail(request, orden_id):
     }
     return render(request, 'administrador/orden_servicio_detail.html', context)
 
-# ========== SERVICIOS TÉCNICOS ========== #
-def servicio_tecnico_list(request):
-    """Vista para listar servicios técnicos"""
-    servicios = ServicioTecnico.objects.filter(activo=True)
+# ========== VENTAS ========== #
+def venta_list(request):
+    """Vista para listar ventas"""
+    ventas = Venta.objects.select_related('cliente').all()
     context = {
-        'servicios': servicios,
-        'titulo': 'Servicios Técnicos'
+        'ventas': ventas,
+        'titulo': 'Gestión de Ventas'
     }
-    return render(request, 'administrador/servicio_tecnico_list.html', context)
+    return render(request, 'administrador/venta_list.html', context)
 
-def servicio_tecnico_detail(request, servicio_id):
-    """Vista de detalle de servicio técnico"""
-    servicio = get_object_or_404(ServicioTecnico, id=servicio_id)
+def venta_detail(request, venta_id):
+    """Vista de detalle de venta"""
+    venta = get_object_or_404(Venta, id=venta_id)
     context = {
-        'servicio': servicio,
-        'titulo': f'Servicio: {servicio.nombre}'
+        'venta': venta,
+        'titulo': f'Venta: {venta.numero_venta}'
     }
-    return render(request, 'administrador/servicio_tecnico_detail.html', context)
+    return render(request, 'administrador/venta_detail.html', context)
 
 # ========== COMPRAS ========== #
 def compra_list(request):
-    """Vista para listar y crear compras"""
-    if request.method == 'POST':
-        # Crear nueva compra
-        try:
-            # Obtener proveedor
-            proveedor = get_object_or_404(Proveedor, id=request.POST.get('proveedor'))
-
-            # Crear la compra
-            compra = Compra.objects.create(
-                numero_compra=request.POST.get('numero_compra'),
-                proveedor=proveedor,
-                fecha_solicitud=request.POST.get('fecha_solicitud'),
-                estado=request.POST.get('estado', 'SOLICITUD'),
-                subtotal=request.POST.get('subtotal', 0),
-                impuestos=request.POST.get('impuestos', 0),
-                total=request.POST.get('total', 0),
-                metodo_pago=request.POST.get('metodo_pago') or None,
-                observaciones=request.POST.get('observaciones', '')
-            )
-
-            messages.success(request, f'Compra {compra.numero_compra} creada exitosamente')
-            return redirect('administrador:compra_list')
-
-        except Exception as e:
-            messages.error(request, f'Error al crear la compra: {str(e)}')
-
-    # Listar compras
-    compras = Compra.objects.select_related('proveedor', 'solicitado_por').order_by('-fecha_solicitud')
-    proveedores = Proveedor.objects.filter(activo=True).order_by('razon_social')
-
+    """Vista para listar compras"""
+    compras = Compra.objects.select_related('proveedor').all()
     context = {
         'compras': compras,
-        'proveedores': proveedores,
         'titulo': 'Gestión de Compras'
     }
     return render(request, 'administrador/compra_list.html', context)
@@ -345,7 +391,7 @@ def compras_pendientes(request):
 # ========== CARRITOS ========== #
 def carrito_list(request):
     """Vista para listar carritos"""
-    carritos = Carrito.objects.select_related('cliente')
+    carritos = Carrito.objects.select_related('cliente').all()
     context = {
         'carritos': carritos,
         'titulo': 'Gestión de Carritos'
@@ -370,48 +416,10 @@ def carritos_abandonados(request):
     }
     return render(request, 'administrador/carritos_abandonados.html', context)
 
-# ========== VENTAS ========== #
-def venta_list(request):
-    """Vista para listar ventas"""
-    ventas = Venta.objects.select_related('cliente', 'vendedor')
-    context = {
-        'ventas': ventas,
-        'titulo': 'Gestión de Ventas'
-    }
-    return render(request, 'administrador/venta_list.html', context)
-
-def venta_detail(request, venta_id):
-    """Vista de detalle de venta"""
-    venta = get_object_or_404(Venta, id=venta_id)
-    context = {
-        'venta': venta,
-        'titulo': f'Venta: {venta.numero_venta}'
-    }
-    return render(request, 'administrador/venta_detail.html', context)
-
-# ========== FACTURACIÓN ========== #
-def facturacion_list(request):
-    """Vista para listar facturas"""
-    facturas = Factura.objects.select_related('cliente', 'venta', 'orden_servicio')
-    context = {
-        'facturas': facturas,
-        'titulo': 'Facturación'
-    }
-    return render(request, 'administrador/facturacion_list.html', context)
-
-def factura_detail(request, factura_id):
-    """Vista de detalle de factura"""
-    factura = get_object_or_404(Factura, id=factura_id)
-    context = {
-        'factura': factura,
-        'titulo': f'Factura: {factura.numero_factura}'
-    }
-    return render(request, 'administrador/factura_detail.html', context)
-
 # ========== GARANTÍAS ========== #
 def garantia_list(request):
     """Vista para listar garantías"""
-    garantias = Garantia.objects.select_related('cliente', 'producto', 'equipo')
+    garantias = Garantia.objects.select_related('producto', 'cliente').all()
     context = {
         'garantias': garantias,
         'titulo': 'Gestión de Garantías'
@@ -427,26 +435,75 @@ def garantia_detail(request, garantia_id):
     }
     return render(request, 'administrador/garantia_detail.html', context)
 
-# ========== LOGS Y AUDITORÍA ========== #
-def log_actividad_list(request):
-    """Vista para listar logs de actividad"""
-    logs = LogActividad.objects.select_related('administrador')[:100]
+# ========== FACTURACIÓN ========== #
+def facturacion_list(request):
+    """Vista para listar facturas"""
+    facturas = Factura.objects.select_related('cliente').all()
     context = {
-        'logs': logs,
-        'titulo': 'Logs de Actividad'
+        'facturas': facturas,
+        'titulo': 'Gestión de Facturación'
     }
-    return render(request, 'administrador/log_actividad_list.html', context)
+    return render(request, 'administrador/facturacion_list.html', context)
 
-# ========== CONFIGURACIÓN ========== #
-def configuracion_general(request):
-    """Vista para configuración general del sistema"""
-    try:
-        config = ConfiguracionGeneral.objects.filter(activa=True).first()
-    except ConfiguracionGeneral.DoesNotExist:
-        config = None
+# ========== SERVICIOS TÉCNICOS ========== #
+def servicio_tecnico_list(request):
+    """Vista para listar servicios técnicos (catálogo)"""
+    if request.method == 'POST':
+        form = ServicioTecnicoForm(request.POST)
+        if form.is_valid():
+            servicio = form.save()
+            messages.success(request, f'Servicio "{servicio.nombre}" registrado correctamente.')
+            return redirect('administrador:servicio_tecnico_list')
+        else:
+            messages.error(request, 'Error al guardar el servicio. Verifica los datos.')
+    else:
+        form = ServicioTecnicoForm()
+
+    servicios = ServicioTecnico.objects.filter(activo=True).order_by('categoria', 'nombre')
+    
+    context = {
+        'servicios': servicios,
+        'form': form,
+        'titulo': 'Catálogo de Servicios Técnicos'
+    }
+    return render(request, 'administrador/servicio_tecnico_list.html', context)
+
+# ========== ADMINISTRADORES ========== #
+def administrador_list(request):
+    """Vista para listar administradores"""
+    administradores = Administrador.objects.select_related('user').all()
+    context = {
+        'administradores': administradores,
+        'titulo': 'Gestión de Administradores'
+    }
+    return render(request, 'administrador/administrador_list.html', context)
+
+# ========== TIENDA ONLINE ========== #
+def tienda_list(request):
+    """Vista para gestionar productos de la tienda online"""
+    productos = Producto.objects.filter(activo=True).select_related('marca', 'proveedor_principal')
+
+    # Estadísticas de la tienda
+    stats = {
+        'total_productos': productos.count(),
+        'productos_bajo_stock': productos.filter(stock_actual__lte=models.F('stock_minimo')).count(),
+        'productos_sin_stock': productos.filter(stock_actual=0).count(),
+        'valor_inventario': sum(p.precio_venta * p.stock_actual for p in productos),
+    }
 
     context = {
-        'config': config,
-        'titulo': 'Configuración General'
+        'productos': productos,
+        'stats': stats,
+        'titulo': 'Gestión de Tienda Online'
     }
-    return render(request, 'administrador/configuracion_general.html', context)
+    return render(request, 'administrador/tienda_list.html', context)
+
+def tienda_producto_toggle(request, producto_id):
+    """Vista para activar/desactivar productos en la tienda"""
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id)
+        producto.activo = not producto.activo
+        producto.save()
+        estado = "activado" if producto.activo else "desactivado"
+        messages.success(request, f'Producto "{producto.nombre}" {estado} en la tienda.')
+    return redirect('administrador:tienda_list')

@@ -11,26 +11,33 @@ urlpatterns = [
     # Gestión de Clientes
     path('clientes/', views.cliente_list, name='cliente_list'),
     path('clientes/<int:cliente_id>/', views.cliente_detail, name='cliente_detail'),
-
-    # Gestión de Equipos
-    path('equipos/', views.equipo_list, name='equipo_list'),
-    path('equipos/<int:equipo_id>/', views.equipo_detail, name='equipo_detail'),
+    path('clientes/<int:cliente_id>/delete/', views.cliente_delete, name='cliente_delete'),
 
     # Gestión de Productos
     path('productos/', views.producto_list, name='producto_list'),
     path('productos/<int:producto_id>/', views.producto_detail, name='producto_detail'),
+    path('productos/<int:producto_id>/edit/', views.producto_edit, name='producto_edit'),
+    path('productos/<int:producto_id>/delete/', views.producto_delete, name='producto_delete'),
+
+    # Gestión de Equipos
+    path('equipos/', views.equipo_list, name='equipo_list'),
+    path('equipos/<int:equipo_id>/', views.equipo_detail, name='equipo_detail'),
+    path('equipos/<int:equipo_id>/delete/', views.equipo_delete, name='equipo_delete'),
 
     # Gestión de Marcas
     path('marcas/', views.marca_list, name='marca_list'),
     path('marcas/<int:marca_id>/', views.marca_detail, name='marca_detail'),
+    path('marcas/<int:marca_id>/delete/', views.marca_delete, name='marca_delete'),
 
     # Gestión de Proveedores
     path('proveedores/', views.proveedor_list, name='proveedor_list'),
     path('proveedores/<int:proveedor_id>/', views.proveedor_detail, name='proveedor_detail'),
+    path('proveedores/<int:proveedor_id>/delete/', views.proveedor_delete, name='proveedor_delete'),
 
     # Gestión de Técnicos
     path('tecnicos/', views.tecnico_list, name='tecnico_list'),
     path('tecnicos/<int:tecnico_id>/', views.tecnico_detail, name='tecnico_detail'),
+    path('tecnicos/<int:tecnico_id>/delete/', views.tecnico_delete, name='tecnico_delete'),
 
     # Órdenes de Servicio
     path('orden-servicio/', views.orden_servicio_list, name='orden_servicio_list'),
@@ -38,7 +45,6 @@ urlpatterns = [
 
     # Servicios Técnicos
     path('servicios-tecnicos/', views.servicio_tecnico_list, name='servicio_tecnico_list'),
-    path('servicios-tecnicos/<int:servicio_id>/', views.servicio_tecnico_detail, name='servicio_tecnico_detail'),
 
     # Gestión de Compras
     path('compras/', views.compra_list, name='compra_list'),
@@ -56,15 +62,15 @@ urlpatterns = [
 
     # Facturación
     path('facturacion/', views.facturacion_list, name='facturacion_list'),
-    path('facturacion/<int:factura_id>/', views.factura_detail, name='factura_detail'),
 
     # Garantías
     path('garantias/', views.garantia_list, name='garantia_list'),
     path('garantias/<int:garantia_id>/', views.garantia_detail, name='garantia_detail'),
 
-    # Logs y Auditoría
-    path('logs/', views.log_actividad_list, name='log_actividad_list'),
+    # Administradores
+    path('administradores/', views.administrador_list, name='administrador_list'),
 
-    # Configuración
-    path('configuracion/', views.configuracion_general, name='configuracion_general'),
+    # Tienda Online
+    path('tienda/', views.tienda_list, name='tienda_list'),
+    path('tienda/<int:producto_id>/toggle/', views.tienda_producto_toggle, name='tienda_producto_toggle'),
 ]

@@ -1,0 +1,287 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ marca.nombre }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Encabezado -->
+    <div class="detail-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1>🏷️ {{ marca.nombre }}</h1>
+                <p class="subtitle">{{ marca.get_tipo_marca_display }}</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'administrador:marca_list' %}" class="btn-secondary">
+                    <i class="icon">←</i> Volver al listado
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información principal -->
+    <div class="detail-grid">
+        <!-- Tarjeta de información básica -->
+        <div class="detail-card">
+            <div class="card-header">
+                <h2>📋 Información General</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">#{{ marca.id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value">{{ marca.nombre }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tipo:</span>
+                    <span class="info-value">
+                        <span class="badge badge-info">{{ marca.get_tipo_marca_display }}</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">País de Origen:</span>
+                    <span class="info-value">{{ marca.pais_origen|default:"No especificado" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Sitio Web:</span>
+                    <span class="info-value">
+                        {% if marca.sitio_web %}
+                            <a href="{{ marca.sitio_web }}" target="_blank" class="link-external">
+                                {{ marca.sitio_web }} 🔗
+                            </a>
+                        {% else %}
+                            No especificado
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Estado:</span>
+                    <span class="info-value">
+                        {% if marca.activa %}
+                            <span class="badge badge-success">✓ Activa</span>
+                        {% else %}
+                            <span class="badge badge-danger">✗ Inactiva</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de descripción -->
+        {% if marca.descripcion %}
+        <div class="detail-card">
+            <div class="card-header">
+                <h2>📝 Descripción</h2>
+            </div>
+            <div class="card-body">
+                <p class="description-text">{{ marca.descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tarjeta de productos -->
+        <div class="detail-card full-width">
+            <div class="card-header">
+                <h2>📦 Productos de la Marca</h2>
+                <span class="badge badge-primary">{{ productos_marca.count }} productos</span>
+            </div>
+            <div class="card-body">
+                {% if productos_marca %}
+                    <div class="products-grid">
+                        {% for producto in productos_marca %}
+                        <div class="product-item">
+                            <div class="product-info">
+                                <h3>{{ producto.nombre }}</h3>
+                                <p class="product-code">{{ producto.codigo }}</p>
+                                <p class="product-price">${{ producto.precio_venta|floatformat:0 }}</p>
+                            </div>
+                            <div class="product-stock">
+                                {% if producto.stock > 0 %}
+                                    <span class="badge badge-success">{{ producto.stock }} en stock</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Sin stock</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="icon">📦</i>
+                        <p>No hay productos registrados con esta marca</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tarjeta de fechas -->
+        <div class="detail-card">
+            <div class="card-header">
+                <h2>📅 Información de Registro</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Fecha de Registro:</span>
+                    <span class="info-value">{{ marca.fecha_registro|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Última Actualización:</span>
+                    <span class="info-value">{{ marca.fecha_actualizacion|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        padding: 20px;
+    }
+
+    .detail-header {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-info h1 {
+        margin: 0 0 5px 0;
+        color: #2c3e50;
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        color: #7f8c8d;
+        margin: 0;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .detail-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .info-value {
+        color: #333;
+    }
+
+    .description-text {
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .product-item {
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .product-info h3 {
+        margin: 0 0 5px 0;
+        font-size: 1.1rem;
+        color: #2c3e50;
+    }
+
+    .product-code {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .product-price {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #27ae60;
+        margin: 0;
+    }
+
+    .link-external {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    .link-external:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #7f8c8d;
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+

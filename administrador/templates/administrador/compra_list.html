@@ -1,229 +1,109 @@
-{% extends 'administrador/base_dashboard.html' %}
+{% extends 'administrador/base_list.html' %}
 {% load static %}
 
-{% block title %}Gestión de Compras{% endblock %}
+{% block title %}Compras | Digit Soft{% endblock %}
+{% block page_header %}Compras{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Gestión de Compras</h3>
-                    <button class="btn btn-primary" onclick="openModal()">
-                        <i class="fas fa-plus"></i> Registrar Compra
-                    </button>
-                </div>
-                <div class="card-body">
-                    <!-- Aquí va la tabla y funcionalidad de compras -->
-                    <div class="search-bar mb-3">
-                        <div class="input-group">
-                            <input type="text" id="search-input" class="form-control" placeholder="Buscar compra por proveedor, fecha o estado...">
-                        </div>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Número</th>
-                                <th>Fecha</th>
-                                <th>Proveedor</th>
-                                <th>Estado</th>
-                                <th>Total</th>
-                                <th>Método Pago</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="purchases-table">
-                            {% for compra in compras %}
-                            <tr>
-                                <td><strong>{{ compra.numero_compra }}</strong></td>
-                                <td>{{ compra.fecha_solicitud|date:"d/m/Y" }}</td>
-                                <td>{{ compra.proveedor.razon_social }}</td>
-                                <td>
-                                    <span class="badge
-                                        {% if compra.estado == 'PAGADA' %}badge-success
-                                        {% elif compra.estado == 'APROBADA' %}badge-info
-                                        {% elif compra.estado == 'SOLICITUD' %}badge-warning
-                                        {% else %}badge-danger{% endif %}">
-                                        {{ compra.get_estado_display }}
-                                    </span>
-                                </td>
-                                <td><strong>${{ compra.total|floatformat:0 }}</strong></td>
-                                <td>{{ compra.get_metodo_pago_display|default:"N/A" }}</td>
-                                <td class="action-buttons">
-                                    <button class="btn btn-success" onclick="viewPurchase('{{ compra.id }}')" style="padding: 6px 12px; font-size: 12px;">👁️</button>
-                                    <button class="btn btn-primary" onclick="editPurchase('{{ compra.id }}')" style="padding: 6px 12px; font-size: 12px;">✏️</button>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" style="text-align: center; padding: 40px;">
-                                    No hay compras registradas
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block list_title %}Gestión de Compras{% endblock %}
+{% block list_description %}Administra las compras a proveedores{% endblock %}
 
-<!-- Modal para agregar/editar compra -->
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modal-title">Registrar Compra</h2>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-        </div>
-        <form id="purchase-form" method="post" action="{% url 'administrador:compra_list' %}">
-            {% csrf_token %}
-            <input type="hidden" id="purchase-id" name="compra_id">
-
-            <div class="form-group">
-                <label for="numero_compra">Número de Compra</label>
-                <input type="text" id="numero_compra" name="numero_compra" class="form-control" required placeholder="CMP-001">
-            </div>
-
-            <div class="form-group">
-                <label for="proveedor">Proveedor</label>
-                <select id="proveedor" name="proveedor" class="form-control" required>
-                    <option value="">Seleccione un proveedor</option>
-                    {% for proveedor in proveedores %}
-                    <option value="{{ proveedor.id }}">{{ proveedor.razon_social }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="fecha_solicitud">Fecha de Solicitud</label>
-                <input type="datetime-local" id="fecha_solicitud" name="fecha_solicitud" class="form-control" required>
-            </div>
-
-            <div class="form-group">
-                <label for="estado">Estado</label>
-                <select id="estado" name="estado" class="form-control" required>
-                    <option value="SOLICITUD">Solicitud</option>
-                    <option value="COTIZACION">Cotización</option>
-                    <option value="APROBADA">Aprobada</option>
-                    <option value="PEDIDO_ENVIADO">Pedido Enviado</option>
-                    <option value="RECIBIDA_PARCIAL">Recibida Parcial</option>
-                    <option value="RECIBIDA_COMPLETA">Recibida Completa</option>
-                    <option value="FACTURADA">Facturada</option>
-                    <option value="PAGADA">Pagada</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="subtotal">Subtotal</label>
-                <input type="number" id="subtotal" name="subtotal" class="form-control" required min="0" step="0.01" placeholder="0.00">
-            </div>
-
-            <div class="form-group">
-                <label for="impuestos">Impuestos</label>
-                <input type="number" id="impuestos" name="impuestos" class="form-control" required min="0" step="0.01" placeholder="0.00">
-            </div>
-
-            <div class="form-group">
-                <label for="total">Total</label>
-                <input type="number" id="total" name="total" class="form-control" required min="0" step="0.01" placeholder="0.00">
-            </div>
-
-            <div class="form-group">
-                <label for="metodo_pago">Método de Pago</label>
-                <select id="metodo_pago" name="metodo_pago" class="form-control">
-                    <option value="">Seleccione método</option>
-                    <option value="EFECTIVO">Efectivo</option>
-                    <option value="TRANSFERENCIA">Transferencia Bancaria</option>
-                    <option value="CHEQUE">Cheque</option>
-                    <option value="CREDITO">Crédito</option>
-                    <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="observaciones">Observaciones</label>
-                <textarea id="observaciones" name="observaciones" class="form-control" rows="3" placeholder="Notas adicionales..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Compra</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    function searchPurchases() {
-        const searchTerm = document.getElementById('search-input').value.toLowerCase();
-        const rows = document.querySelectorAll('#purchases-table tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            if (text.includes(searchTerm) || searchTerm === '') {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-    function openModal() {
-        document.getElementById('modal').classList.add('active');
-        document.getElementById('modal-title').textContent = 'Registrar Compra';
-        document.getElementById('purchase-form').reset();
-
-        // Establecer fecha actual
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('fecha_solicitud').value = now.toISOString().slice(0, 16);
-    }
-
-    function closeModal() {
-        document.getElementById('modal').classList.remove('active');
-        document.getElementById('purchase-form').reset();
-    }
-
-    function viewPurchase(id) {
-        window.location.href = `/administrador/compras/${id}/`;
-    }
-
-    function editPurchase(id) {
-        // Implementar lógica de edición
-        showAlert('Funcionalidad de edición en desarrollo');
-    }
-
-    function showAlert(message, type = 'success') {
-        const container = document.getElementById('alert-container');
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type}`;
-        alert.textContent = message;
-        container.appendChild(alert);
-
-        setTimeout(() => alert.remove(), 3000);
-    }
-
-    // Cerrar modal al hacer clic fuera
-    document.getElementById('modal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-
-    // Calcular total automáticamente
-    document.getElementById('subtotal').addEventListener('input', calculateTotal);
-    document.getElementById('impuestos').addEventListener('input', calculateTotal);
-
-    function calculateTotal() {
-        const subtotal = parseFloat(document.getElementById('subtotal').value) || 0;
-        const impuestos = parseFloat(document.getElementById('impuestos').value) || 0;
-        document.getElementById('total').value = (subtotal + impuestos).toFixed(2);
-    }
-
-    // Mostrar mensajes de Django
-    {% if messages %}
-        {% for message in messages %}
-            showAlert('{{ message }}', '{{ message.tags }}');
-        {% endfor %}
-    {% endif %}
-</script>
+{% block table_headers %}
+<th>Número</th>
+<th>Proveedor</th>
+<th>Fecha Solicitud</th>
+<th>Estado</th>
+<th>Subtotal</th>
+<th>Impuestos</th>
+<th>Total</th>
+<th>Método Pago</th>
+<th style="width: 200px;">Acciones</th>
 {% endblock %}
+
+{% block table_body %}
+{% if compras %}
+    {% for compra in compras %}
+    <tr>
+        <td><strong>{{ compra.numero_compra }}</strong></td>
+        <td>{{ compra.proveedor.razon_social }}</td>
+        <td>{{ compra.fecha_solicitud|date:"d/m/Y" }}</td>
+        <td>
+            {% if compra.estado == 'RECIBIDA_COMPLETA' or compra.estado == 'PAGADA' %}
+                <span class="badge badge-success">{{ compra.get_estado_display }}</span>
+            {% elif compra.estado == 'APROBADA' or compra.estado == 'PEDIDO_ENVIADO' %}
+                <span class="badge badge-info">{{ compra.get_estado_display }}</span>
+            {% elif compra.estado == 'CANCELADA' %}
+                <span class="badge badge-danger">{{ compra.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-warning">{{ compra.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>${{ compra.subtotal|floatformat:2 }}</td>
+        <td>${{ compra.impuestos|floatformat:2 }}</td>
+        <td><strong>${{ compra.total|floatformat:2 }}</strong></td>
+        <td>
+            {% if compra.metodo_pago %}
+                <span class="badge badge-info">{{ compra.get_metodo_pago_display }}</span>
+            {% else %}
+                <span class="badge badge-secondary">Pendiente</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ compra.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ compra.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ compra.id }}, '{{ compra.numero_compra }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ compra.id }}, '{{ compra.numero_compra }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="9" class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <p>No hay compras registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Registrar Primera Compra
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="form-group">
+    <label class="form-label">Proveedor *</label>
+    <select name="proveedor" class="form-control" required>
+        <option value="">Seleccione un proveedor...</option>
+        {% for proveedor in proveedores %}
+            <option value="{{ proveedor.id }}">{{ proveedor.razon_social }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Método de Pago</label>
+    <select name="metodo_pago" class="form-control">
+        <option value="">Seleccione...</option>
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+        <option value="CHEQUE">Cheque</option>
+        <option value="CREDITO">Crédito</option>
+        <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Observaciones</label>
+    <textarea name="observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales (opcional)"></textarea>
+</div>
+{% endblock %}
+

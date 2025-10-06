@@ -1,65 +1,91 @@
-{% extends 'DigitSoft/base.html' %}
+{% extends 'administrador/base_list.html' %}
 {% load static %}
+
 {% block title %}Facturación | Digit Soft{% endblock %}
+{% block page_header %}Facturación{% endblock %}
 
-{% block page_header %}Gestión de Facturación{% endblock %}
+{% block list_title %}Gestión de Facturación{% endblock %}
+{% block list_description %}Administra las facturas emitidas{% endblock %}
 
-{% block content %}
-<div class="dashboard-header">
-    <h1>Lista de Facturas</h1>
-    <button class="btn-primary">
-        <span>➕</span>
-        Nueva Factura
-    </button>
-</div>
-
-<div class="dashboard-card">
-    <div class="card-header">
-        <h3>Facturas Emitidas</h3>
-        <div class="card-actions">
-            <input type="text" placeholder="Buscar factura..." class="search-input">
-            <button class="btn-icon" title="Filtros">🔍</button>
-        </div>
-    </div>
-    <div class="card-content">
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Cliente</th>
-                        <th>Fecha</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>F-2025-001</td>
-                        <td>Juan Pérez</td>
-                        <td>2025-01-15</td>
-                        <td>$150.000</td>
-                        <td><span class="status-badge completed">Pagada</span></td>
-                        <td>
-                            <button class="btn-edit">👁️</button>
-                            <button class="btn-icon">🖨️</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>F-2025-002</td>
-                        <td>María González</td>
-                        <td>2025-01-10</td>
-                        <td>$250.000</td>
-                        <td><span class="status-badge pending">Pendiente</span></td>
-                        <td>
-                            <button class="btn-edit">👁️</button>
-                            <button class="btn-icon">🖨️</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+{% block table_headers %}
+<th>Número</th>
+<th>Cliente</th>
+<th>Tipo</th>
+<th>Fecha Emisión</th>
+<th>Vencimiento</th>
+<th>Subtotal</th>
+<th>Total</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
 {% endblock %}
+
+{% block table_body %}
+{% if facturas %}
+    {% for factura in facturas %}
+    <tr>
+        <td><strong>{{ factura.numero_factura }}</strong></td>
+        <td>{{ factura.cliente.nombre_completo }}</td>
+        <td>
+            <span class="badge badge-info">{{ factura.get_tipo_factura_display }}</span>
+        </td>
+        <td>{{ factura.fecha_emision|date:"d/m/Y" }}</td>
+        <td>{{ factura.fecha_vencimiento|date:"d/m/Y" }}</td>
+        <td>${{ factura.subtotal|floatformat:2 }}</td>
+        <td><strong>${{ factura.total|floatformat:2 }}</strong></td>
+        <td>
+            {% if factura.estado == 'PAGADA' %}
+                <span class="badge badge-success">{{ factura.get_estado_display }}</span>
+            {% elif factura.estado == 'EMITIDA' %}
+                <span class="badge badge-info">{{ factura.get_estado_display }}</span>
+            {% elif factura.estado == 'VENCIDA' %}
+                <span class="badge badge-danger">{{ factura.get_estado_display }}</span>
+            {% elif factura.estado == 'ANULADA' %}
+                <span class="badge badge-secondary">{{ factura.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-warning">{{ factura.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ factura.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-success btn-sm" onclick="printInvoice({{ factura.id }})" title="Imprimir">
+                    <i class="fas fa-print"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ factura.id }}, '{{ factura.numero_factura }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ factura.id }}, '{{ factura.numero_factura }}')" title="Anular">
+                    <i class="fas fa-ban"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="9" class="empty-state">
+            <i class="fas fa-file-invoice"></i>
+            <p>No hay facturas registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Crear Primera Factura
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+function printInvoice(facturaId) {
+    showNotification('Preparando factura para imprimir...', 'info');
+    setTimeout(() => {
+        window.open('/administrador/facturacion/' + facturaId + '/print/', '_blank');
+        showNotification('Factura lista para imprimir', 'success');
+    }, 500);
+}
+</script>
+{% endblock %}
+

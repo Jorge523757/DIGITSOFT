@@ -1,197 +1,130 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Marcas</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fa;
-            margin: 0;
-            padding: 0;
-        }
+{% extends 'administrador/base_list.html' %}
+{% load static %}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px;
-        }
+{% block title %}Marcas | Digit Soft{% endblock %}
+{% block page_header %}Marcas{% endblock %}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+{% block list_title %}Gestión de Marcas{% endblock %}
+{% block list_description %}Administra las marcas de productos del sistema{% endblock %}
 
-        .header h1 {
-            font-size: 28px;
-            color: #333;
-            margin: 0;
-        }
+{% block table_headers %}
+<th>ID</th>
+<th>Nombre</th>
+<th>Tipo</th>
+<th>País</th>
+<th>Productos</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
 
-        .btn-primary {
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .btn-primary:hover {
-            background: #0056b3;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .table th {
-            background: #f8f9fa;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .table tr:hover {
-            background: #f5f5f5;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .badge-info { background: #17a2b8; }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 12px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 12px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .btn-success:hover { background: #218838; }
-        .btn-danger:hover { background: #c82333; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏷️ Gestión de Marcas</h1>
-            <button class="btn btn-primary" onclick="openModal()">+ Registrar Marca</button>
-        </div>
-        <div id="alert-container"></div>
-        <div class="card">
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar marca por nombre o tipo..." oninput="searchBrands()">
-                <button class="btn btn-primary" onclick="searchBrands()">🔍 Buscar</button>
+{% block table_body %}
+{% if marcas %}
+    {% for marca in marcas %}
+    <tr>
+        <td><strong>#{{ marca.id }}</strong></td>
+        <td>{{ marca.nombre }}</td>
+        <td>
+            <span class="badge badge-info">
+                {{ marca.get_tipo_marca_display }}
+            </span>
+        </td>
+        <td>{{ marca.pais_origen|default:"No especificado" }}</td>
+        <td>
+            <span class="badge badge-secondary">
+                {{ marca.producto_set.count }} productos
+            </span>
+        </td>
+        <td>
+            {% if marca.activa %}
+                <span class="badge badge-success">Activa</span>
+            {% else %}
+                <span class="badge badge-danger">Inactiva</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ marca.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ marca.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ marca.id }}, '{{ marca.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ marca.id }}, '{{ marca.nombre }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Productos</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if marcas %}
-                        {% for marca in marcas %}
-                            <tr>
-                                <td><strong>{{ marca.nombre }}</strong></td>
-                                <td><span class="badge badge-info">{{ marca.get_tipo_marca_display }}</span></td>
-                                <td>{{ marca.producto_set.count }} productos</td>
-                                <td class="action-buttons">
-                                    <button class="btn btn-success" onclick="editBrand('{{ marca.id }}')">✏️ Editar</button>
-                                    <button class="btn btn-danger" onclick="deleteBrand('{{ marca.id }}')">🗑️ Eliminar</button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="4" style="text-align: center; padding: 40px;">No hay marcas registradas</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="7" class="empty-state">
+            <i class="fas fa-tag"></i>
+            <p>No hay marcas registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primera Marca
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="form-group">
+    <label class="form-label">Nombre de la Marca *</label>
+    {{ form.nombre }}
+    {% if form.nombre.errors %}
+        <small class="text-danger">{{ form.nombre.errors.0 }}</small>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Tipo de Marca *</label>
+            {{ form.tipo_marca }}
+            {% if form.tipo_marca.errors %}
+                <small class="text-danger">{{ form.tipo_marca.errors.0 }}</small>
+            {% endif %}
         </div>
     </div>
-    <script>
-        function searchBrands() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const rows = document.querySelectorAll('.table tbody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm) || searchTerm === '') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        function openModal() {
-            alert('Funcionalidad de agregar marca en desarrollo');
-        }
-        function editBrand(id) {
-            alert('Funcionalidad de editar marca (conectar a vista real): ' + id);
-        }
-        function deleteBrand(id) {
-            alert('Funcionalidad de eliminar marca (conectar a vista real): ' + id);
-        }
-    </script>
-</body>
-</html>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">País de Origen</label>
+            {{ form.pais_origen }}
+            {% if form.pais_origen.errors %}
+                <small class="text-danger">{{ form.pais_origen.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Descripción</label>
+    {{ form.descripcion }}
+    {% if form.descripcion.errors %}
+        <small class="text-danger">{{ form.descripcion.errors.0 }}</small>
+    {% endif %}
+</div>
+
+<div class="form-group">
+    <label class="form-label">Sitio Web</label>
+    {{ form.sitio_web }}
+    {% if form.sitio_web.errors %}
+        <small class="text-danger">{{ form.sitio_web.errors.0 }}</small>
+    {% endif %}
+    <small class="text-muted">Ejemplo: https://www.ejemplo.com</small>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Logo</label>
+    {{ form.logo }}
+    {% if form.logo.errors %}
+        <small class="text-danger">{{ form.logo.errors.0 }}</small>
+    {% endif %}
+    <small class="text-muted">Formatos permitidos: JPG, PNG. Tamaño máximo: 2MB</small>
+</div>
+{% endblock %}

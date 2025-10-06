@@ -1,883 +1,164 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigitSoft - Gestión de Proveedores</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
-            color: #000;
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #e83e8c);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        .search-section {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 300px;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .table th {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .table th:first-child {
-            border-top-left-radius: 10px;
-        }
-
-        .table th:last-child {
-            border-top-right-radius: 10px;
-        }
-
-        .table td {
-            padding: 15px 12px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
-
-        .table tr:hover {
-            background: linear-gradient(135deg, #f8f9ff, #fff5f8);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .badge-warning {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
-            color: #000;
-        }
-
-        .badge-danger {
-            background: linear-gradient(135deg, #dc3545, #e83e8c);
-            color: white;
-        }
-
-        .badge-info {
-            background: linear-gradient(135deg, #17a2b8, #6f42c1);
-            color: white;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: modalSlide 0.3s ease;
-        }
-
-        @keyframes modalSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .modal-header h2 {
-            color: #667eea;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-            transition: color 0.3s ease;
-        }
-
-        .close-btn:hover {
-            color: #dc3545;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-control.error {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-        }
-
-        .form-group.has-error label {
-            color: #dc3545;
-        }
-
-        .error-summary {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            animation: slideDown 0.3s ease;
-        }
-
-        .error-summary h4 {
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .error-summary ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .error-summary li {
-            margin-bottom: 5px;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 1001;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            animation: slideDown 0.3s ease;
-            border-left: 4px solid;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            color: #155724;
-            border-left-color: #28a745;
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-            color: #721c24;
-            border-left-color: #dc3545;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Dark Mode */
-        .dark-mode {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        .dark-mode .header,
-        .dark-mode .card,
-        .dark-mode .modal-content {
-            background: #2d3748;
-            color: #e2e8f0;
-        }
-
-        .dark-mode .table {
-            background: #2d3748;
-            color: #e2e8f0;
-        }
-
-        .dark-mode .table tr:hover {
-            background: linear-gradient(135deg, #4a5568, #2d3748);
-        }
-
-        .dark-mode .form-control {
-            background: #4a5568;
-            color: #e2e8f0;
-            border-color: #4a5568;
-        }
-
-        .dark-mode .form-control:focus {
-            border-color: #667eea;
-        }
-
-        .dark-mode .search-input {
-            background: #4a5568;
-            color: #e2e8f0;
-            border-color: #4a5568;
-        }
-
-        .dark-mode .search-input:focus {
-            border-color: #667eea;
-        }
-
-        .provider-nit {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .error-text {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 4px;
-            display: block;
-        }
-
-        .field-errors {
-            margin-top: 8px;
-        }
-
-        /* Dark mode error styles */
-        .dark-mode .error-text {
-            color: #f56565;
-        }
-
-        .dark-mode .form-control.error {
-            border-color: #f56565;
-            box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
-        }
-
-        .dark-mode .form-group.has-error label {
-            color: #f56565;
-        }
-
-        .dark-mode .error-summary {
-            background: linear-gradient(135deg, #2d1b1e, #3c1d21);
-            color: #feb2b2;
-            border-left-color: #f56565;
-        }
-    </style>
-</head>
-<body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙 Tema Oscuro</button>
-
-    <div class="container">
-        <div class="header">
-            <h1>🏢 Gestión de Proveedores</h1>
-            <button class="btn btn-primary" onclick="openCreateModal()">
-                ➕ Registrar Proveedor
-            </button>
-        </div>
-
-        <div id="alert-container"></div>
-
-        <div class="card">
-            <div class="search-section">
-                <input type="text" class="search-input" id="search-input"
-                       placeholder="🔍 Buscar por empresa, NIT, contacto o tipo..."
-                       oninput="searchProviders()">
-                <button class="btn btn-primary" onclick="searchProviders()">
-                    🔍 Buscar
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Proveedores | Digit Soft{% endblock %}
+{% block page_header %}Proveedores{% endblock %}
+
+{% block list_title %}Gestión de Proveedores{% endblock %}
+{% block list_description %}Administra los proveedores de productos y servicios{% endblock %}
+
+{% block table_headers %}
+<th>NIT/Documento</th>
+<th>Razón Social</th>
+<th>Categoría</th>
+<th>Email</th>
+<th>Teléfono</th>
+<th>Calificación</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if proveedores %}
+    {% for proveedor in proveedores %}
+    <tr>
+        <td><strong>{{ proveedor.numero_documento }}</strong></td>
+        <td>{{ proveedor.razon_social }}</td>
+        <td>
+            <span class="badge badge-info">{{ proveedor.get_categoria_principal_display }}</span>
+        </td>
+        <td>{{ proveedor.email }}</td>
+        <td>{{ proveedor.telefono }}</td>
+        <td>⭐ {{ proveedor.calificacion|floatformat:1 }}</td>
+        <td>
+            {% if proveedor.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ proveedor.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ proveedor.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ proveedor.id }}, '{{ proveedor.razon_social }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ proveedor.id }}, '{{ proveedor.razon_social }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-building"></i>
+            <p>No hay proveedores registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Proveedor
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
 
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Empresa</th>
-                            <th>Contacto</th>
-                            <th>Comunicación</th>
-                            <th>Ubicación</th>
-                            <th>Tipo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="providers-table">
-                        {% for proveedor in proveedores %}
-                        <tr data-proveedor-id="{{ proveedor.id }}">
-                            <td>
-                                <strong>{{ proveedor.razon_social }}</strong>
-                                {% if proveedor.nombre_comercial %}
-                                <br><small style="color: #6c757d;">{{ proveedor.nombre_comercial }}</small>
-                                {% endif %}
-                                <br><small class="provider-nit">{{ proveedor.get_tipo_documento_display }}: {{ proveedor.numero_documento }}</small>
-                            </td>
-                            <td>
-                                <strong>{{ proveedor.contacto_principal }}</strong>
-                            </td>
-                            <td>
-                                <div>📞 {{ proveedor.telefono }}</div>
-                                {% if proveedor.email %}
-                                <div style="font-size: 12px; color: #6c757d;">✉️ {{ proveedor.email }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if proveedor.ciudad %}
-                                <div>🏙️ {{ proveedor.ciudad }}, {{ proveedor.departamento }}</div>
-                                {% endif %}
-                                {% if proveedor.direccion %}
-                                <div style="font-size: 12px; color: #6c757d;">📍 {{ proveedor.direccion|truncatechars:30 }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <span class="badge badge-info">{{ proveedor.get_categoria_principal_display }}</span>
-                            </td>
-                            <td class="action-buttons">
-                                <button class="btn btn-warning btn-sm" onclick="editProvider({{ proveedor.id }})" title="Editar">
-                                    ✏️
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteProvider({{ proveedor.id }})" title="Eliminar">
-                                    🗑️
-                                </button>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="empty-state">
-                                <div class="empty-state-icon">🏢</div>
-                                <h3>No hay proveedores registrados</h3>
-                                <p>Comienza registrando tu primer proveedor</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+{% block form_content %}
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Tipo de Documento *</label>
+        <select name="tipo_documento" class="form-control" required>
+            <option value="NIT">NIT</option>
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="CE">Cédula de Extranjería</option>
+        </select>
     </div>
-
-    <!-- Modal para crear/editar proveedor -->
-    <div class="modal" id="providerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Registrar Proveedor</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="provider-form" method="post" action="{% url 'administrador:proveedor_list' %}">
-                {% csrf_token %}
-                <input type="hidden" id="provider-id" name="proveedor_id">
-
-                <div class="form-group">
-                    <label for="{{ form.razon_social.id_for_label }}">* Razón Social</label>
-                    {{ form.razon_social }}
-                    {% if form.razon_social.errors %}
-                        <div class="field-errors">
-                            {% for error in form.razon_social.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.nit.id_for_label }}">* NIT</label>
-                    {{ form.nit }}
-                    {% if form.nit.errors %}
-                        <div class="field-errors">
-                            {% for error in form.nit.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.nombre_contacto.id_for_label }}">* Persona de Contacto</label>
-                    {{ form.nombre_contacto }}
-                    {% if form.nombre_contacto.errors %}
-                        <div class="field-errors">
-                            {% for error in form.nombre_contacto.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.telefono.id_for_label }}">* Teléfono</label>
-                    {{ form.telefono }}
-                    {% if form.telefono.errors %}
-                        <div class="field-errors">
-                            {% for error in form.telefono.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                        <div class="field-errors">
-                            {% for error in form.email.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.tipo_proveedor.id_for_label }}">* Tipo de Proveedor</label>
-                    <select id="{{ form.tipo_proveedor.id_for_label }}" name="tipo_proveedor" class="form-control" required>
-                        <option value="">Seleccione el tipo</option>
-                        <option value="HARDWARE" {% if form.tipo_proveedor.value == 'HARDWARE' %}selected{% endif %}>🔧 Hardware y Componentes</option>
-                        <option value="SOFTWARE" {% if form.tipo_proveedor.value == 'SOFTWARE' %}selected{% endif %}>💻 Software y Licencias</option>
-                        <option value="SERVICIOS" {% if form.tipo_proveedor.value == 'SERVICIOS' %}selected{% endif %}>⚙️ Servicios Técnicos</option>
-                        <option value="EQUIPOS" {% if form.tipo_proveedor.value == 'EQUIPOS' %}selected{% endif %}>📱 Equipos Completos</option>
-                        <option value="CONSUMIBLES" {% if form.tipo_proveedor.value == 'CONSUMIBLES' %}selected{% endif %}>🖨️ Consumibles</option>
-                        <option value="GENERAL" {% if form.tipo_proveedor.value == 'GENERAL' %}selected{% endif %}>📦 Proveedor General</option>
-                    </select>
-                    {% if form.tipo_proveedor.errors %}
-                        <div class="field-errors">
-                            {% for error in form.tipo_proveedor.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.ciudad.id_for_label }}">Ciudad</label>
-                    {{ form.ciudad }}
-                    {% if form.ciudad.errors %}
-                        <div class="field-errors">
-                            {% for error in form.ciudad.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.direccion.id_for_label }}">Dirección</label>
-                    {{ form.direccion }}
-                    {% if form.direccion.errors %}
-                        <div class="field-errors">
-                            {% for error in form.direccion.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.productos_servicios.id_for_label }}">Productos/Servicios</label>
-                    {{ form.productos_servicios }}
-                    {% if form.productos_servicios.errors %}
-                        <div class="field-errors">
-                            {% for error in form.productos_servicios.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.observaciones.id_for_label }}">Observaciones</label>
-                    {{ form.observaciones }}
-                    {% if form.observaciones.errors %}
-                        <div class="field-errors">
-                            {% for error in form.observaciones.errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                {% if form.non_field_errors %}
-                    <div class="form-group">
-                        <div class="field-errors">
-                            {% for error in form.non_field_errors %}
-                                <small class="error-text">{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        💾 Guardar Proveedor
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div class="form-group">
+        <label class="form-label">Número de Documento *</label>
+        <input type="text" name="numero_documento" class="form-control" required placeholder="Ej: 900123456-7">
     </div>
+</div>
 
-    <script>
-        // Datos de proveedores para edición
-        const providerData = {
-            {% for proveedor in proveedores %}
-            {{ proveedor.id }}: {
-                tipo_documento: '{{ proveedor.tipo_documento }}',
-                numero_documento: '{{ proveedor.numero_documento }}',
-                razon_social: '{{ proveedor.razon_social }}',
-                nombre_comercial: '{{ proveedor.nombre_comercial }}',
-                contacto_principal: '{{ proveedor.contacto_principal }}',
-                telefono: '{{ proveedor.telefono }}',
-                email: '{{ proveedor.email }}',
-                categoria_principal: '{{ proveedor.categoria_principal }}',
-                direccion: '{{ proveedor.direccion|escapejs }}',
-                ciudad: '{{ proveedor.ciudad }}',
-                departamento: '{{ proveedor.departamento }}',
-                sitio_web: '{{ proveedor.sitio_web }}',
-                telefono_contacto: '{{ proveedor.telefono_contacto }}',
-                email_contacto: '{{ proveedor.email_contacto }}',
-                condiciones_pago: '{{ proveedor.condiciones_pago|escapejs }}',
-                tiempo_entrega_dias: '{{ proveedor.tiempo_entrega_dias }}'
-            }{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        };
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Razón Social *</label>
+        <input type="text" name="razon_social" class="form-control" required placeholder="Nombre legal de la empresa">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Nombre Comercial</label>
+        <input type="text" name="nombre_comercial" class="form-control" placeholder="Nombre comercial">
+    </div>
+</div>
 
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtn = document.querySelector('.theme-toggle');
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input type="email" name="email" class="form-control" required placeholder="correo@proveedor.com">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Teléfono *</label>
+        <input type="tel" name="telefono" class="form-control" required placeholder="6012345678">
+    </div>
+</div>
 
-            body.classList.toggle('dark-mode');
+<div class="form-group">
+    <label class="form-label">Categoría Principal *</label>
+    <select name="categoria_principal" class="form-control" required>
+        <option value="">Seleccione...</option>
+        <option value="EQUIPOS">Equipos de Cómputo</option>
+        <option value="COMPONENTES">Componentes y Partes</option>
+        <option value="SOFTWARE">Software y Licencias</option>
+        <option value="ACCESORIOS">Accesorios</option>
+        <option value="CONSUMIBLES">Consumibles</option>
+        <option value="SERVICIOS">Servicios</option>
+    </select>
+</div>
 
-            if (body.classList.contains('dark-mode')) {
-                themeBtn.innerHTML = '☀️ Tema Claro';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                themeBtn.innerHTML = '🌙 Tema Oscuro';
-                localStorage.setItem('theme', 'light');
-            }
-        }
+<div class="form-group">
+    <label class="form-label">Dirección *</label>
+    <textarea name="direccion" class="form-control" rows="2" required placeholder="Dirección completa"></textarea>
+</div>
 
-        // Cargar tema guardado
-        window.addEventListener('load', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.querySelector('.theme-toggle').innerHTML = '☀️ Tema Claro';
-            }
-        });
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Ciudad *</label>
+        <input type="text" name="ciudad" class="form-control" required placeholder="Ciudad">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Departamento *</label>
+        <input type="text" name="departamento" class="form-control" required placeholder="Departamento">
+    </div>
+</div>
 
-        function searchProviders() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const rows = document.querySelectorAll('#providers-table tr[data-proveedor-id]');
+<div class="form-group">
+    <label class="form-label">Contacto Principal *</label>
+    <input type="text" name="contacto_principal" class="form-control" required placeholder="Nombre del contacto">
+</div>
 
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm) || searchTerm === '') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Email Contacto</label>
+        <input type="email" name="email_contacto" class="form-control" placeholder="Email del contacto">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Teléfono Contacto</label>
+        <input type="tel" name="telefono_contacto" class="form-control" placeholder="Teléfono del contacto">
+    </div>
+</div>
 
-        function openCreateModal() {
-            document.getElementById('providerModal').classList.add('active');
-            document.getElementById('modal-title').textContent = 'Registrar Proveedor';
-            document.getElementById('provider-form').reset();
-            document.getElementById('provider-id').value = '';
-        }
+<div class="form-group">
+    <label class="form-label">Condiciones de Pago</label>
+    <textarea name="condiciones_pago" class="form-control" rows="2" placeholder="Ej: 30 días, Contado, etc."></textarea>
+</div>
 
-        function editProvider(id) {
-            const provider = providerData[id];
-            if (!provider) {
-                showAlert('Error: No se encontraron los datos del proveedor', 'error');
-                return;
-            }
+<div class="form-group">
+    <label class="form-label">Tiempo de Entrega (días) *</label>
+    <input type="number" name="tiempo_entrega_dias" class="form-control" required value="1" min="1">
+</div>
+{% endblock %}
 
-            // Abrir modal y cambiar título
-            document.getElementById('providerModal').classList.add('active');
-            document.getElementById('modal-title').textContent = 'Editar Proveedor';
-
-            // Llenar formulario con datos existentes usando los campos reales
-            document.getElementById('provider-id').value = id;
-            document.getElementById('id_tipo_documento').value = provider.tipo_documento;
-            document.getElementById('id_numero_documento').value = provider.numero_documento;
-            document.getElementById('id_razon_social').value = provider.razon_social;
-            document.getElementById('id_nombre_comercial').value = provider.nombre_comercial;
-            document.getElementById('id_contacto_principal').value = provider.contacto_principal;
-            document.getElementById('id_telefono').value = provider.telefono;
-            document.getElementById('id_email').value = provider.email;
-            document.getElementById('id_categoria_principal').value = provider.categoria_principal;
-            document.getElementById('id_direccion').value = provider.direccion;
-            document.getElementById('id_ciudad').value = provider.ciudad;
-            document.getElementById('id_departamento').value = provider.departamento;
-            document.getElementById('id_sitio_web').value = provider.sitio_web;
-            document.getElementById('id_telefono_contacto').value = provider.telefono_contacto;
-            document.getElementById('id_email_contacto').value = provider.email_contacto;
-            document.getElementById('id_condiciones_pago').value = provider.condiciones_pago;
-            document.getElementById('id_tiempo_entrega_dias').value = provider.tiempo_entrega_dias;
-        }
-
-        function deleteProvider(id) {
-            if (confirm('⚠️ ¿Estás seguro de que deseas eliminar este proveedor?\n\nEsta acción no se puede deshacer.')) {
-                // Aquí implementarías la eliminación real
-                showAlert('Funcionalidad de eliminación en desarrollo', 'error');
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('providerModal').classList.remove('active');
-            document.getElementById('provider-form').reset();
-        }
-
-        function showAlert(message, type = 'success') {
-            const container = document.getElementById('alert-container');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <strong>${type === 'success' ? '✅' : '❌'}</strong> ${message}
-            `;
-
-            container.appendChild(alert);
-
-            setTimeout(() => {
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 300);
-            }, 4000);
-        }
-
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('providerModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // Cerrar modal con Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        // Mostrar mensajes de Django
-        {% if messages %}
-            window.addEventListener('load', function() {
-                {% for message in messages %}
-                    showAlert('{{ message|escapejs }}', '{{ message.tags }}');
-                {% endfor %}
-            });
-        {% endif %}
-    </script>
-</body>
-</html>

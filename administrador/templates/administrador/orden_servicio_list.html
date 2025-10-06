@@ -1,65 +1,136 @@
-{% extends 'administrador/base_dashboard.html' %}
+{% extends 'administrador/base_list.html' %}
 {% load static %}
+
 {% block title %}Órdenes de Servicio | Digit Soft{% endblock %}
-{% block page_header %}Gestión de Órdenes de Servicio{% endblock %}
-{% block content %}
-<div class="dashboard-header">
-    <h1>Lista de Órdenes de Servicio</h1>
-    <button class="btn-primary">
-        <span>➕</span>
-        Nueva Orden
-    </button>
+{% block page_header %}Órdenes de Servicio{% endblock %}
+
+{% block list_title %}Gestión de Órdenes de Servicio{% endblock %}
+{% block list_description %}Administra las órdenes de servicio técnico{% endblock %}
+
+{% block table_headers %}
+<th>Número</th>
+<th>Cliente</th>
+<th>Equipo</th>
+<th>Técnico</th>
+<th>Prioridad</th>
+<th>Estado</th>
+<th>Fecha Ingreso</th>
+<th>Total</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if ordenes %}
+    {% for orden in ordenes %}
+    <tr>
+        <td><strong>{{ orden.numero_orden }}</strong></td>
+        <td>{{ orden.cliente.nombre_completo }}</td>
+        <td>{{ orden.equipo.nombre }}</td>
+        <td>{{ orden.tecnico_asignado.nombre_completo|default:"Sin asignar" }}</td>
+        <td>
+            {% if orden.prioridad == 'URGENTE' %}
+                <span class="badge badge-danger">{{ orden.get_prioridad_display }}</span>
+            {% elif orden.prioridad == 'ALTA' %}
+                <span class="badge badge-warning">{{ orden.get_prioridad_display }}</span>
+            {% else %}
+                <span class="badge badge-info">{{ orden.get_prioridad_display }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if orden.estado == 'COMPLETADA' %}
+                <span class="badge badge-success">{{ orden.get_estado_display }}</span>
+            {% elif orden.estado == 'EN_PROCESO' %}
+                <span class="badge badge-info">{{ orden.get_estado_display }}</span>
+            {% elif orden.estado == 'PAUSADA' %}
+                <span class="badge badge-warning">{{ orden.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-danger">{{ orden.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>{{ orden.fecha_ingreso|date:"d/m/Y" }}</td>
+        <td><strong>${{ orden.total|floatformat:2 }}</strong></td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ orden.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ orden.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ orden.id }}, '{{ orden.numero_orden }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ orden.id }}, '{{ orden.numero_orden }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="9" class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <p>No hay órdenes de servicio registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Crear Primera Orden
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Cliente *</label>
+        <select name="cliente" class="form-control" required>
+            <option value="">Seleccione un cliente...</option>
+            {% for cliente in clientes %}
+                <option value="{{ cliente.id }}">{{ cliente.nombre_completo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Equipo *</label>
+        <select name="equipo" class="form-control" required>
+            <option value="">Seleccione un equipo...</option>
+            {% for equipo in equipos %}
+                <option value="{{ equipo.id }}">{{ equipo.nombre }} - {{ equipo.codigo_equipo }}</option>
+            {% endfor %}
+        </select>
+    </div>
 </div>
-<div class="dashboard-card">
-    <div class="card-header">
-        <h3>Órdenes Activas</h3>
-        <div class="card-actions">
-            <input type="text" placeholder="Buscar orden..." class="search-input">
-            <button class="btn-icon" title="Filtros">🔍</button>
-        </div>
+
+<div class="form-group">
+    <label class="form-label">Descripción del Problema *</label>
+    <textarea name="descripcion_problema" class="form-control" rows="4" required placeholder="Describa detalladamente el problema del equipo..."></textarea>
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Técnico Asignado</label>
+        <select name="tecnico_asignado" class="form-control">
+            <option value="">Sin asignar</option>
+            {% for tecnico in tecnicos %}
+                <option value="{{ tecnico.id }}">{{ tecnico.nombre_completo }}</option>
+            {% endfor %}
+        </select>
     </div>
-    <div class="card-content">
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Cliente</th>
-                        <th>Equipo</th>
-                        <th>Técnico</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>OS-2025-001</td>
-                        <td>Juan Pérez</td>
-                        <td>Laptop HP</td>
-                        <td>Carlos Tech</td>
-                        <td>2025-01-15</td>
-                        <td><span class="status-badge in-progress">En Proceso</span></td>
-                        <td>
-                            <button class="btn-edit">✏️</button>
-                            <button class="btn-icon">🖨️</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>OS-2025-002</td>
-                        <td>María González</td>
-                        <td>Desktop Dell</td>
-                        <td>Ana Repair</td>
-                        <td>2025-01-10</td>
-                        <td><span class="status-badge completed">Completado</span></td>
-                        <td>
-                            <button class="btn-edit">✏️</button>
-                            <button class="btn-icon">🖨️</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="form-group">
+        <label class="form-label">Prioridad *</label>
+        <select name="prioridad" class="form-control" required>
+            <option value="BAJA">Baja</option>
+            <option value="MEDIA" selected>Media</option>
+            <option value="ALTA">Alta</option>
+            <option value="URGENTE">Urgente</option>
+        </select>
     </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Fecha Estimada de Entrega</label>
+    <input type="datetime-local" name="fecha_estimada_entrega" class="form-control">
 </div>
 {% endblock %}
+

@@ -1,302 +1,289 @@
-{% extends 'administrador/base_dashboard.html' %}
+{% extends 'administrador/base_list.html' %}
 {% load static %}
 
-{% block title %}{{ titulo }}{% endblock %}
+{% block title %}Productos | Digit Soft{% endblock %}
+{% block page_header %}Productos{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">{{ titulo }}</h3>
-                    <button class="btn btn-primary" onclick="openModal()">
-                        <i class="fas fa-plus"></i> Registrar Producto
-                    </button>
-                </div>
-                <div class="card-body">
-                    <!-- Barra de búsqueda -->
-                    <div class="search-bar mb-3">
-                        <div class="input-group">
-                            <input type="text" id="search-input" class="form-control" placeholder="Buscar producto por nombre, código o categoría..." oninput="searchProducts()">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" onclick="searchProducts()">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+{% block list_title %}Gestión de Productos{% endblock %}
+{% block list_description %}Administra el inventario de productos y servicios{% endblock %}
 
-                    <!-- Tabla de productos -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover data-table">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Producto</th>
-                                    <th>Marca</th>
-                                    <th>Categoría</th>
-                                    <th>Stock</th>
-                                    <th>Precio Venta</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="products-table">
-                                {% for producto in productos %}
-                                <tr>
-                                    <td><strong>{{ producto.codigo_producto }}</strong></td>
-                                    <td>{{ producto.nombre }}</td>
-                                    <td>{{ producto.marca.nombre|default:"N/A" }}</td>
-                                    <td>
-                                        <span class="badge badge-info">
-                                            {{ producto.get_categoria_display }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge
-                                            {% if producto.stock_actual <= producto.stock_minimo %}badge-danger
-                                            {% elif producto.stock_actual <= producto.stock_maximo %}badge-warning
-                                            {% else %}badge-success{% endif %}">
-                                            {{ producto.stock_actual }}
-                                        </span>
-                                    </td>
-                                    <td>${{ producto.precio_venta|floatformat:2 }}</td>
-                                    <td>
-                                        <span class="badge {% if producto.activo %}badge-success{% else %}badge-danger{% endif %}">
-                                            {% if producto.activo %}Activo{% else %}Inactivo{% endif %}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-info" onclick="viewProduct('{{ producto.id }}')" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-warning" onclick="editProduct('{{ producto.id }}')" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ producto.id }}')" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="8" class="text-center py-4">
-                                        <div class="empty-state">
-                                            <i class="fas fa-box fa-3x text-muted mb-3"></i>
-                                            <p class="text-muted">No hay productos registrados</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block table_headers %}
+<th>Código</th>
+<th>Nombre</th>
+<th>Categoría</th>
+<th>Marca</th>
+<th>Precio Venta</th>
+<th>Stock</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
 
-<!-- Modal para agregar/editar producto -->
-<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Registrar Producto</h5>
-                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+{% block table_body %}
+{% if productos %}
+    {% for producto in productos %}
+    <tr>
+        <td><strong>{{ producto.codigo_producto }}</strong></td>
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.get_categoria_display }}</td>
+        <td>{{ producto.marca.nombre|default:"Sin marca" }}</td>
+        <td>${{ producto.precio_venta|floatformat:2 }}</td>
+        <td>
+            {% if producto.stock_actual <= producto.stock_minimo %}
+                <span class="badge badge-danger">{{ producto.stock_actual }}</span>
+            {% elif producto.stock_actual <= producto.stock_minimo|add:10 %}
+                <span class="badge badge-warning">{{ producto.stock_actual }}</span>
+            {% else %}
+                <span class="badge badge-success">{{ producto.stock_actual }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if producto.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ producto.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ producto.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ producto.id }}, '{{ producto.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ producto.id }}, '{{ producto.nombre }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
-            <form id="product-form" method="post" action="{% url 'administrador:producto_list' %}">
-                {% csrf_token %}
-                <input type="hidden" id="productId" name="producto_id">
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>No hay productos registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Producto
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
 
-                <div class="modal-body">
-                    <!-- Información Básica -->
-                    <h6 class="border-bottom pb-2 mb-3">Información Básica</h6>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="codigo_producto">Código del Producto</label>
-                                <input type="text" id="codigo_producto" name="codigo_producto" class="form-control" required placeholder="PRD-001">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">Nombre del Producto</label>
-                                <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Nombre del producto">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Descripción detallada del producto"></textarea>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="marca">Marca</label>
-                                <select id="marca" name="marca" class="form-control">
-                                    <option value="">Seleccione marca</option>
-                                    <!-- Se llenará dinámicamente -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="categoria">Categoría</label>
-                                <select id="categoria" name="categoria" class="form-control" required>
-                                    <option value="">Seleccione categoría</option>
-                                    <option value="COMPUTADORES">Computadores</option>
-                                    <option value="LAPTOPS">Laptops</option>
-                                    <option value="ACCESORIOS">Accesorios</option>
-                                    <option value="COMPONENTES">Componentes</option>
-                                    <option value="PERIFERICOS">Periféricos</option>
-                                    <option value="SOFTWARE">Software</option>
-                                    <option value="SERVICIOS">Servicios</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="proveedor_principal">Proveedor Principal</label>
-                                <select id="proveedor_principal" name="proveedor_principal" class="form-control">
-                                    <option value="">Seleccione proveedor</option>
-                                    <!-- Se llenará dinámicamente -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Información de Precios y Stock -->
-                    <h6 class="border-bottom pb-2 mb-3 mt-4">Precios y Stock</h6>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="precio_compra">Precio de Compra</label>
-                                <input type="number" id="precio_compra" name="precio_compra" class="form-control" step="0.01" required placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="precio_venta">Precio de Venta</label>
-                                <input type="number" id="precio_venta" name="precio_venta" class="form-control" step="0.01" required placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="stock_actual">Stock Actual</label>
-                                <input type="number" id="stock_actual" name="stock_actual" class="form-control" required placeholder="0">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="stock_minimo">Stock Mínimo</label>
-                                <input type="number" id="stock_minimo" name="stock_minimo" class="form-control" required placeholder="0">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="stock_maximo">Stock Máximo</label>
-                                <input type="number" id="stock_maximo" name="stock_maximo" class="form-control" required placeholder="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Especificaciones -->
-                    <h6 class="border-bottom pb-2 mb-3 mt-4">Especificaciones Técnicas</h6>
-                    <div class="form-group">
-                        <label for="especificaciones_tecnicas">Especificaciones</label>
-                        <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="4" placeholder="Especificaciones técnicas del producto"></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Producto</button>
-                </div>
-            </form>
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Código del Producto *</label>
+            {{ form.codigo_producto }}
+            {% if form.codigo_producto.errors %}
+                <small class="text-danger">{{ form.codigo_producto.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            {{ form.nombre }}
+            {% if form.nombre.errors %}
+                <small class="text-danger">{{ form.nombre.errors.0 }}</small>
+            {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Alert container -->
-<div id="alert-container" class="position-fixed" style="top: 20px; right: 20px; z-index: 9999;"></div>
+<div class="form-group">
+    <label class="form-label">Descripción</label>
+    {{ form.descripcion }}
+    {% if form.descripcion.errors %}
+        <small class="text-danger">{{ form.descripcion.errors.0 }}</small>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            {{ form.categoria }}
+            {% if form.categoria.errors %}
+                <small class="text-danger">{{ form.categoria.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Marca *</label>
+            {{ form.marca }}
+            {% if form.marca.errors %}
+                <small class="text-danger">{{ form.marca.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Modelo</label>
+            {{ form.modelo }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Proveedor Principal *</label>
+            {{ form.proveedor_principal }}
+            {% if form.proveedor_principal.errors %}
+                <small class="text-danger">{{ form.proveedor_principal.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Precio de Compra *</label>
+            {{ form.precio_compra }}
+            {% if form.precio_compra.errors %}
+                <small class="text-danger">{{ form.precio_compra.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Precio de Venta *</label>
+            {{ form.precio_venta }}
+            {% if form.precio_venta.errors %}
+                <small class="text-danger">{{ form.precio_venta.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="form-label">Stock Actual *</label>
+            {{ form.stock_actual }}
+            {% if form.stock_actual.errors %}
+                <small class="text-danger">{{ form.stock_actual.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="form-label">Stock Mínimo *</label>
+            {{ form.stock_minimo }}
+            {% if form.stock_minimo.errors %}
+                <small class="text-danger">{{ form.stock_minimo.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="form-label">Stock Máximo *</label>
+            {{ form.stock_maximo }}
+            {% if form.stock_maximo.errors %}
+                <small class="text-danger">{{ form.stock_maximo.errors.0 }}</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Ubicación en Almacén</label>
+            {{ form.ubicacion_almacen }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label">Garantía (meses)</label>
+            {{ form.garantia_meses }}
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Imagen del Producto</label>
+    {{ form.imagen }}
+</div>
+
+<div class="form-group">
+    <div class="form-check">
+        {{ form.es_servicio }}
+        <label class="form-check-label" for="{{ form.es_servicio.id_for_label }}">
+            ¿Es un servicio? (no es un producto físico)
+        </label>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script>
-function searchProducts() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-    const rows = document.querySelectorAll('#products-table tr');
+// Calcular margen de ganancia automáticamente
+const precioCompra = document.querySelector('[name="precio_compra"]');
+const precioVenta = document.querySelector('[name="precio_venta"]');
 
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(searchTerm) || searchTerm === '') {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
+if (precioCompra && precioVenta) {
+    function calcularMargen() {
+        const compra = parseFloat(precioCompra.value) || 0;
+        const venta = parseFloat(precioVenta.value) || 0;
+
+        if (compra > 0 && venta > 0) {
+            const margen = ((venta - compra) / compra * 100).toFixed(2);
+            const mensaje = margen >= 0 ? `Margen: ${margen}%` : `⚠️ Pérdida: ${Math.abs(margen)}%`;
+
+            // Mostrar mensaje temporal
+            if (!document.getElementById('margenInfo')) {
+                const info = document.createElement('small');
+                info.id = 'margenInfo';
+                info.style.color = margen >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
+                precioVenta.parentNode.appendChild(info);
+            }
+            document.getElementById('margenInfo').textContent = mensaje;
         }
-    });
-}
-
-function viewProduct(id) {
-    window.location.href = `/administrador/productos/${id}/`;
-}
-
-function editProduct(id) {
-    showAlert('Funcionalidad de edición en desarrollo');
-}
-
-function deleteProduct(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-        showAlert('Producto eliminado correctamente');
     }
+
+    precioCompra.addEventListener('input', calcularMargen);
+    precioVenta.addEventListener('input', calcularMargen);
 }
 
-function openModal() {
-    document.getElementById('productModal').style.display = 'block';
-    document.getElementById('modal-title').textContent = 'Registrar Producto';
-    document.getElementById('product-form').reset();
-    $('#productModal').modal('show');
-}
+// Validar que el precio de venta no sea menor al de compra
+precioVenta.addEventListener('blur', function() {
+    const compra = parseFloat(precioCompra.value) || 0;
+    const venta = parseFloat(precioVenta.value) || 0;
 
-function closeModal() {
-    $('#productModal').modal('hide');
-    document.getElementById('product-form').reset();
-}
-
-function showAlert(message, type = 'success') {
-    const container = document.getElementById('alert-container');
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} alert-dismissible fade show`;
-    alert.innerHTML = `
-        ${message}
-        <button type="button" class="close" onclick="this.parentElement.remove()">
-            <span>&times;</span>
-        </button>
-    `;
-    container.appendChild(alert);
-
-    setTimeout(() => {
-        if (alert.parentElement) {
-            alert.remove();
+    if (venta < compra && compra > 0) {
+        if (confirm('El precio de venta es menor al de compra. ¿Deseas continuar?')) {
+            // Continuar
+        } else {
+            precioVenta.value = (compra * 1.3).toFixed(2); // Sugerir 30% de margen
+            calcularMargen();
         }
-    }, 5000);
-}
+    }
+});
 
-// Mostrar mensajes de Django
-{% if messages %}
-    window.addEventListener('load', function() {
-        {% for message in messages %}
-            showAlert('{{ message }}', '{{ message.tags }}');
-        {% endfor %}
+// Alertar cuando el stock esté bajo
+const stockActual = document.querySelector('[name="stock_actual"]');
+const stockMinimo = document.querySelector('[name="stock_minimo"]');
+
+if (stockActual && stockMinimo) {
+    stockActual.addEventListener('blur', function() {
+        const actual = parseInt(this.value) || 0;
+        const minimo = parseInt(stockMinimo.value) || 0;
+
+        if (actual <= minimo && minimo > 0) {
+            showNotification('⚠️ Stock bajo o igual al mínimo', 'warning');
+        }
     });
-{% endif %}
+}
 </script>
 {% endblock %}
+
