@@ -54,7 +54,7 @@
                 <button class="btn btn-warning btn-sm" onclick="viewHistory({{ producto.id }}, '{{ producto.nombre }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ producto.id }}, '{{ producto.nombre }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ producto.id }}, '{{ producto.nombre }}', '{{ producto.codigo_producto }}', '{{ producto.precio_venta }}', {{ producto.stock_actual }})" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -286,4 +286,3 @@ if (stockActual && stockMinimo) {
 }
 </script>
 {% endblock %}
-

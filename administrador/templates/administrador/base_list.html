@@ -508,21 +508,8 @@ function editRecord(id) {
 }
 
 function deleteRecord(id, nombre) {
-    if (confirm(`¿Estás seguro de que deseas eliminar "${nombre}"?`)) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = window.location.pathname + id + '/delete/';
-
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = 'csrfmiddlewaretoken';
-        csrfInput.value = csrfToken;
-
-        form.appendChild(csrfInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    // Usar el modal de confirmación personalizado
+    confirmDelete(id, nombre);
 }
 
 function viewDetails(id) {
@@ -568,3 +555,170 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
 {% block extra_content %}
 <!-- Los templates hijos pueden agregar contenido adicional aquí -->
 {% endblock %}
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal" id="deleteConfirmModal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="background: #fee; border-bottom: 2px solid #ef4444;">
+            <h3 style="color: #ef4444; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                ¿Eliminar Registro?
+            </h3>
+            <button class="close-modal" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #856404; font-weight: 600;">
+                    <i class="fas fa-info-circle"></i>
+                    Esta acción desactivará el registro. Podrás reactivarlo después si lo necesitas.
+                </p>
+            </div>
+
+            <div id="deleteInfo" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <!-- La información se llenará dinámicamente con JavaScript -->
+            </div>
+
+            <p style="color: #718096; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                ¿Estás seguro de que deseas continuar?
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #deleteConfirmModal .modal-content {
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row strong {
+        color: #2d3748;
+    }
+
+    .info-row span {
+        color: #4a5568;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+// Función para mostrar el modal de confirmación de eliminación con información del producto
+function confirmDelete(id, nombre, codigo = '', precio = '', stock = '') {
+    const modal = document.getElementById('deleteConfirmModal');
+    const deleteInfo = document.getElementById('deleteInfo');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    // Construir la información del registro
+    let infoHTML = `
+        <div class="info-row">
+            <strong><i class="fas fa-tag"></i> Nombre:</strong>
+            <span>${nombre}</span>
+        </div>
+    `;
+
+    if (codigo) {
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-barcode"></i> Código:</strong>
+                <span>${codigo}</span>
+            </div>
+        `;
+    }
+
+    if (precio) {
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-dollar-sign"></i> Precio:</strong>
+                <span>$${parseFloat(precio).toLocaleString('es-CO', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    }
+
+    if (stock !== '' && stock !== undefined) {
+        const stockBadge = stock <= 10
+            ? `<span style="color: #ef4444;">${stock} unidades</span>`
+            : `<span style="color: #48bb78;">${stock} unidades</span>`;
+
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-boxes"></i> Stock:</strong>
+                ${stockBadge}
+            </div>
+        `;
+    }
+
+    deleteInfo.innerHTML = infoHTML;
+
+    // Configurar el botón de confirmación
+    confirmBtn.onclick = function() {
+        executeDelete(id, nombre);
+    };
+
+    // Mostrar el modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Función para cerrar el modal de eliminación
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// Función para ejecutar la eliminación
+function executeDelete(id, nombre) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = window.location.pathname + id + '/delete/';
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = csrfToken;
+
+    form.appendChild(csrfInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('deleteConfirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>
