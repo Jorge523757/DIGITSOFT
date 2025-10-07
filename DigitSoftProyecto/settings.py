@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'DigitSoft',  # Tu aplicación principal
     'administrador',  # Módulo consolidado con todos los modelos
+    'autenticacion',  # Sistema de autenticación y gestión de usuarios
     # MÓDULOS INDIVIDUALES DESACTIVADOS - AHORA TODO ESTÁ EN 'administrador'
     # 'cliente',
     # 'tecnico',
@@ -141,3 +142,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ...
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración del correo electrónico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tucorreo@gmail.com'  # Reemplaza con tu dirección de correo
+EMAIL_HOST_PASSWORD = 'tucontraseña'  # Reemplaza con tu contraseña de correo
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

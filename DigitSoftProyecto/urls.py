@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('DigitSoft.urls')),
     path('administrador/', include('administrador.urls')),
+    path('autenticacion/', include('autenticacion.urls')),
 ]
 
 # Servir archivos de media en desarrollo

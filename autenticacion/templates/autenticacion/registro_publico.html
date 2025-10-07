@@ -1,0 +1,283 @@
+{% extends 'autenticacion/base_auth.html' %}
+
+{% block title %}Crear Cuenta - DigitSoft{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <div class="logo">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <h1>
+            Crear Cuenta
+        </h1>
+        <p>Regístrate para acceder a todos nuestros servicios</p>
+    </div>
+
+    <div class="auth-body">
+        <!-- Mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                    <i class="fas fa-info-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Formulario de Registro -->
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <!-- Información Personal -->
+            <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 1rem; color: #2d3748; font-size: 1.1rem;">
+                    <i class="fas fa-user"></i> Información Personal
+                </h3>
+
+                <!-- Nombres -->
+                <div class="form-group">
+                    <label for="id_first_name" class="form-label">
+                        <i class="fas fa-id-card"></i> Nombres
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.first_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Apellidos -->
+                <div class="form-group">
+                    <label for="id_last_name" class="form-label">
+                        <i class="fas fa-id-card"></i> Apellidos
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.last_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Documento -->
+                <div class="form-group">
+                    <label for="id_documento" class="form-label">
+                        <i class="fas fa-address-card"></i> Documento de Identidad
+                    </label>
+                    {{ form.documento }}
+                    {% if form.documento.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.documento.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label for="id_telefono" class="form-label">
+                        <i class="fas fa-phone"></i> Teléfono
+                    </label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.telefono.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información de Cuenta -->
+            <div style="background: #f0f4ff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 1rem; color: #2d3748; font-size: 1.1rem;">
+                    <i class="fas fa-key"></i> Información de Cuenta
+                </h3>
+
+                <!-- Usuario -->
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user"></i> Nombre de Usuario
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.username.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <small style="color: #718096; font-size: 0.875rem;">
+                        Este será tu nombre de usuario para iniciar sesión
+                    </small>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="id_email" class="form-label">
+                        <i class="fas fa-envelope"></i> Correo Electrónico
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label for="id_password1" class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <div class="password-wrapper">
+                        {{ form.password1 }}
+                        <button type="button" class="password-toggle" id="togglePassword1" onclick="togglePassword('togglePassword1', 'id_password1')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password1.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.password1.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <small style="color: #718096; font-size: 0.875rem;">
+                        Mínimo 8 caracteres
+                    </small>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div class="form-group">
+                    <label for="id_password2" class="form-label">
+                        <i class="fas fa-lock"></i> Confirmar Contraseña
+                    </label>
+                    <div class="password-wrapper">
+                        {{ form.password2 }}
+                        <button type="button" class="password-toggle" id="togglePassword2" onclick="togglePassword('togglePassword2', 'id_password2')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.password2.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Términos y Condiciones -->
+            <div class="form-check" style="margin-bottom: 1.5rem;">
+                {{ form.acepto_terminos }}
+                <label for="acepto_terminos" class="form-check-label">
+                    Acepto los <a href="#" style="color: #667eea;">términos y condiciones</a> y la
+                    <a href="#" style="color: #667eea;">política de privacidad</a>
+                </label>
+                {% if form.acepto_terminos.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.acepto_terminos.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Errores generales del formulario -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Botón de envío -->
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i>
+                Crear Cuenta
+            </button>
+        </form>
+
+        <!-- Footer con enlaces -->
+        <div class="auth-footer">
+            <div style="text-align: center; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                <p style="color: #718096; margin-bottom: 0.5rem;">¿Ya tienes una cuenta?</p>
+                <a href="{% url 'autenticacion:login' %}" style="color: #667eea; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validación en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Validar campos requeridos
+            const requiredFields = ['id_first_name', 'id_last_name', 'id_documento', 'id_telefono', 'id_username', 'id_email', 'id_password1', 'id_password2'];
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && !field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--danger-color)';
+                } else if (field) {
+                    field.style.borderColor = 'var(--border-color)';
+                }
+            });
+
+            // Validar que las contraseñas coincidan
+            const password1 = document.getElementById('id_password1');
+            const password2 = document.getElementById('id_password2');
+
+            if (password1.value !== password2.value) {
+                isValid = false;
+                password2.style.borderColor = 'var(--danger-color)';
+                alert('Las contraseñas no coinciden');
+            }
+
+            // Validar términos
+            const terminos = document.getElementById('acepto_terminos');
+            if (!terminos.checked) {
+                isValid = false;
+                alert('Debes aceptar los términos y condiciones');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+
+        // Focus automático en el primer campo
+        document.getElementById('id_first_name').focus();
+    });
+</script>
+{% endblock %}
+

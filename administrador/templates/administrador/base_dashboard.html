@@ -37,6 +37,18 @@
                 <li class="sidebar-category">
                     <span class="category-title">Módulos Administrador</span>
                     <ul class="category-list">
+                        <!-- Gestión de Usuarios (Solo para Administradores) -->
+                        {% if user.perfil.puede_crear_usuarios %}
+                        <li>
+                            <a href="{% url 'autenticacion:lista_usuarios' %}" class="nav-item {% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">
+                                <i class="icon">👤</i>
+                                <span>Gestión de Usuarios</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Opciones solo para Administradores -->
+                        {% if user.perfil.tipo_usuario in 'SUPER_ADMIN,ADMINISTRADOR' %}
                         <li>
                             <a href="{% url 'administrador:producto_list' %}" class="nav-item {% if request.resolver_match.url_name == 'producto_list' %}active{% endif %}">
                                 <i class="icon">📦</i>
@@ -50,9 +62,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'administrador:carrito_list' %}" class="nav-item {% if request.resolver_match.url_name == 'carrito_list' %}active{% endif %}">
+                            <a href="{% url 'administrador:venta_list' %}" class="nav-item {% if request.resolver_match.url_name == 'venta_list' %}active{% endif %}">
                                 <i class="icon">🛒</i>
-                                <span>Carrito</span>
+                                <span>Ventas</span>
                             </a>
                         </li>
                         <li>
@@ -86,21 +98,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'administrador:orden_servicio_list' %}" class="nav-item {% if request.resolver_match.url_name == 'orden_servicio_list' %}active{% endif %}">
-                                <i class="icon">📋</i>
-                                <span>Órdenes de Servicio</span>
-                            </a>
-                        </li>
-                        <li>
                             <a href="{% url 'administrador:proveedor_list' %}" class="nav-item {% if request.resolver_match.url_name == 'proveedor_list' %}active{% endif %}">
                                 <i class="icon">🏢</i>
                                 <span>Proveedores</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'administrador:servicio_tecnico_list' %}" class="nav-item {% if request.resolver_match.url_name == 'servicio_tecnico_list' %}active{% endif %}">
-                                <i class="icon">🔧</i>
-                                <span>Servicios Técnicos</span>
                             </a>
                         </li>
                         <li>
@@ -110,17 +110,54 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'administrador:venta_list' %}" class="nav-item {% if request.resolver_match.url_name == 'venta_list' %}active{% endif %}">
-                                <i class="icon">🛒</i>
-                                <span>Ventas</span>
-                            </a>
-                        </li>
-                        <li>
                             <a href="{% url 'administrador:tienda_list' %}" class="nav-item {% if request.resolver_match.url_name == 'tienda_list' %}active{% endif %}">
                                 <i class="icon">🏪</i>
                                 <span>Tienda Online</span>
                             </a>
                         </li>
+                        {% endif %}
+
+                        <!-- Opciones para Administradores y Técnicos -->
+                        {% if user.perfil.tipo_usuario in 'SUPER_ADMIN,ADMINISTRADOR,TECNICO' %}
+                        <li>
+                            <a href="{% url 'administrador:orden_servicio_list' %}" class="nav-item {% if request.resolver_match.url_name == 'orden_servicio_list' %}active{% endif %}">
+                                <i class="icon">📋</i>
+                                <span>Órdenes de Servicio</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:servicio_tecnico_list' %}" class="nav-item {% if request.resolver_match.url_name == 'servicio_tecnico_list' %}active{% endif %}">
+                                <i class="icon">🔧</i>
+                                <span>Servicios Técnicos</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Opciones para Proveedores -->
+                        {% if user.perfil.tipo_usuario == 'PROVEEDOR' %}
+                        <li>
+                            <a href="{% url 'administrador:compra_list' %}" class="nav-item">
+                                <i class="icon">📦</i>
+                                <span>Mis Órdenes de Compra</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:producto_list' %}" class="nav-item">
+                                <i class="icon">📦</i>
+                                <span>Productos</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Carrito (Común para varios roles) -->
+                        {% if user.perfil.tipo_usuario in 'SUPER_ADMIN,ADMINISTRADOR' %}
+                        <li>
+                            <a href="{% url 'administrador:carrito_list' %}" class="nav-item {% if request.resolver_match.url_name == 'carrito_list' %}active{% endif %}">
+                                <i class="icon">🛒</i>
+                                <span>Carritos</span>
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </li>
             </ul>
@@ -131,7 +168,7 @@
                 <i class="icon">🌐</i>
                 <span>Ir al Sitio Web</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'autenticacion:logout' %}" class="nav-item">
                 <i class="icon">🚪</i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -160,9 +197,15 @@
                         <span>{{ request.user.username|default:"Admin" }}</span>
                     </button>
                     <div class="user-dropdown" id="userDropdown">
-                        <a href="#">Mi Perfil</a>
-                        <a href="#">Configuración</a>
-                        <a href="#">Cerrar Sesión</a>
+                        <a href="{% url 'autenticacion:perfil_usuario' %}">
+                            <i class="fas fa-user"></i> Mi Perfil
+                        </a>
+                        <a href="{% url 'autenticacion:perfil_usuario' %}">
+                            <i class="fas fa-cog"></i> Configuración
+                        </a>
+                        <a href="{% url 'autenticacion:logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
                     </div>
                 </div>
             </div>
