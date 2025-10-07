@@ -22,6 +22,7 @@ urlpatterns = [
     # Otras páginas
     path('portafolio/', views.portafolio, name='portafolio'),
     path('servicios/', views.servicios, name='servicios'),
+    path('diseno-web/', views.diseno_web, name='diseno_web'),
     path('nosotros/', views.nosotros, name='nosotros'),
     path('contacto/', views.contacto, name='contacto'),
 ]

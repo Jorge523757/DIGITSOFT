@@ -152,3 +152,7 @@ EMAIL_HOST_USER = 'tucorreo@gmail.com'  # Reemplaza con tu dirección de correo
 EMAIL_HOST_PASSWORD = 'tucontraseña'  # Reemplaza con tu contraseña de correo
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Configuración de autenticación
+LOGIN_URL = '/autenticacion/login/'
+LOGIN_REDIRECT_URL = '/administrador/dashboard/'
+LOGOUT_REDIRECT_URL = '/autenticacion/login/'

@@ -241,6 +241,13 @@ def servicios(request):
     }
     return render(request, 'DigitSoft/servicios.html', context)
 
+def diseno_web(request):
+    """Vista para la página de paquetes de diseño web"""
+    context = {
+        'page_title': 'Diseño Web - Digit Soft',
+    }
+    return render(request, 'DigitSoft/diseno_web.html', context)
+
 def nosotros(request):
     """Vista para la página nosotros"""
     context = {

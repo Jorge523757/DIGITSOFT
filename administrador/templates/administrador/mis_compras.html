@@ -1,0 +1,374 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Mis Compras | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="mis-compras-container">
+    <div class="page-header">
+        <h1><i class="fas fa-shopping-bag"></i> Mis Compras</h1>
+        <p class="page-description">Historial de todas tus compras realizadas</p>
+    </div>
+
+    {% if ventas %}
+    <div class="compras-lista">
+        {% for venta in ventas %}
+        <div class="compra-card">
+            <div class="compra-header">
+                <div class="compra-info-principal">
+                    <h3>{{ venta.numero_venta }}</h3>
+                    <p class="fecha">{{ venta.fecha_venta|date:"d/m/Y H:i" }}</p>
+                </div>
+
+                <div class="compra-estado">
+                    {% if venta.estado == 'PAGADA' %}
+                        <span class="badge badge-success">{{ venta.get_estado_display }}</span>
+                    {% elif venta.estado == 'PENDIENTE' %}
+                        <span class="badge badge-warning">{{ venta.get_estado_display }}</span>
+                    {% elif venta.estado == 'ANULADA' %}
+                        <span class="badge badge-danger">{{ venta.get_estado_display }}</span>
+                    {% else %}
+                        <span class="badge badge-info">{{ venta.get_estado_display }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="compra-detalles">
+                <div class="detalle-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span><strong>Método de Pago:</strong> {{ venta.get_metodo_pago_display }}</span>
+                </div>
+
+                <div class="detalle-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span><strong>Subtotal:</strong> ${{ venta.subtotal|floatformat:2 }}</span>
+                </div>
+
+                <div class="detalle-item">
+                    <i class="fas fa-percentage"></i>
+                    <span><strong>IVA:</strong> ${{ venta.impuestos|floatformat:2 }}</span>
+                </div>
+
+                <div class="detalle-item total">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span><strong>TOTAL:</strong> ${{ venta.total|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <div class="compra-acciones">
+                <button class="btn-detalle" onclick="verDetalle({{ venta.id }})">
+                    <i class="fas fa-eye"></i> Ver Detalles
+                </button>
+
+                <button class="btn-factura" onclick="descargarFactura({{ venta.id }})">
+                    <i class="fas fa-file-invoice"></i> Factura
+                </button>
+
+                <button class="btn-garantias" onclick="verGarantias({{ venta.id }})">
+                    <i class="fas fa-shield-alt"></i> Garantías
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="estadisticas">
+        <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="stat-info">
+                <span class="stat-label">Total Compras</span>
+                <span class="stat-valor">{{ ventas.count }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fas fa-dollar-sign"></i>
+            <div class="stat-info">
+                <span class="stat-label">Total Gastado</span>
+                <span class="stat-valor">${{ ventas|sum_field:'total'|floatformat:2 }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="sin-compras">
+        <i class="fas fa-shopping-bag"></i>
+        <h2>No tienes compras registradas</h2>
+        <p>¡Explora nuestra tienda y realiza tu primera compra!</p>
+        <a href="{% url 'administrador:tienda_publica' %}" class="btn-ir-tienda">
+            <i class="fas fa-store"></i> Ir a la Tienda
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.mis-compras-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.page-description {
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+.compras-lista {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.compra-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+
+.compra-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.compra-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 1rem;
+}
+
+.compra-info-principal h3 {
+    font-size: 1.3rem;
+    color: #2d3748;
+    margin: 0 0 0.5rem 0;
+}
+
+.fecha {
+    color: #718096;
+    margin: 0;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.badge-success {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-warning {
+    background: #feebc8;
+    color: #744210;
+}
+
+.badge-danger {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.badge-info {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.compra-detalles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.detalle-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #4a5568;
+}
+
+.detalle-item i {
+    color: #4299e1;
+    width: 20px;
+}
+
+.detalle-item.total {
+    grid-column: 1 / -1;
+    font-size: 1.1rem;
+    color: #2d3748;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.compra-acciones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.compra-acciones button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-detalle {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-detalle:hover {
+    background: #3182ce;
+}
+
+.btn-factura {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-factura:hover {
+    background: #38a169;
+}
+
+.btn-garantias {
+    background: #ed8936;
+    color: white;
+}
+
+.btn-garantias:hover {
+    background: #dd6b20;
+}
+
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-card i {
+    font-size: 3rem;
+    color: #4299e1;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-valor {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.sin-compras {
+    background: white;
+    border-radius: 12px;
+    padding: 4rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sin-compras i {
+    font-size: 5rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+}
+
+.sin-compras h2 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.sin-compras p {
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-ir-tienda {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #4299e1;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.btn-ir-tienda:hover {
+    background: #3182ce;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .compra-detalles,
+    .compra-acciones,
+    .estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-item.total {
+        grid-column: 1;
+    }
+}
+</style>
+
+<script>
+function verDetalle(ventaId) {
+    window.location.href = `/administrador/ventas/${ventaId}/`;
+}
+
+function descargarFactura(ventaId) {
+    alert('Descargando factura...');
+    // window.location.href = `/administrador/ventas/${ventaId}/factura/`;
+}
+
+function verGarantias(ventaId) {
+    window.location.href = `{% url 'administrador:mis_garantias' %}?venta=${ventaId}`;
+}
+</script>
+{% endblock %}
+

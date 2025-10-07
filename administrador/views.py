@@ -363,8 +363,10 @@ def venta_detail(request, venta_id):
 def compra_list(request):
     """Vista para listar compras"""
     compras = Compra.objects.select_related('proveedor').all()
+    proveedores = Proveedor.objects.filter(activo=True).order_by('razon_social')
     context = {
         'compras': compras,
+        'proveedores': proveedores,
         'titulo': 'Gestión de Compras'
     }
     return render(request, 'administrador/compra_list.html', context)
@@ -419,7 +421,31 @@ def carritos_abandonados(request):
 # ========== GARANTÍAS ========== #
 def garantia_list(request):
     """Vista para listar garantías"""
-    garantias = Garantia.objects.select_related('producto', 'cliente').all()
+    # Obtener todas las garantías
+    garantias = Garantia.objects.select_related('producto', 'equipo', 'cliente', 'venta').all()
+
+    # Filtrar por estado si se proporciona
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        garantias = garantias.filter(estado=estado_filtro)
+
+    # Filtrar por cliente
+    cliente_id = request.GET.get('cliente')
+    if cliente_id:
+        garantias = garantias.filter(cliente_id=cliente_id)
+
+    # Filtrar por vigencia
+    vigencia = request.GET.get('vigencia')
+    if vigencia == 'vigentes':
+        from datetime import date
+        garantias = garantias.filter(estado='VIGENTE', fecha_vencimiento__gte=date.today())
+    elif vigencia == 'vencidas':
+        from datetime import date
+        garantias = garantias.filter(fecha_vencimiento__lt=date.today())
+
+    # Ordenar por fecha de vencimiento
+    garantias = garantias.order_by('-fecha_inicio')
+
     context = {
         'garantias': garantias,
         'titulo': 'Gestión de Garantías'
@@ -507,3 +533,527 @@ def tienda_producto_toggle(request, producto_id):
         estado = "activado" if producto.activo else "desactivado"
         messages.success(request, f'Producto "{producto.nombre}" {estado} en la tienda.')
     return redirect('administrador:tienda_list')
+
+
+# ========== MÓDULO DE REPORTES ========== #
+from .reportes import (
+    generar_reporte_ventas_csv,
+    generar_reporte_inventario_csv,
+    generar_reporte_clientes_csv,
+    generar_reporte_servicios_csv,
+    generar_reporte_compras_csv,
+    obtener_estadisticas_ventas
+)
+
+def reportes_dashboard(request):
+    """Dashboard principal de reportes"""
+    from datetime import datetime, timedelta
+
+    # Fecha por defecto: último mes
+    fecha_fin = timezone.now()
+    fecha_inicio = fecha_fin - timedelta(days=30)
+
+    # Estadísticas generales
+    stats_ventas = obtener_estadisticas_ventas(fecha_inicio, fecha_fin)
+
+    stats = {
+        'total_ventas': stats_ventas.get('total_ventas', 0),
+        'total_ingresos': stats_ventas.get('total_ingresos', 0) or 0,
+        'promedio_venta': stats_ventas.get('promedio_venta', 0) or 0,
+        'total_clientes': Cliente.objects.filter(activo=True).count(),
+        'total_productos': Producto.objects.filter(activo=True).count(),
+        'ordenes_completadas': OrdenServicio.objects.filter(estado='COMPLETADA').count(),
+        'productos_stock_bajo': Producto.objects.filter(
+            stock_actual__lte=models.F('stock_minimo')
+        ).count(),
+    }
+
+    context = {
+        'stats': stats,
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+        'titulo': 'Centro de Reportes'
+    }
+    return render(request, 'administrador/reportes_dashboard.html', context)
+
+def reporte_ventas(request):
+    """Vista para generar reporte de ventas"""
+    return generar_reporte_ventas_csv(request)
+
+def reporte_inventario(request):
+    """Vista para generar reporte de inventario"""
+    return generar_reporte_inventario_csv(request)
+
+def reporte_clientes(request):
+    """Vista para generar reporte de clientes"""
+    return generar_reporte_clientes_csv(request)
+
+def reporte_servicios(request):
+    """Vista para generar reporte de servicios"""
+    return generar_reporte_servicios_csv(request)
+
+def reporte_compras(request):
+    """Vista para generar reporte de compras"""
+    return generar_reporte_compras_csv(request)
+
+
+# ========== MÓDULO DE AYUDA ========== #
+def ayuda_centro(request):
+    """Centro de ayuda y soporte"""
+    context = {
+        'titulo': 'Centro de Ayuda'
+    }
+    return render(request, 'administrador/ayuda_centro.html', context)
+
+def ayuda_faq(request):
+    """Preguntas frecuentes"""
+    faqs = [
+        {
+            'categoria': 'Productos',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo registro un nuevo producto?',
+                    'respuesta': 'Ve a Gestión de Productos, haz clic en "Nuevo Registro", completa el formulario con los datos del producto y presiona "Guardar".'
+                },
+                {
+                    'pregunta': '¿Cómo actualizo el stock de un producto?',
+                    'respuesta': 'En la lista de productos, haz clic en el ícono de editar, modifica el campo "Stock Actual" y guarda los cambios.'
+                },
+                {
+                    'pregunta': '¿Qué significa el estado "Stock Bajo"?',
+                    'respuesta': 'Un producto tiene stock bajo cuando la cantidad actual es menor o igual al stock mínimo configurado.'
+                }
+            ]
+        },
+        {
+            'categoria': 'Clientes',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo registro un nuevo cliente?',
+                    'respuesta': 'Accede a Gestión de Clientes, haz clic en "Nuevo Registro", completa el formulario y guarda.'
+                },
+                {
+                    'pregunta': '¿Cuál es la diferencia entre Persona Natural y Jurídica?',
+                    'respuesta': 'Persona Natural es un cliente individual. Persona Jurídica es una empresa u organización.'
+                }
+            ]
+        },
+        {
+            'categoria': 'Ventas y Facturación',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo genero una venta?',
+                    'respuesta': 'Ve a Gestión de Ventas, selecciona el cliente, agrega los productos, verifica el total y confirma la venta.'
+                },
+                {
+                    'pregunta': '¿Puedo cancelar una venta?',
+                    'respuesta': 'Sí, desde el detalle de la venta puedes cambiar el estado a "Anulada" si tienes los permisos necesarios.'
+                }
+            ]
+        },
+        {
+            'categoria': 'Servicios Técnicos',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo registro una orden de servicio?',
+                    'respuesta': 'En Órdenes de Servicio, crea una nueva orden, selecciona el cliente, equipo, describe el problema y asigna un técnico.'
+                },
+                {
+                    'pregunta': '¿Cómo cambio el estado de una orden?',
+                    'respuesta': 'Edita la orden y actualiza el campo "Estado" según el avance del servicio.'
+                }
+            ]
+        },
+        {
+            'categoria': 'Reportes',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo genero un reporte de ventas?',
+                    'respuesta': 'Ve al Centro de Reportes y haz clic en "Reporte de Ventas". Se descargará un archivo Excel con toda la información.'
+                },
+                {
+                    'pregunta': '¿Qué formato tienen los reportes?',
+                    'respuesta': 'Los reportes se generan en formato CSV/Excel, compatible con Microsoft Excel, Google Sheets y LibreOffice.'
+                }
+            ]
+        },
+        {
+            'categoria': 'Sistema',
+            'preguntas': [
+                {
+                    'pregunta': '¿Cómo cambio mi contraseña?',
+                    'respuesta': 'Ve a tu perfil de usuario, haz clic en "Cambiar Contraseña" e ingresa tu contraseña actual y la nueva.'
+                },
+                {
+                    'pregunta': '¿Qué hago si olvidé mi contraseña?',
+                    'respuesta': 'En la pantalla de login, haz clic en "¿Olvidaste tu contraseña?" e ingresa tu correo para recibir instrucciones.'
+                }
+            ]
+        }
+    ]
+
+    context = {
+        'faqs': faqs,
+        'titulo': 'Preguntas Frecuentes'
+    }
+    return render(request, 'administrador/ayuda_faq.html', context)
+
+
+# ========== MÓDULO DE BACKUP ========== #
+from django.core.management import call_command
+from django.http import FileResponse
+import os
+import json
+
+def backup_database(request):
+    """Genera un backup de la base de datos"""
+    if request.method == 'POST':
+        try:
+            from django.conf import settings
+            import sqlite3
+            import shutil
+            from datetime import datetime
+
+            # Nombre del archivo de backup
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            backup_filename = f'backup_digitsoft_{timestamp}.db'
+            backup_path = os.path.join(settings.BASE_DIR, 'backups', backup_filename)
+
+            # Crear directorio de backups si no existe
+            os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+
+            # Copiar la base de datos
+            db_path = settings.DATABASES['default']['NAME']
+            shutil.copy2(db_path, backup_path)
+
+            messages.success(request, f'Backup creado exitosamente: {backup_filename}')
+
+            # Retornar el archivo para descarga
+            return FileResponse(
+                open(backup_path, 'rb'),
+                as_attachment=True,
+                filename=backup_filename
+            )
+        except Exception as e:
+            messages.error(request, f'Error al crear el backup: {str(e)}')
+
+    context = {
+        'titulo': 'Backup de Base de Datos'
+    }
+    return render(request, 'administrador/backup_database.html', context)
+
+def backup_list(request):
+    """Lista todos los backups disponibles"""
+    from django.conf import settings
+    from datetime import datetime
+
+    backups_dir = os.path.join(settings.BASE_DIR, 'backups')
+    backups = []
+
+    if os.path.exists(backups_dir):
+        for filename in os.listdir(backups_dir):
+            if filename.endswith('.db'):
+                filepath = os.path.join(backups_dir, filename)
+                backups.append({
+                    'nombre': filename,
+                    'tamano': os.path.getsize(filepath),
+                    'fecha': datetime.fromtimestamp(os.path.getmtime(filepath))
+                })
+
+    backups.sort(key=lambda x: x['fecha'], reverse=True)
+
+    context = {
+        'backups': backups,
+        'titulo': 'Gestión de Backups'
+    }
+    return render(request, 'administrador/backup_list.html', context)
+
+
+# ========== E-COMMERCE - TIENDA ONLINE ========== #
+from .ecommerce import (
+    calcular_totales_carrito,
+    verificar_stock_disponible,
+    reducir_stock_producto,
+    generar_numero_venta,
+    generar_numero_factura,
+    generar_numero_garantia
+)
+from datetime import timedelta
+
+def tienda_publica(request):
+    """Tienda pública accesible para todos los usuarios"""
+    # Obtener parámetros de búsqueda y filtros
+    busqueda = request.GET.get('q', '')
+    categoria = request.GET.get('categoria', '')
+    marca_id = request.GET.get('marca', '')
+
+    # Filtrar productos activos y con stock
+    productos = Producto.objects.filter(activo=True).select_related('marca')
+
+    if busqueda:
+        productos = productos.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(descripcion__icontains=busqueda) |
+            Q(codigo_producto__icontains=busqueda)
+        )
+
+    if categoria:
+        productos = productos.filter(categoria=categoria)
+
+    if marca_id:
+        productos = productos.filter(marca_id=marca_id)
+
+    # Obtener categorías y marcas para filtros
+    categorias = Producto.CATEGORIA_CHOICES
+    marcas = Marca.objects.filter(activa=True)
+
+    context = {
+        'productos': productos,
+        'categorias': categorias,
+        'marcas': marcas,
+        'busqueda': busqueda,
+        'categoria_actual': categoria,
+        'titulo': 'Tienda Online - Digit Soft'
+    }
+    return render(request, 'administrador/tienda_publica.html', context)
+
+def producto_detalle_tienda(request, producto_id):
+    """Vista detallada de un producto en la tienda"""
+    producto = get_object_or_404(Producto, id=producto_id, activo=True)
+    productos_relacionados = Producto.objects.filter(
+        categoria=producto.categoria,
+        activo=True
+    ).exclude(id=producto_id)[:4]
+
+    context = {
+        'producto': producto,
+        'productos_relacionados': productos_relacionados,
+        'titulo': f'{producto.nombre} - Digit Soft'
+    }
+    return render(request, 'administrador/producto_detalle_tienda.html', context)
+
+def agregar_al_carrito(request, producto_id):
+    """Agregar producto al carrito"""
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id, activo=True)
+        cantidad = int(request.POST.get('cantidad', 1))
+
+        # Verificar stock
+        if not verificar_stock_disponible(producto, cantidad):
+            messages.error(request, f'No hay suficiente stock disponible. Stock actual: {producto.stock_actual}')
+            return redirect('administrador:producto_detalle_tienda', producto_id=producto_id)
+
+        # Obtener o crear carrito del usuario
+        if request.user.is_authenticated:
+            try:
+                cliente = Cliente.objects.get(user=request.user)
+            except Cliente.DoesNotExist:
+                messages.error(request, 'Debes tener un perfil de cliente para comprar.')
+                return redirect('administrador:tienda_publica')
+
+            carrito, created = Carrito.objects.get_or_create(
+                cliente=cliente,
+                estado='ACTIVO'
+            )
+        else:
+            messages.error(request, 'Debes iniciar sesión para agregar productos al carrito.')
+            return redirect('autenticacion:login')
+
+        # Agregar o actualizar item en el carrito
+        from administrador.models import ItemCarrito
+        item, created = ItemCarrito.objects.get_or_create(
+            carrito=carrito,
+            producto=producto,
+            defaults={'cantidad': cantidad, 'precio_unitario': producto.precio_venta}
+        )
+
+        if not created:
+            item.cantidad += cantidad
+            item.save()
+
+        carrito.actualizar_totales()
+        messages.success(request, f'{producto.nombre} agregado al carrito correctamente.')
+        return redirect('administrador:ver_carrito')
+
+    return redirect('administrador:tienda_publica')
+
+def ver_carrito(request):
+    """Ver el carrito de compras del usuario"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión para ver tu carrito.')
+        return redirect('autenticacion:login')
+
+    try:
+        cliente = Cliente.objects.get(user=request.user)
+        carrito = Carrito.objects.get(cliente=cliente, estado='ACTIVO')
+        items = carrito.items.all()
+        totales = calcular_totales_carrito(items)
+    except (Cliente.DoesNotExist, Carrito.DoesNotExist):
+        items = []
+        totales = {'subtotal': 0, 'iva': 0, 'total': 0, 'cantidad_items': 0}
+        carrito = None
+
+    context = {
+        'carrito': carrito,
+        'items': items,
+        'totales': totales,
+        'titulo': 'Mi Carrito'
+    }
+    return render(request, 'administrador/ver_carrito.html', context)
+
+def procesar_compra(request):
+    """Procesar la compra y generar venta, factura y garantía"""
+    if request.method != 'POST':
+        return redirect('administrador:ver_carrito')
+
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión para realizar la compra.')
+        return redirect('autenticacion:login')
+
+    try:
+        cliente = Cliente.objects.get(user=request.user)
+        carrito = Carrito.objects.get(cliente=cliente, estado='ACTIVO')
+        items = carrito.items.all()
+
+        if not items.exists():
+            messages.error(request, 'Tu carrito está vacío.')
+            return redirect('administrador:ver_carrito')
+
+        # Verificar stock de todos los productos
+        for item in items:
+            if not verificar_stock_disponible(item.producto, item.cantidad):
+                messages.error(request, f'No hay suficiente stock de {item.producto.nombre}')
+                return redirect('administrador:ver_carrito')
+
+        # Calcular totales
+        totales = calcular_totales_carrito(items)
+        metodo_pago = request.POST.get('metodo_pago', 'EFECTIVO')
+
+        # 1. CREAR VENTA
+        venta = Venta.objects.create(
+            numero_venta=generar_numero_venta(),
+            cliente=cliente,
+            vendedor=None,  # Venta online
+            subtotal=totales['subtotal'],
+            descuento=Decimal('0.00'),
+            impuestos=totales['iva'],
+            total=totales['total'],
+            metodo_pago=metodo_pago,
+            estado='PAGADA' if metodo_pago != 'CREDITO' else 'CREDITO'
+        )
+
+        # 2. CREAR DETALLES DE VENTA Y REDUCIR STOCK
+        for item in items:
+            # Crear detalle de venta (si tienes el modelo DetalleVenta)
+            # DetalleVenta.objects.create(...)
+
+            # Reducir stock
+            reducir_stock_producto(item.producto, item.cantidad)
+
+        # 3. CREAR FACTURA
+        factura = Factura.objects.create(
+            numero_factura=generar_numero_factura(),
+            cliente=cliente,
+            venta=venta,
+            tipo_factura='VENTA',
+            estado='EMITIDA',
+            subtotal=totales['subtotal'],
+            descuento=Decimal('0.00'),
+            impuestos=totales['iva'],
+            total=totales['total'],
+            fecha_vencimiento=(timezone.now() + timedelta(days=30)).date()
+        )
+
+        # 4. CREAR GARANTÍAS PARA CADA PRODUCTO
+        garantias_creadas = []
+        for item in items:
+            if item.producto.garantia_meses > 0:
+                garantia = Garantia.objects.create(
+                    numero_garantia=generar_numero_garantia(),
+                    producto=item.producto,
+                    cliente=cliente,
+                    venta=venta,
+                    tipo_garantia='FABRICANTE',
+                    fecha_inicio=timezone.now().date(),
+                    fecha_vencimiento=(timezone.now() + timedelta(days=item.producto.garantia_meses * 30)).date(),
+                    duracion_meses=item.producto.garantia_meses,
+                    estado='VIGENTE',
+                    condiciones=f'Garantía del fabricante para {item.producto.nombre}',
+                    cobertura='Defectos de fabricación',
+                    exclusiones='Daños por mal uso o accidentes'
+                )
+                garantias_creadas.append(garantia)
+
+        # 5. MARCAR CARRITO COMO CONVERTIDO
+        carrito.estado = 'CONVERTIDO'
+        carrito.venta_generada = venta
+        carrito.save()
+
+        messages.success(request, '¡Compra realizada exitosamente!')
+        return redirect('administrador:compra_exitosa', venta_id=venta.id)
+
+    except Exception as e:
+        messages.error(request, f'Error al procesar la compra: {str(e)}')
+        return redirect('administrador:ver_carrito')
+
+def compra_exitosa(request, venta_id):
+    """Página de confirmación de compra con factura y garantías"""
+    venta = get_object_or_404(Venta, id=venta_id)
+
+    # Verificar que la venta pertenece al usuario actual
+    if request.user.is_authenticated:
+        try:
+            cliente = Cliente.objects.get(user=request.user)
+            if venta.cliente != cliente:
+                messages.error(request, 'No tienes permiso para ver esta compra.')
+                return redirect('administrador:tienda_publica')
+        except Cliente.DoesNotExist:
+            messages.error(request, 'Perfil de cliente no encontrado.')
+            return redirect('administrador:tienda_publica')
+
+    factura = Factura.objects.filter(venta=venta).first()
+    garantias = Garantia.objects.filter(venta=venta)
+
+    context = {
+        'venta': venta,
+        'factura': factura,
+        'garantias': garantias,
+        'titulo': 'Compra Exitosa'
+    }
+    return render(request, 'administrador/compra_exitosa.html', context)
+
+def mis_compras(request):
+    """Lista de compras del usuario"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión.')
+        return redirect('autenticacion:login')
+
+    try:
+        cliente = Cliente.objects.get(user=request.user)
+        ventas = Venta.objects.filter(cliente=cliente).order_by('-fecha_venta')
+    except Cliente.DoesNotExist:
+        ventas = []
+
+    context = {
+        'ventas': ventas,
+        'titulo': 'Mis Compras'
+    }
+    return render(request, 'administrador/mis_compras.html', context)
+
+def mis_garantias(request):
+    """Lista de garantías del usuario"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión.')
+        return redirect('autenticacion:login')
+
+    try:
+        cliente = Cliente.objects.get(user=request.user)
+        garantias = Garantia.objects.filter(cliente=cliente).order_by('-fecha_inicio')
+    except Cliente.DoesNotExist:
+        garantias = []
+
+    context = {
+        'garantias': garantias,
+        'titulo': 'Mis Garantías'
+    }
+    return render(request, 'administrador/mis_garantias.html', context)

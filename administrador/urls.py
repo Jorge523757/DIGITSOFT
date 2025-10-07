@@ -73,4 +73,39 @@ urlpatterns = [
     # Tienda Online
     path('tienda/', views.tienda_list, name='tienda_list'),
     path('tienda/<int:producto_id>/toggle/', views.tienda_producto_toggle, name='tienda_producto_toggle'),
+
+    # ========== NUEVAS URLS - MÓDULOS ADICIONALES ========== #
+
+    # Reportes
+    path('reportes/', views.reportes_dashboard, name='reportes_dashboard'),
+    path('reportes/ventas/', views.reporte_ventas, name='reporte_ventas'),
+    path('reportes/inventario/', views.reporte_inventario, name='reporte_inventario'),
+    path('reportes/clientes/', views.reporte_clientes, name='reporte_clientes'),
+    path('reportes/servicios/', views.reporte_servicios, name='reporte_servicios'),
+    path('reportes/compras/', views.reporte_compras, name='reporte_compras'),
+
+    # Ayuda
+    path('ayuda/', views.ayuda_centro, name='ayuda_centro'),
+    path('ayuda/faq/', views.ayuda_faq, name='ayuda_faq'),
+
+    # Backup
+    path('backup/', views.backup_database, name='backup_database'),
+    path('backup/lista/', views.backup_list, name='backup_list'),
+
+    # ========== E-COMMERCE URLS ========== #
+    # Tienda Pública
+    path('tienda/', views.tienda_publica, name='tienda_publica'),
+    path('tienda/producto/<int:producto_id>/', views.producto_detalle_tienda, name='producto_detalle_tienda'),
+
+    # Carrito
+    path('carrito/', views.ver_carrito, name='ver_carrito'),
+    path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+
+    # Compra
+    path('compra/procesar/', views.procesar_compra, name='procesar_compra'),
+    path('compra/exitosa/<int:venta_id>/', views.compra_exitosa, name='compra_exitosa'),
+
+    # Mis compras y garantías
+    path('mis-compras/', views.mis_compras, name='mis_compras'),
+    path('mis-garantias/', views.mis_garantias, name='mis_garantias'),
 ]

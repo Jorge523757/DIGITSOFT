@@ -1,0 +1,938 @@
+
+    // Desactivar todos los tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Mostrar el contenido seleccionado
+    document.getElementById(tabName).classList.add('active');
+
+    // Activar el tab clickeado
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ producto.nombre }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="producto-detalle-container">
+    <div class="breadcrumb">
+        <a href="{% url 'administrador:tienda_publica' %}"><i class="fas fa-store"></i> Tienda</a>
+        <span>/</span>
+        <span>{{ producto.nombre }}</span>
+    </div>
+
+    <div class="producto-detalle">
+        <!-- Galería de Imágenes -->
+        <div class="producto-galeria">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="imagen-principal">
+            {% else %}
+                <img src="{% static 'images/no-image.png' %}" alt="Sin imagen" class="imagen-principal">
+            {% endif %}
+        </div>
+
+        <!-- Información del Producto -->
+        <div class="producto-informacion">
+            <span class="producto-categoria">{{ producto.get_categoria_display }}</span>
+            <h1>{{ producto.nombre }}</h1>
+
+            <div class="producto-codigo">
+                <strong>Código:</strong> {{ producto.codigo_producto }}
+            </div>
+
+            <div class="producto-marca">
+                <i class="fas fa-tag"></i>
+                <strong>Marca:</strong> {{ producto.marca.nombre }}
+                {% if producto.modelo %}
+                    | <strong>Modelo:</strong> {{ producto.modelo }}
+                {% endif %}
+            </div>
+
+            <div class="producto-precio-section">
+                <div class="precio-principal">${{ producto.precio_venta|floatformat:2 }}</div>
+                <div class="precio-iva">Con IVA: ${{ producto.precio_con_iva|floatformat:2 }}</div>
+            </div>
+
+            <div class="producto-stock-info">
+                {% if producto.stock_actual > 0 %}
+                    <div class="stock-disponible">
+                        <i class="fas fa-check-circle"></i>
+                        <span><strong>Disponible</strong> - {{ producto.stock_actual }} unidades en stock</span>
+                    </div>
+                {% else %}
+                    <div class="stock-agotado">
+                        <i class="fas fa-times-circle"></i>
+                        <span><strong>Agotado</strong> - No disponible en este momento</span>
+                    </div>
+                {% endif %}
+
+                {% if producto.garantia_meses > 0 %}
+                    <div class="garantia-info">
+                        <i class="fas fa-shield-alt"></i>
+                        <span><strong>Garantía:</strong> {{ producto.garantia_meses }} meses</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if producto.stock_actual > 0 %}
+            <form method="POST" action="{% url 'administrador:agregar_al_carrito' producto.id %}" class="form-agregar">
+                {% csrf_token %}
+                <div class="cantidad-selector">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" name="cantidad" id="cantidad" value="1" min="1" max="{{ producto.stock_actual }}" required>
+                </div>
+
+                <button type="submit" class="btn-agregar-carrito">
+                    <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+                </button>
+            </form>
+            {% endif %}
+
+            <div class="acciones-extra">
+                <a href="{% url 'administrador:tienda_publica' %}" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver a la Tienda
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Descripción y Especificaciones -->
+    <div class="producto-detalles-extra">
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('descripcion')">Descripción</button>
+                <button class="tab" onclick="showTab('especificaciones')">Especificaciones</button>
+            </div>
+
+            <div class="tab-content active" id="descripcion">
+                <h3>Descripción del Producto</h3>
+                <p>{{ producto.descripcion }}</p>
+            </div>
+
+            <div class="tab-content" id="especificaciones">
+                <h3>Especificaciones Técnicas</h3>
+                {% if producto.especificaciones %}
+                    <pre>{{ producto.especificaciones }}</pre>
+                {% else %}
+                    <p>No hay especificaciones técnicas disponibles.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos Relacionados -->
+    {% if productos_relacionados %}
+    <div class="productos-relacionados">
+        <h2>Productos Relacionados</h2>
+        <div class="productos-grid">
+            {% for prod in productos_relacionados %}
+            <div class="producto-card-mini">
+                <div class="producto-imagen-mini">
+                    {% if prod.imagen %}
+                        <img src="{{ prod.imagen.url }}" alt="{{ prod.nombre }}">
+                    {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="Sin imagen">
+                    {% endif %}
+                </div>
+                <div class="producto-info-mini">
+                    <h4>{{ prod.nombre }}</h4>
+                    <div class="precio">${{ prod.precio_venta|floatformat:2 }}</div>
+                    <a href="{% url 'administrador:producto_detalle_tienda' prod.id %}" class="btn-ver">Ver Producto</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.producto-detalle-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.breadcrumb {
+    margin-bottom: 2rem;
+    color: #718096;
+}
+
+.breadcrumb a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+.breadcrumb span {
+    margin: 0 0.5rem;
+}
+
+.producto-detalle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.producto-galeria {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagen-principal {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.producto-informacion h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin: 1rem 0;
+}
+
+.producto-categoria {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #edf2f7;
+    color: #4a5568;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.producto-codigo,
+.producto-marca {
+    color: #718096;
+    margin: 0.75rem 0;
+}
+
+.producto-precio-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f7fafc;
+    border-radius: 8px;
+}
+
+.precio-principal {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.precio-iva {
+    font-size: 1.1rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+.producto-stock-info {
+    margin: 1.5rem 0;
+}
+
+.stock-disponible,
+.stock-agotado,
+.garantia-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+.stock-disponible {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.stock-agotado {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.garantia-info {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.form-agregar {
+    margin: 2rem 0;
+}
+
+.cantidad-selector {
+    margin-bottom: 1rem;
+}
+
+.cantidad-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.cantidad-selector input {
+    width: 100px;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.btn-agregar-carrito {
+    width: 100%;
+    padding: 1rem;
+    background: #48bb78;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-agregar-carrito:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.acciones-extra {
+    margin-top: 1.5rem;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: #4299e1;
+    border: 2px solid #4299e1;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-volver:hover {
+    background: #4299e1;
+    color: white;
+}
+
+.producto-detalles-extra {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    padding: 1rem 2rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #718096;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    color: #4299e1;
+    border-bottom-color: #4299e1;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.tab-content pre {
+    white-space: pre-wrap;
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #4a5568;
+}
+
+.productos-relacionados {
+    margin-top: 3rem;
+}
+
+.productos-relacionados h2 {
+    font-size: 1.8rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.producto-card-mini {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+
+.producto-card-mini:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.producto-imagen-mini {
+    height: 180px;
+    overflow: hidden;
+    background: #f7fafc;
+}
+
+.producto-imagen-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.producto-info-mini {
+    padding: 1.5rem;
+}
+
+.producto-info-mini h4 {
+    font-size: 1rem;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    min-height: 2.5rem;
+}
+
+.producto-info-mini .precio {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.btn-ver {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    background: #4299e1;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-ver:hover {
+    background: #3182ce;
+}
+
+@media (max-width: 768px) {
+    .producto-detalle {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function showTab(tabName) {
+    // Ocultar todos los contenidos
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Tienda Online | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="tienda-container">
+    <div class="tienda-header">
+        <h1><i class="fas fa-store"></i> Tienda Digit Soft</h1>
+        <p class="tienda-descripcion">Encuentra los mejores productos tecnológicos</p>
+
+        <div class="header-actions">
+            <a href="{% url 'administrador:ver_carrito' %}" class="btn-carrito">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="carrito-badge">0</span>
+                Mi Carrito
+            </a>
+        </div>
+    </div>
+
+    <!-- Barra de Búsqueda y Filtros -->
+    <div class="filtros-container">
+        <form method="GET" class="filtros-form">
+            <div class="search-box">
+                <input type="text" name="q" placeholder="Buscar productos..." value="{{ busqueda }}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="filtros-row">
+                <select name="categoria" class="filtro-select">
+                    <option value="">Todas las Categorías</option>
+                    {% for cat_value, cat_label in categorias %}
+                        <option value="{{ cat_value }}" {% if categoria_actual == cat_value %}selected{% endif %}>
+                            {{ cat_label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <select name="marca" class="filtro-select">
+                    <option value="">Todas las Marcas</option>
+                    {% for marca in marcas %}
+                        <option value="{{ marca.id }}">{{ marca.nombre }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn-filtrar">Filtrar</button>
+                <a href="{% url 'administrador:tienda_publica' %}" class="btn-limpiar">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grid de Productos -->
+    <div class="productos-grid">
+        {% if productos %}
+            {% for producto in productos %}
+            <div class="producto-card">
+                <div class="producto-imagen">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="Sin imagen">
+                    {% endif %}
+
+                    {% if producto.stock_actual <= 0 %}
+                        <div class="badge-agotado">Agotado</div>
+                    {% elif producto.stock_actual <= producto.stock_minimo %}
+                        <div class="badge-pocas">Pocas unidades</div>
+                    {% endif %}
+                </div>
+
+                <div class="producto-info">
+                    <span class="producto-categoria">{{ producto.get_categoria_display }}</span>
+                    <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+                    <p class="producto-descripcion">{{ producto.descripcion|truncatewords:15 }}</p>
+
+                    <div class="producto-marca">
+                        <i class="fas fa-tag"></i> {{ producto.marca.nombre }}
+                    </div>
+
+                    <div class="producto-precio">
+                        <span class="precio-principal">${{ producto.precio_venta|floatformat:2 }}</span>
+                        {% if producto.precio_con_iva %}
+                            <span class="precio-iva">Con IVA: ${{ producto.precio_con_iva|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="producto-stock">
+                        {% if producto.stock_actual > 0 %}
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Stock: {{ producto.stock_actual }} disponibles</span>
+                        {% else %}
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Sin stock</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="producto-acciones">
+                        <a href="{% url 'administrador:producto_detalle_tienda' producto.id %}" class="btn-ver-detalle">
+                            <i class="fas fa-eye"></i> Ver Detalles
+                        </a>
+
+                        {% if producto.stock_actual > 0 %}
+                            <button onclick="agregarAlCarrito({{ producto.id }})" class="btn-agregar">
+                                <i class="fas fa-cart-plus"></i> Agregar
+                            </button>
+                        {% else %}
+                            <button class="btn-agregar" disabled>
+                                <i class="fas fa-times"></i> No disponible
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="sin-productos">
+                <i class="fas fa-box-open"></i>
+                <h3>No se encontraron productos</h3>
+                <p>Intenta con otros filtros de búsqueda</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.tienda-container {
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.tienda-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.tienda-header h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.tienda-descripcion {
+    font-size: 1.1rem;
+    color: #718096;
+}
+
+.header-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.btn-carrito {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #4299e1;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.btn-carrito:hover {
+    background: #3182ce;
+    transform: translateY(-2px);
+}
+
+.carrito-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #e53e3e;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.filtros-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-box button {
+    padding: 0.75rem 1.5rem;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.filtros-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filtro-select {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.btn-filtrar,
+.btn-limpiar {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-filtrar {
+    background: #48bb78;
+    color: white;
+    border: none;
+}
+
+.btn-limpiar {
+    background: white;
+    color: #718096;
+    border: 1px solid #cbd5e0;
+}
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.producto-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+
+.producto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.producto-imagen {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: #f7fafc;
+}
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-agotado,
+.badge-pocas {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-agotado {
+    background: #e53e3e;
+}
+
+.badge-pocas {
+    background: #ed8936;
+}
+
+.producto-info {
+    padding: 1.5rem;
+}
+
+.producto-categoria {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #edf2f7;
+    color: #4a5568;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.producto-nombre {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin: 0.5rem 0;
+    min-height: 2.5rem;
+}
+
+.producto-descripcion {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem 0;
+    min-height: 3rem;
+}
+
+.producto-marca {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.producto-precio {
+    margin: 1rem 0;
+}
+
+.precio-principal {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.precio-iva {
+    display: block;
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+.producto-stock {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.producto-acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-ver-detalle,
+.btn-agregar {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-ver-detalle {
+    background: white;
+    color: #4299e1;
+    border: 1px solid #4299e1;
+}
+
+.btn-ver-detalle:hover {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-agregar {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-agregar:hover:not(:disabled) {
+    background: #38a169;
+}
+
+.btn-agregar:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+.sin-productos {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem;
+    background: white;
+    border-radius: 12px;
+}
+
+.sin-productos i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+}
+
+.sin-productos h3 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.text-success {
+    color: #48bb78;
+}
+
+.text-danger {
+    color: #e53e3e;
+}
+</style>
+
+<script>
+function agregarAlCarrito(productoId) {
+    // Crear formulario temporal para enviar la petición
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/administrador/carrito/agregar/${productoId}/`;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'csrfmiddlewaretoken';
+        input.value = csrfToken;
+        form.appendChild(input);
+    }
+
+    const cantidadInput = document.createElement('input');
+    cantidadInput.type = 'hidden';
+    cantidadInput.name = 'cantidad';
+    cantidadInput.value = '1';
+    form.appendChild(cantidadInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}
+

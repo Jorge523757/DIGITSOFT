@@ -93,6 +93,9 @@ class Cliente(models.Model):
         ('JURIDICA', 'Persona Jurídica'),
     ]
 
+    # Relación con el usuario del sistema
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Usuario del sistema")
+
     tipo_documento = models.CharField(max_length=3, choices=TIPO_DOCUMENTO_CHOICES, verbose_name="Tipo de documento")
     numero_documento = models.CharField(max_length=20, unique=True, verbose_name="Número de documento")
     nombres = models.CharField(max_length=100, verbose_name="Nombres")
@@ -375,7 +378,8 @@ class Producto(models.Model):
     @property
     def precio_con_iva(self):
         # IVA por defecto 19%
-        return self.precio_venta * 1.19
+        from decimal import Decimal
+        return self.precio_venta * Decimal('1.19')
 
     @property
     def necesita_restock(self):
@@ -587,6 +591,26 @@ class Compra(models.Model):
     def __str__(self):
         return f"{self.numero_compra} - {self.proveedor}"
 
+    def save(self, *args, **kwargs):
+        if not self.numero_compra:
+            # Generar número de compra automático
+            fecha = timezone.now().strftime('%Y%m')
+            ultimo = Compra.objects.filter(numero_compra__startswith=f'C{fecha}').count()
+            self.numero_compra = f'C{fecha}{(ultimo + 1):04d}'
+
+        # Calcular total
+        self.total = self.subtotal - self.descuento + self.impuestos + self.costos_envio
+        super().save(*args, **kwargs)
+
+    @property
+    def total_productos(self):
+        """Retorna el total de productos en la compra"""
+        # Comentado temporalmente hasta crear el modelo DetalleCompra
+        # return self.detallecompra_set.aggregate(
+        #     total=models.Sum('cantidad')
+        # )['total'] or 0
+        return 0
+
 
 # ========== CARRITOS ========== #
 class Carrito(models.Model):
@@ -635,6 +659,31 @@ class Carrito(models.Model):
         self.total_items = sum(item.cantidad for item in items)
         self.subtotal = sum(item.subtotal for item in items)
         self.save()
+
+
+# ========== ITEMS DEL CARRITO ========== #
+class ItemCarrito(models.Model):
+    """Items individuales dentro de un carrito de compras"""
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name='items', verbose_name="Carrito")
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name="Producto")
+    cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
+    precio_unitario = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Precio Unitario")
+
+    fecha_agregado = models.DateTimeField(auto_now_add=True, verbose_name="Fecha agregado")
+
+    class Meta:
+        verbose_name = "Item del Carrito"
+        verbose_name_plural = "Items del Carrito"
+        db_table = 'items_carrito'
+        unique_together = ['carrito', 'producto']
+
+    def __str__(self):
+        return f"{self.producto.nombre} x{self.cantidad} - Carrito #{self.carrito.id}"
+
+    @property
+    def subtotal(self):
+        """Calcula el subtotal del item"""
+        return self.precio_unitario * self.cantidad
 
 
 # ========== VENTAS ========== #

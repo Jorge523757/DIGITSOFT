@@ -1,0 +1,229 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1><i class="fas fa-history"></i> {{ titulo }}</h1>
+        <p class="page-description">Historial de copias de seguridad creadas</p>
+        <a href="{% url 'administrador:backup_database' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Crear Nuevo Backup
+        </a>
+    </div>
+
+    {% if backups %}
+    <div class="backups-table-container">
+        <table class="backups-table">
+            <thead>
+                <tr>
+                    <th>Nombre del Archivo</th>
+                    <th>Fecha de Creación</th>
+                    <th>Tamaño</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for backup in backups %}
+                <tr>
+                    <td>
+                        <i class="fas fa-database"></i>
+                        <strong>{{ backup.nombre }}</strong>
+                    </td>
+                    <td>{{ backup.fecha|date:"d/m/Y H:i" }}</td>
+                    <td>{{ backup.tamano|filesizeformat }}</td>
+                    <td>
+                        <a href="#" class="btn-action btn-download" title="Descargar">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-database"></i>
+        <h3>No hay backups disponibles</h3>
+        <p>Aún no has creado ninguna copia de seguridad.</p>
+        <a href="{% url 'administrador:backup_database' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Crear Primer Backup
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <p><strong>Nota:</strong> Los backups se almacenan en el directorio <code>backups/</code> del proyecto. Asegúrate de descargarlos y almacenarlos en un lugar seguro externo al servidor.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.content-wrapper {
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin: 0;
+}
+
+.page-description {
+    color: #718096;
+    flex-basis: 100%;
+}
+
+.backups-table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.backups-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.backups-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.backups-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.backups-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.backups-table tbody tr:hover {
+    background: #f7fafc;
+}
+
+.backups-table td i.fa-database {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-download {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.btn-download:hover {
+    transform: scale(1.1);
+}
+
+.empty-state {
+    background: white;
+    border-radius: 12px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #718096;
+    margin-bottom: 2rem;
+}
+
+.info-box {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    border-left: 4px solid #3b82f6;
+    padding: 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+}
+
+.info-box i {
+    color: #3b82f6;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.info-box p {
+    margin: 0;
+    color: #1e3a8a;
+    line-height: 1.6;
+}
+
+.info-box code {
+    background: rgba(0,0,0,0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+}
+</style>
+{% endblock %}
+

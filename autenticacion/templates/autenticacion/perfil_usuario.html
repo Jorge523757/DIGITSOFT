@@ -12,8 +12,12 @@
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             {% if message.tags == 'success' %}
                 <i class="fas fa-check-circle"></i>
-            {% else %}
+            {% elif message.tags == 'error' %}
                 <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+                <i class="fas fa-info-circle"></i>
             {% endif %}
             {{ message }}
             <button type="button" class="close" data-dismiss="alert">
@@ -60,13 +64,13 @@
                         <div class="form-group">
                             <label for="telefono"><i class="fas fa-phone"></i> Teléfono</label>
                             <input type="text" class="form-control" id="telefono" name="telefono"
-                                   value="{{ perfil.telefono }}" placeholder="3001234567">
+                                   value="{{ perfil.telefono|default:'' }}" placeholder="3001234567">
                         </div>
 
                         <div class="form-group">
                             <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
                             <textarea class="form-control" id="direccion" name="direccion"
-                                      rows="2" placeholder="Ingresa tu dirección">{{ perfil.direccion }}</textarea>
+                                      rows="2" placeholder="Ingresa tu dirección">{{ perfil.direccion|default:'' }}</textarea>
                         </div>
 
                         <div class="text-right">
@@ -89,21 +93,42 @@
 
                         <div class="form-group">
                             <label for="password_actual"><i class="fas fa-key"></i> Contraseña Actual</label>
-                            <input type="password" class="form-control" id="password_actual"
-                                   name="password_actual" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password_actual"
+                                       name="password_actual" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password_actual')">
+                                        <i class="fas fa-eye" id="icon_password_actual"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="password_nueva"><i class="fas fa-lock"></i> Nueva Contraseña</label>
-                            <input type="password" class="form-control" id="password_nueva"
-                                   name="password_nueva" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password_nueva"
+                                       name="password_nueva" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password_nueva')">
+                                        <i class="fas fa-eye" id="icon_password_nueva"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <small class="form-text text-muted">Mínimo 8 caracteres</small>
                         </div>
 
                         <div class="form-group">
                             <label for="password_confirmar"><i class="fas fa-lock"></i> Confirmar Nueva Contraseña</label>
-                            <input type="password" class="form-control" id="password_confirmar"
-                                   name="password_confirmar" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password_confirmar"
+                                       name="password_confirmar" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password_confirmar')">
+                                        <i class="fas fa-eye" id="icon_password_confirmar"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-right">
@@ -215,6 +240,35 @@
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
 }
-</style>
-{% endblock %}
 
+.input-group-append .btn {
+    border-left: none;
+    padding: 0.375rem 0.75rem;
+}
+
+.input-group .form-control {
+    border-right: none;
+}
+
+.input-group-append .btn:hover {
+    background-color: #e9ecef;
+}
+</style>
+
+<script>
+function togglePasswordVisibility(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById('icon_' + fieldId);
+
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

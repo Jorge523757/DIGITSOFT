@@ -158,6 +158,64 @@
                             </a>
                         </li>
                         {% endif %}
+
+                        <!-- E-COMMERCE - Opciones para Clientes -->
+                        {% if user.perfil.tipo_usuario == 'CLIENTE' or user.is_authenticated %}
+                        <li class="nav-separator"></li>
+                        <li>
+                            <a href="{% url 'administrador:tienda_publica' %}" class="nav-item {% if request.resolver_match.url_name == 'tienda_publica' %}active{% endif %}">
+                                <i class="icon">🏪</i>
+                                <span>Tienda Online</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:ver_carrito' %}" class="nav-item {% if request.resolver_match.url_name == 'ver_carrito' %}active{% endif %}">
+                                <i class="icon">🛒</i>
+                                <span>Mi Carrito</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:mis_compras' %}" class="nav-item {% if request.resolver_match.url_name == 'mis_compras' %}active{% endif %}">
+                                <i class="icon">📦</i>
+                                <span>Mis Compras</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'administrador:mis_garantias' %}" class="nav-item {% if request.resolver_match.url_name == 'mis_garantias' %}active{% endif %}">
+                                <i class="icon">🛡️</i>
+                                <span>Mis Garantías</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- NUEVOS MÓDULOS AGREGADOS -->
+                        {% if user.perfil.tipo_usuario in 'SUPER_ADMIN,ADMINISTRADOR' %}
+                        <li class="nav-separator"></li>
+
+                        <!-- Reportes -->
+                        <li>
+                            <a href="{% url 'administrador:reportes_dashboard' %}" class="nav-item {% if 'reportes' in request.path %}active{% endif %}">
+                                <i class="icon">📊</i>
+                                <span>Reportes</span>
+                            </a>
+                        </li>
+
+                        <!-- Ayuda -->
+                        <li>
+                            <a href="{% url 'administrador:ayuda_faq' %}" class="nav-item {% if 'ayuda' in request.path %}active{% endif %}">
+                                <i class="icon">❓</i>
+                                <span>Ayuda</span>
+                            </a>
+                        </li>
+
+                        <!-- Backup -->
+                        <li>
+                            <a href="{% url 'administrador:backup_database' %}" class="nav-item {% if 'backup' in request.path %}active{% endif %}">
+                                <i class="icon">💾</i>
+                                <span>Backup</span>
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </li>
             </ul>
@@ -287,6 +345,12 @@ function toggleSubmenu() {
 }
 .category-list .nav-item {
     padding-left: 2.2rem;
+}
+.nav-separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+    margin: 1rem 1.5rem;
+    border: none;
 }
 </style>
 {% endblock %}
