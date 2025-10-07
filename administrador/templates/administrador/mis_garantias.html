@@ -1,3 +1,51 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Mis Garantías | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="mis-garantias-container">
+    <div class="page-header">
+        <h1><i class="fas fa-shield-alt"></i> Mis Garantías</h1>
+        <p class="page-description">Administra todas las garantías de tus productos</p>
+    </div>
+
+    {% if garantias %}
+    <div class="filtros-garantias">
+        <button class="filtro-btn active" onclick="filtrarGarantias('todas')">
+            Todas ({{ garantias.count }})
+        </button>
+        <button class="filtro-btn" onclick="filtrarGarantias('vigentes')">
+            Vigentes
+        </button>
+        <button class="filtro-btn" onclick="filtrarGarantias('vencidas')">
+            Vencidas
+        </button>
+    </div>
+
+    <div class="garantias-grid">
+        {% for garantia in garantias %}
+        <div class="garantia-card {% if garantia.esta_vigente %}vigente{% else %}vencida{% endif %}">
+            <div class="garantia-header">
+                <div class="garantia-badge">
+                    {% if garantia.esta_vigente %}
+                        <i class="fas fa-check-circle"></i> Vigente
+                    {% else %}
+                        <i class="fas fa-times-circle"></i> Vencida
+                    {% endif %}
+                </div>
+                <span class="garantia-tipo">{{ garantia.get_tipo_garantia_display }}</span>
+            </div>
+
+            <div class="garantia-producto">
+                <h3>{{ garantia.producto.nombre }}</h3>
+                <p class="producto-codigo">Código: {{ garantia.producto.codigo_producto }}</p>
+            </div>
+
+            <div class="garantia-numero">
+                <i class="fas fa-barcode"></i>
+                <span>{{ garantia.numero_garantia }}</span>
+            </div>
 
             <div class="garantia-fechas">
                 <div class="fecha-item">
@@ -72,8 +120,14 @@
             <div class="stat-info">
                 <span class="stat-label">Vigentes</span>
                 <span class="stat-valor vigente">
-                    {% for g in garantias %}{% if g.esta_vigente %}{% endif %}{% endfor %}
-                    {{ garantias|filter_vigentes|length }}
+                    {% with vigentes=0 %}
+                        {% for g in garantias %}
+                            {% if g.esta_vigente %}
+                                {% with vigentes=vigentes|add:1 %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                    {{ garantias.count }}
                 </span>
             </div>
         </div>
@@ -82,9 +136,7 @@
             <i class="fas fa-times-circle"></i>
             <div class="stat-info">
                 <span class="stat-label">Vencidas</span>
-                <span class="stat-valor vencido">
-                    {{ garantias|filter_vencidas|length }}
-                </span>
+                <span class="stat-valor vencido">0</span>
             </div>
         </div>
     </div>
@@ -496,496 +548,6 @@ function reclamarGarantia(garantiaId) {
         alert('Se ha iniciado el proceso de reclamo de garantía. Serás contactado pronto.');
         // Aquí iría la lógica para crear el reclamo
     }
-}
-</script>
-{% endblock %}
-{% extends 'administrador/base_dashboard.html' %}
-{% load static %}
-
-{% block title %}Mis Garantías | Digit Soft{% endblock %}
-
-{% block content %}
-<div class="mis-garantias-container">
-    <div class="page-header">
-        <h1><i class="fas fa-shield-alt"></i> Mis Garantías</h1>
-        <p class="page-description">Administra todas las garantías de tus productos</p>
-    </div>
-
-    {% if garantias %}
-    <div class="filtros-garantias">
-        <button class="filtro-btn active" onclick="filtrarGarantias('todas')">
-            Todas ({{ garantias.count }})
-        </button>
-        <button class="filtro-btn" onclick="filtrarGarantias('vigentes')">
-            Vigentes
-        </button>
-        <button class="filtro-btn" onclick="filtrarGarantias('vencidas')">
-            Vencidas
-        </button>
-    </div>
-
-    <div class="garantias-grid">
-        {% for garantia in garantias %}
-        <div class="garantia-card {% if garantia.esta_vigente %}vigente{% else %}vencida{% endif %}">
-            <div class="garantia-header">
-                <div class="garantia-badge">
-                    {% if garantia.esta_vigente %}
-                        <i class="fas fa-check-circle"></i> Vigente
-                    {% else %}
-                        <i class="fas fa-times-circle"></i> Vencida
-                    {% endif %}
-                </div>
-                <span class="garantia-tipo">{{ garantia.get_tipo_garantia_display }}</span>
-            </div>
-
-            <div class="garantia-producto">
-                <h3>{{ garantia.producto.nombre }}</h3>
-                <p class="producto-codigo">Código: {{ garantia.producto.codigo_producto }}</p>
-            </div>
-
-            <div class="garantia-numero">
-                <i class="fas fa-barcode"></i>
-                <span>{{ garantia.numero_garantia }}</span>
-            </div>
-{% extends 'administrador/base_dashboard.html' %}
-{% load static %}
-
-{% block title %}¡Compra Exitosa! | Digit Soft{% endblock %}
-
-{% block content %}
-<div class="compra-exitosa-container">
-    <div class="exito-header">
-        <div class="icono-exito">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <h1>¡Compra Realizada Exitosamente!</h1>
-        <p>Tu pedido ha sido procesado correctamente</p>
-    </div>
-
-    <!-- Información de la Venta -->
-    <div class="info-venta">
-        <div class="info-card">
-            <h2><i class="fas fa-receipt"></i> Detalles de la Compra</h2>
-
-            <div class="info-row">
-                <span class="label">Número de Venta:</span>
-                <span class="valor"><strong>{{ venta.numero_venta }}</strong></span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Fecha:</span>
-                <span class="valor">{{ venta.fecha_venta|date:"d/m/Y H:i" }}</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Cliente:</span>
-                <span class="valor">{{ venta.cliente.nombre_completo }}</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Método de Pago:</span>
-                <span class="valor">{{ venta.get_metodo_pago_display }}</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Estado:</span>
-                <span class="valor">
-                    <span class="badge badge-success">{{ venta.get_estado_display }}</span>
-                </span>
-            </div>
-
-            <hr>
-
-            <div class="info-row">
-                <span class="label">Subtotal:</span>
-                <span class="valor">${{ venta.subtotal|floatformat:2 }}</span>
-            </div>
-
-            {% if venta.descuento > 0 %}
-            <div class="info-row">
-                <span class="label">Descuento:</span>
-                <span class="valor text-danger">-${{ venta.descuento|floatformat:2 }}</span>
-            </div>
-            {% endif %}
-
-            <div class="info-row">
-                <span class="label">IVA (19%):</span>
-                <span class="valor">${{ venta.impuestos|floatformat:2 }}</span>
-            </div>
-
-            <div class="info-row total">
-                <span class="label"><strong>TOTAL:</strong></span>
-                <span class="valor"><strong>${{ venta.total|floatformat:2 }}</strong></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Factura -->
-    {% if factura %}
-    <div class="factura-card">
-        <h2><i class="fas fa-file-invoice"></i> Factura Generada</h2>
-
-        <div class="factura-info">
-            <div class="factura-item">
-                <span class="label">Número de Factura:</span>
-                <span class="valor"><strong>{{ factura.numero_factura }}</strong></span>
-            </div>
-
-            <div class="factura-item">
-                <span class="label">Fecha de Emisión:</span>
-                <span class="valor">{{ factura.fecha_emision|date:"d/m/Y" }}</span>
-            </div>
-
-            <div class="factura-item">
-                <span class="label">Fecha de Vencimiento:</span>
-                <span class="valor">{{ factura.fecha_vencimiento|date:"d/m/Y" }}</span>
-            </div>
-
-            <div class="factura-item">
-                <span class="label">Estado:</span>
-                <span class="valor">
-                    <span class="badge badge-info">{{ factura.get_estado_display }}</span>
-                </span>
-            </div>
-        </div>
-
-        <button class="btn-descargar" onclick="descargarFactura({{ factura.id }})">
-            <i class="fas fa-download"></i> Descargar Factura PDF
-        </button>
-    </div>
-    {% endif %}
-
-    <!-- Garantías -->
-    {% if garantias %}
-    <div class="garantias-card">
-        <h2><i class="fas fa-shield-alt"></i> Garantías Activadas</h2>
-
-        <div class="garantias-lista">
-            {% for garantia in garantias %}
-            <div class="garantia-item">
-                <div class="garantia-header">
-                    <h3>{{ garantia.producto.nombre }}</h3>
-                    <span class="garantia-numero">{{ garantia.numero_garantia }}</span>
-                </div>
-
-                <div class="garantia-detalles">
-                    <div class="garantia-detalle">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Inicio: {{ garantia.fecha_inicio|date:"d/m/Y" }}</span>
-                    </div>
-
-                    <div class="garantia-detalle">
-                        <i class="fas fa-calendar-times"></i>
-                        <span>Vence: {{ garantia.fecha_vencimiento|date:"d/m/Y" }}</span>
-                    </div>
-
-                    <div class="garantia-detalle">
-                        <i class="fas fa-hourglass-half"></i>
-                        <span>Duración: {{ garantia.duracion_meses }} meses</span>
-                    </div>
-
-                    <div class="garantia-detalle">
-                        <i class="fas fa-tag"></i>
-                        <span>Tipo: {{ garantia.get_tipo_garantia_display }}</span>
-                    </div>
-                </div>
-
-                {% if garantia.esta_vigente %}
-                    <span class="badge badge-success">Vigente</span>
-                {% else %}
-                    <span class="badge badge-danger">Vencida</span>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Acciones -->
-    <div class="acciones-finales">
-        <a href="{% url 'administrador:tienda_publica' %}" class="btn-accion btn-primary">
-            <i class="fas fa-store"></i> Volver a la Tienda
-        </a>
-
-        <a href="{% url 'administrador:mis_compras' %}" class="btn-accion btn-secondary">
-            <i class="fas fa-shopping-bag"></i> Ver Mis Compras
-        </a>
-
-        <a href="{% url 'administrador:mis_garantias' %}" class="btn-accion btn-info">
-            <i class="fas fa-shield-alt"></i> Ver Mis Garantías
-        </a>
-    </div>
-</div>
-
-<style>
-.compra-exitosa-container {
-    padding: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.exito-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.icono-exito {
-    font-size: 5rem;
-    color: #48bb78;
-    margin-bottom: 1rem;
-    animation: scaleIn 0.5s ease;
-}
-
-@keyframes scaleIn {
-    from {
-        transform: scale(0);
-    }
-    to {
-        transform: scale(1);
-    }
-}
-
-.exito-header h1 {
-    font-size: 2.5rem;
-    color: #2d3748;
-    margin-bottom: 0.5rem;
-}
-
-.exito-header p {
-    font-size: 1.2rem;
-    color: #718096;
-}
-
-.info-venta,
-.factura-card,
-.garantias-card {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-.info-card h2,
-.factura-card h2,
-.garantias-card h2 {
-    font-size: 1.5rem;
-    color: #2d3748;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.info-row.total {
-    border-top: 2px solid #2d3748;
-    border-bottom: none;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    font-size: 1.2rem;
-}
-
-.label {
-    color: #718096;
-}
-
-.valor {
-    color: #2d3748;
-}
-
-.text-danger {
-    color: #e53e3e;
-}
-
-.badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: bold;
-}
-
-.badge-success {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.badge-info {
-    background: #bee3f8;
-    color: #2c5282;
-}
-
-.badge-danger {
-    background: #fed7d7;
-    color: #742a2a;
-}
-
-.factura-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.factura-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.btn-descargar {
-    width: 100%;
-    padding: 1rem;
-    background: #4299e1;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-descargar:hover {
-    background: #3182ce;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
-}
-
-.garantias-lista {
-    display: grid;
-    gap: 1rem;
-}
-
-.garantia-item {
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    transition: all 0.3s;
-}
-
-.garantia-item:hover {
-    border-color: #4299e1;
-    box-shadow: 0 2px 8px rgba(66, 153, 225, 0.2);
-}
-
-.garantia-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.garantia-header h3 {
-    font-size: 1.1rem;
-    color: #2d3748;
-    margin: 0;
-}
-
-.garantia-numero {
-    padding: 0.25rem 0.75rem;
-    background: #edf2f7;
-    color: #4a5568;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: bold;
-}
-
-.garantia-detalles {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.garantia-detalle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #4a5568;
-    font-size: 0.9rem;
-}
-
-.garantia-detalle i {
-    color: #4299e1;
-}
-
-.acciones-finales {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.btn-accion {
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.btn-primary {
-    background: #48bb78;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #38a169;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: #4299e1;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #3182ce;
-    transform: translateY(-2px);
-}
-
-.btn-info {
-    background: #ed8936;
-    color: white;
-}
-
-.btn-info:hover {
-    background: #dd6b20;
-    transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-    .factura-info {
-        grid-template-columns: 1fr;
-    }
-
-    .garantia-detalles {
-        grid-template-columns: 1fr;
-    }
-
-    .acciones-finales {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-
-<script>
-function descargarFactura(facturaId) {
-    // Aquí iría la lógica para descargar la factura en PDF
-    alert('Descargando factura...');
-    // window.location.href = `/administrador/factura/${facturaId}/pdf/`;
 }
 </script>
 {% endblock %}

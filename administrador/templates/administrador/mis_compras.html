@@ -22,14 +22,37 @@
 
                 <div class="compra-estado">
                     {% if venta.estado == 'PAGADA' %}
-                        <span class="badge badge-success">{{ venta.get_estado_display }}</span>
+                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> {{ venta.get_estado_display }}</span>
                     {% elif venta.estado == 'PENDIENTE' %}
-                        <span class="badge badge-warning">{{ venta.get_estado_display }}</span>
+                        <span class="badge badge-warning"><i class="fas fa-clock"></i> {{ venta.get_estado_display }}</span>
                     {% elif venta.estado == 'ANULADA' %}
-                        <span class="badge badge-danger">{{ venta.get_estado_display }}</span>
+                        <span class="badge badge-danger"><i class="fas fa-times-circle"></i> {{ venta.get_estado_display }}</span>
                     {% else %}
                         <span class="badge badge-info">{{ venta.get_estado_display }}</span>
                     {% endif %}
+                </div>
+            </div>
+
+            <!-- Productos Comprados -->
+            <div class="productos-comprados">
+                <h4><i class="fas fa-box"></i> Productos Comprados:</h4>
+                <div class="productos-lista">
+                    {% for carrito in venta.carrito_set.all %}
+                        {% for item in carrito.items.all %}
+                        <div class="producto-item">
+                            {% if item.producto.imagen %}
+                            <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" class="producto-imagen">
+                            {% else %}
+                            <div class="producto-imagen-placeholder">📦</div>
+                            {% endif %}
+                            <div class="producto-info-item">
+                                <strong>{{ item.producto.nombre }}</strong>
+                                <small>{{ item.producto.marca.nombre|default:"Sin marca" }}</small>
+                                <span class="cantidad-precio">{{ item.cantidad }} x ${{ item.precio_unitario|floatformat:2 }} = ${{ item.subtotal|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
                 </div>
             </div>
 
@@ -46,7 +69,7 @@
 
                 <div class="detalle-item">
                     <i class="fas fa-percentage"></i>
-                    <span><strong>IVA:</strong> ${{ venta.impuestos|floatformat:2 }}</span>
+                    <span><strong>IVA (12%):</strong> ${{ venta.impuestos|floatformat:2 }}</span>
                 </div>
 
                 <div class="detalle-item total">
@@ -55,18 +78,29 @@
                 </div>
             </div>
 
+            <!-- Información de Factura -->
+            {% with factura=venta.factura_set.first %}
+            {% if factura %}
+            <div class="factura-info">
+                <i class="fas fa-file-invoice"></i>
+                <span><strong>Factura:</strong> {{ factura.numero_factura }} - {{ factura.get_estado_display }}</span>
+                <span class="factura-fecha">Emitida: {{ factura.fecha_emision|date:"d/m/Y" }}</span>
+            </div>
+            {% endif %}
+            {% endwith %}
+
             <div class="compra-acciones">
-                <button class="btn-detalle" onclick="verDetalle({{ venta.id }})">
-                    <i class="fas fa-eye"></i> Ver Detalles
+                <a href="{% url 'administrador:compra_exitosa' venta.id %}" class="btn-detalle">
+                    <i class="fas fa-eye"></i> Ver Detalles Completos
+                </a>
+
+                <button class="btn-factura" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir
                 </button>
 
-                <button class="btn-factura" onclick="descargarFactura({{ venta.id }})">
-                    <i class="fas fa-file-invoice"></i> Factura
-                </button>
-
-                <button class="btn-garantias" onclick="verGarantias({{ venta.id }})">
-                    <i class="fas fa-shield-alt"></i> Garantías
-                </button>
+                <a href="{% url 'administrador:mis_garantias' %}" class="btn-garantias">
+                    <i class="fas fa-shield-alt"></i> Ver Garantías
+                </a>
             </div>
         </div>
         {% endfor %}
@@ -85,7 +119,7 @@
             <i class="fas fa-dollar-sign"></i>
             <div class="stat-info">
                 <span class="stat-label">Total Gastado</span>
-                <span class="stat-valor">${{ ventas|sum_field:'total'|floatformat:2 }}</span>
+                <span class="stat-valor">${{ total_gastado|floatformat:2 }}</span>
             </div>
         </div>
     </div>
@@ -167,6 +201,9 @@
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .badge-success {
@@ -189,11 +226,82 @@
     color: #2c5282;
 }
 
+/* Estilos para productos comprados */
+.productos-comprados {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.productos-comprados h4 {
+    font-size: 1rem;
+    color: #2d3748;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.productos-lista {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.producto-item {
+    background: white;
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #e2e8f0;
+}
+
+.producto-imagen,
+.producto-imagen-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.producto-imagen-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.producto-info-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.producto-info-item strong {
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+.producto-info-item small {
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.cantidad-precio {
+    color: #4299e1;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 .compra-detalles {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .detalle-item {
@@ -216,13 +324,42 @@
     border-top: 1px solid #e2e8f0;
 }
 
+/* Información de factura */
+.factura-info {
+    background: #edf2f7;
+    border-left: 4px solid #4299e1;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.factura-info i {
+    color: #4299e1;
+    font-size: 1.2rem;
+}
+
+.factura-info span {
+    color: #2d3748;
+}
+
+.factura-fecha {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
 .compra-acciones {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
 }
 
-.compra-acciones button {
+.compra-acciones button,
+.compra-acciones a {
     padding: 0.75rem;
     border: none;
     border-radius: 8px;
@@ -233,6 +370,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    text-decoration: none;
 }
 
 .btn-detalle {
@@ -353,6 +491,23 @@
     .detalle-item.total {
         grid-column: 1;
     }
+
+    .factura-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .factura-fecha {
+        margin-left: 0;
+    }
+}
+
+@media print {
+    .compra-acciones,
+    .page-header,
+    .estadisticas {
+        display: none;
+    }
 }
 </style>
 
@@ -371,4 +526,3 @@ function verGarantias(ventaId) {
 }
 </script>
 {% endblock %}
-

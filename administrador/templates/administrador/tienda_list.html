@@ -279,6 +279,15 @@
                     <a href="{% url 'administrador:producto_detail' producto.id %}" class="btn btn-primary">
                         <i class="fas fa-eye"></i> Ver
                     </a>
+
+                    <form method="POST" action="{% url 'administrador:agregar_al_carrito' producto.id %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <input type="hidden" name="cantidad" value="1">
+                        <button type="submit" class="btn btn-success" style="width: 100%;" {% if producto.stock_actual <= 0 %}disabled{% endif %}>
+                            <i class="fas fa-cart-plus"></i> Carrito
+                        </button>
+                    </form>
+
                     {% if producto.activo %}
                     <form method="POST" action="{% url 'administrador:tienda_producto_toggle' producto.id %}" style="flex: 1;">
                         {% csrf_token %}
@@ -330,4 +339,3 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
 });
 </script>
 {% endblock %}
-

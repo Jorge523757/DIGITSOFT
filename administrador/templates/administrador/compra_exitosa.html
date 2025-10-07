@@ -1,0 +1,555 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Compra Exitosa | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="compra-exitosa-container">
+    <!-- Mensaje de Éxito -->
+    <div class="success-header">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>¡Compra Realizada Exitosamente!</h1>
+        <p>Gracias por tu compra. A continuación encontrarás los detalles de tu pedido.</p>
+    </div>
+
+    <!-- Información de la Venta -->
+    <div class="info-grid">
+        <div class="info-card">
+            <h2><i class="fas fa-receipt"></i> Detalles de la Venta</h2>
+            <div class="info-content">
+                <div class="info-row">
+                    <span class="label">Número de Venta:</span>
+                    <span class="value"><strong>{{ venta.numero_venta }}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Fecha:</span>
+                    <span class="value">{{ venta.fecha_venta|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Estado:</span>
+                    <span class="value">
+                        <span class="badge badge-{{ venta.estado|lower }}">{{ venta.get_estado_display }}</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Método de Pago:</span>
+                    <span class="value">{{ venta.get_metodo_pago_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if factura %}
+        <div class="info-card">
+            <h2><i class="fas fa-file-invoice"></i> Factura</h2>
+            <div class="info-content">
+                <div class="info-row">
+                    <span class="label">Número de Factura:</span>
+                    <span class="value"><strong>{{ factura.numero_factura }}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Tipo:</span>
+                    <span class="value">{{ factura.get_tipo_factura_display }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Estado:</span>
+                    <span class="value">
+                        <span class="badge badge-{{ factura.estado|lower }}">{{ factura.get_estado_display }}</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Fecha de Emisión:</span>
+                    <span class="value">{{ factura.fecha_emision|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Resumen de Productos -->
+    <div class="productos-section">
+        <h2><i class="fas fa-shopping-bag"></i> Productos Comprados</h2>
+        <div class="productos-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unit.</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in venta.carrito_set.first.items.all %}
+                    <tr>
+                        <td>
+                            <div class="producto-info">
+                                {% if item.producto.imagen %}
+                                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ item.producto.nombre }}</strong>
+                                    <small>{{ item.producto.codigo_producto }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ item.producto.precio_venta|floatformat:2 }}</td>
+                        <td><strong>${{ item.subtotal|floatformat:2 }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                        <td><strong>${{ venta.subtotal|floatformat:2 }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>IVA (12%):</strong></td>
+                        <td><strong>${{ venta.impuestos|floatformat:2 }}</strong></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3" class="text-right"><strong>TOTAL:</strong></td>
+                        <td><strong class="total-amount">${{ venta.total|floatformat:2 }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Garantías -->
+    {% if garantias %}
+    <div class="garantias-section">
+        <h2><i class="fas fa-shield-alt"></i> Garantías Generadas</h2>
+        <div class="garantias-grid">
+            {% for garantia in garantias %}
+            <div class="garantia-card">
+                <div class="garantia-header">
+                    <span class="garantia-badge">
+                        <i class="fas fa-check-circle"></i> Vigente
+                    </span>
+                </div>
+                <h3>{{ garantia.producto.nombre }}</h3>
+                <div class="garantia-info">
+                    <div class="info-item">
+                        <i class="fas fa-barcode"></i>
+                        <span>{{ garantia.numero_garantia }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ garantia.duracion_meses }} meses</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Hasta: {{ garantia.fecha_vencimiento|date:"d/m/Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Acciones -->
+    <div class="acciones-section">
+        <a href="{% url 'administrador:mis_compras' %}" class="btn btn-primary">
+            <i class="fas fa-list"></i> Ver Mis Compras
+        </a>
+        {% if factura %}
+        <a href="#" class="btn btn-secondary" onclick="window.print(); return false;">
+            <i class="fas fa-print"></i> Imprimir Factura
+        </a>
+        {% endif %}
+        {% if garantias %}
+        <a href="{% url 'administrador:mis_garantias' %}" class="btn btn-info">
+            <i class="fas fa-shield-alt"></i> Ver Garantías
+        </a>
+        {% endif %}
+        <a href="{% url 'administrador:tienda_publica' %}" class="btn btn-success">
+            <i class="fas fa-store"></i> Seguir Comprando
+        </a>
+    </div>
+</div>
+
+<style>
+.compra-exitosa-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.success-header {
+    text-align: center;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+}
+
+.success-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    animation: successPulse 1s ease-in-out;
+}
+
+@keyframes successPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.success-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.success-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-card h2 {
+    font-size: 1.3rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card h2 i {
+    color: #4299e1;
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.info-row .value {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.badge-pagada {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-emitida {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.badge-credito {
+    background: #feebc8;
+    color: #7c2d12;
+}
+
+.productos-section,
+.garantias-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.productos-section h2,
+.garantias-section h2 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.productos-section h2 i,
+.garantias-section h2 i {
+    color: #4299e1;
+}
+
+.productos-table {
+    overflow-x: auto;
+}
+
+.productos-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.productos-table thead {
+    background: #f7fafc;
+}
+
+.productos-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: bold;
+    color: #2d3748;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.productos-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.producto-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.producto-info img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.producto-info div {
+    display: flex;
+    flex-direction: column;
+}
+
+.producto-info small {
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.productos-table tfoot {
+    background: #f7fafc;
+}
+
+.productos-table tfoot td {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.total-row {
+    background: #edf2f7;
+}
+
+.total-row td {
+    font-size: 1.2rem;
+    padding: 1rem;
+}
+
+.total-amount {
+    color: #48bb78;
+    font-size: 1.5rem;
+}
+
+.garantias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.garantia-card {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid #48bb78;
+}
+
+.garantia-header {
+    margin-bottom: 1rem;
+}
+
+.garantia-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #c6f6d5;
+    color: #22543d;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.garantia-card h3 {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.garantia-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #4a5568;
+}
+
+.info-item i {
+    color: #4299e1;
+    width: 20px;
+}
+
+.acciones-section {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 2rem 0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3182ce;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.btn-secondary {
+    background: #718096;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4a5568;
+    transform: translateY(-2px);
+}
+
+.btn-info {
+    background: #38b2ac;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #319795;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+}
+
+@media print {
+    .acciones-section,
+    .success-header p {
+        display: none;
+    }
+
+    .success-header {
+        background: white;
+        color: black;
+        box-shadow: none;
+    }
+
+    .info-card,
+    .productos-section,
+    .garantias-section {
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .garantias-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-section {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .productos-table {
+        font-size: 0.9rem;
+    }
+
+    .producto-info img {
+        width: 40px;
+        height: 40px;
+    }
+}
+</style>
+{% endblock %}
+

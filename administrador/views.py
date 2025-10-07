@@ -1031,11 +1031,18 @@ def mis_compras(request):
     try:
         cliente = Cliente.objects.get(user=request.user)
         ventas = Venta.objects.filter(cliente=cliente).order_by('-fecha_venta')
+
+        # Calcular total gastado
+        from django.db.models import Sum
+        total_gastado = ventas.aggregate(total=Sum('total'))['total'] or 0
+
     except Cliente.DoesNotExist:
         ventas = []
+        total_gastado = 0
 
     context = {
         'ventas': ventas,
+        'total_gastado': total_gastado,
         'titulo': 'Mis Compras'
     }
     return render(request, 'administrador/mis_compras.html', context)
