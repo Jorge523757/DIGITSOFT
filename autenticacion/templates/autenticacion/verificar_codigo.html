@@ -6,13 +6,13 @@
 <div class="auth-container">
     <div class="auth-header">
         <div class="logo">
-            <i class="fas fa-shield-alt"></i>
+            <i class="fas fa-shield-check"></i>
         </div>
         <h1>
             <i class="fas fa-check-circle"></i>
             Verificar Código
         </h1>
-        <p>Ingresa el código de 6 dígitos enviado a {{ email_oculto }}</p>
+        <p>Ingresa el código de 6 dígitos enviado a <strong>{{ email_oculto }}</strong></p>
     </div>
 
     <div class="auth-body">
@@ -36,6 +36,13 @@
             {% endfor %}
         {% endif %}
 
+        <!-- Info Panel -->
+        <div class="info-panel" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+            <i class="fas fa-envelope" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.9;"></i>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 600;">¿Cómo funciona?</h3>
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.95;">Te enviamos un código de 6 dígitos a tu correo electrónico registrado. Este código será válido por 1 hora.</p>
+        </div>
+
         <!-- Formulario -->
         <form method="POST" novalidate>
             {% csrf_token %}
@@ -44,10 +51,22 @@
                 <label for="id_codigo" class="form-label">
                     <i class="fas fa-hashtag"></i> Código de Verificación
                 </label>
-                {{ form.codigo }}
-                {% if form.codigo.help_text %}
-                    <div class="help-text">{{ form.codigo.help_text }}</div>
-                {% endif %}
+                <div style="position: relative;">
+                    <input
+                        type="text"
+                        name="codigo"
+                        maxlength="6"
+                        class="form-control code-input"
+                        id="id_codigo"
+                        placeholder="000000"
+                        autocomplete="off"
+                        required
+                        style="font-size: 2rem; text-align: center; letter-spacing: 0.5rem; font-weight: 600; padding: 1.5rem; font-family: 'Courier New', monospace;"
+                    >
+                </div>
+                <div class="help-text" style="text-align: center; margin-top: 0.75rem; color: #6c757d;">
+                    <i class="fas fa-info-circle"></i> Ingresa el código de 6 dígitos enviado a tu correo
+                </div>
                 {% if form.codigo.errors %}
                     <ul class="errorlist">
                         {% for error in form.codigo.errors %}
@@ -57,16 +76,19 @@
                 {% endif %}
             </div>
 
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-check"></i>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem;">
+                <i class="fas fa-check-circle"></i>
                 Verificar Código
             </button>
         </form>
 
-        <div class="auth-footer">
-            <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                <i class="fas fa-clock"></i> El código expira en 1 hora
-            </p>
+        <div class="auth-footer" style="margin-top: 2rem; text-align: center;">
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <i class="fas fa-clock" style="color: #ffc107;"></i>
+                <span style="color: #495057; font-size: 0.9rem; margin-left: 0.5rem;">
+                    El código expira en <strong>1 hora</strong>
+                </span>
+            </div>
         </div>
     </div>
 </div>
@@ -79,12 +101,46 @@
 
         // Solo permitir números
         codigoInput.addEventListener('input', function(e) {
+            // Eliminar caracteres no numéricos
             this.value = this.value.replace(/[^0-9]/g, '');
+
+            // Limitar a 6 dígitos
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+
+            // Cambiar color según longitud
+            if (this.value.length === 6) {
+                this.style.borderColor = '#28a745';
+                this.style.background = '#f0fff4';
+            } else if (this.value.length > 0) {
+                this.style.borderColor = '#ffc107';
+                this.style.background = '#fffbf0';
+            } else {
+                this.style.borderColor = '#ced4da';
+                this.style.background = '#fff';
+            }
+        });
+
+        // Auto-enviar cuando se completen 6 dígitos (opcional)
+        codigoInput.addEventListener('input', function(e) {
+            if (this.value.length === 6) {
+                // Opcional: enviar automáticamente
+                // this.form.submit();
+            }
         });
 
         // Focus automático
         codigoInput.focus();
+
+        // Evitar pegar caracteres no numéricos
+        codigoInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 6);
+            this.value = numericOnly;
+            this.dispatchEvent(new Event('input'));
+        });
     });
 </script>
 {% endblock %}
-

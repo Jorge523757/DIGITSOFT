@@ -89,33 +89,31 @@
 
                 <div class="metodos-pago">
                     <h4>Método de Pago</h4>
-                    <form method="POST" action="{% url 'administrador:procesar_compra' %}" id="formCompra">
-                        {% csrf_token %}
-
+                    <div class="metodos-pago-list">
                         <label class="metodo-pago-option">
-                            <input type="radio" name="metodo_pago" value="EFECTIVO" checked>
+                            <input type="radio" name="metodo_pago" value="EFECTIVO" checked id="metodo_efectivo">
                             <i class="fas fa-money-bill-wave"></i> Efectivo
                         </label>
 
                         <label class="metodo-pago-option">
-                            <input type="radio" name="metodo_pago" value="TARJETA_DEBITO">
+                            <input type="radio" name="metodo_pago" value="TARJETA_DEBITO" id="metodo_debito">
                             <i class="fas fa-credit-card"></i> Tarjeta Débito
                         </label>
 
                         <label class="metodo-pago-option">
-                            <input type="radio" name="metodo_pago" value="TARJETA_CREDITO">
+                            <input type="radio" name="metodo_pago" value="TARJETA_CREDITO" id="metodo_credito">
                             <i class="fas fa-credit-card"></i> Tarjeta Crédito
                         </label>
 
                         <label class="metodo-pago-option">
-                            <input type="radio" name="metodo_pago" value="TRANSFERENCIA">
+                            <input type="radio" name="metodo_pago" value="TRANSFERENCIA" id="metodo_transferencia">
                             <i class="fas fa-exchange-alt"></i> Transferencia
                         </label>
 
-                        <button type="submit" class="btn-procesar-compra">
-                            <i class="fas fa-check-circle"></i> Procesar Compra
+                        <button type="button" class="btn-procesar-compra" onclick="abrirModalDatos()">
+                            <i class="fas fa-lock"></i> Finalizar Compra
                         </button>
-                    </form>
+                    </div>
                 </div>
 
                 <a href="{% url 'administrador:tienda_publica' %}" class="btn-seguir-comprando">
@@ -134,6 +132,155 @@
         </a>
     </div>
     {% endif %}
+</div>
+
+<!-- MODAL 1: Datos del Cliente -->
+<div id="modalDatosCliente" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user"></i> Datos de Envío</h2>
+            <span class="close" onclick="cerrarModal('modalDatosCliente')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="formDatosCliente">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombres *</label>
+                        <input type="text" name="nombres" id="nombres" required value="{{ request.user.cliente.nombres|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellidos *</label>
+                        <input type="text" name="apellidos" id="apellidos" required value="{{ request.user.cliente.apellidos|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Documento *</label>
+                        <input type="text" name="documento" id="documento" required value="{{ request.user.cliente.numero_documento|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input type="tel" name="telefono" id="telefono" required value="{{ request.user.cliente.telefono|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" id="email" required value="{{ request.user.cliente.email|default:'' }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Dirección *</label>
+                    <textarea name="direccion" id="direccion" required rows="3">{{ request.user.cliente.direccion|default:'' }}</textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ciudad *</label>
+                        <input type="text" name="ciudad" id="ciudad" required value="{{ request.user.cliente.ciudad|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Departamento *</label>
+                        <input type="text" name="departamento" id="departamento" required value="{{ request.user.cliente.departamento|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="cerrarModal('modalDatosCliente')">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Confirmar y Procesar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 2: Factura -->
+<div id="modalFactura" class="modal">
+    <div class="modal-content modal-factura">
+        <div class="modal-header">
+            <h2><i class="fas fa-file-invoice"></i> Factura de Compra</h2>
+            <span class="close" onclick="cerrarModalFactura()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="factura-container" id="facturaContent">
+                <div class="factura-header">
+                    <div class="empresa-info">
+                        <h1>DIGIT SOFT</h1>
+                        <p>NIT: 900.123.456-7</p>
+                        <p>Calle 123 #45-67</p>
+                        <p>Tel: (1) 234-5678</p>
+                    </div>
+                    <div class="factura-info">
+                        <h2>FACTURA DE VENTA</h2>
+                        <p><strong>No:</strong> <span id="numeroFactura">-</span></p>
+                        <p><strong>Fecha:</strong> <span id="fechaFactura">-</span></p>
+                    </div>
+                </div>
+
+                <div class="cliente-info">
+                    <h3>Información del Cliente</h3>
+                    <p><strong>Nombre:</strong> <span id="clienteNombre">-</span></p>
+                    <p><strong>Documento:</strong> <span id="clienteDocumento">-</span></p>
+                    <p><strong>Teléfono:</strong> <span id="clienteTelefono">-</span></p>
+                    <p><strong>Dirección:</strong> <span id="clienteDireccion">-</span></p>
+                </div>
+
+                <div class="productos-factura">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productosFactura">
+                            <!-- Se llenará dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="totales-factura">
+                    <div class="total-linea">
+                        <span>Subtotal:</span>
+                        <span id="facturaSubtotal">$0</span>
+                    </div>
+                    <div class="total-linea">
+                        <span>IVA (19%):</span>
+                        <span id="facturaIva">$0</span>
+                    </div>
+                    <div class="total-linea total-final">
+                        <span><strong>TOTAL:</strong></span>
+                        <span><strong id="facturaTotal">$0</strong></span>
+                    </div>
+                </div>
+
+                <div class="metodo-pago-factura">
+                    <p><strong>Método de Pago:</strong> <span id="metodoPagoFactura">-</span></p>
+                </div>
+
+                <div class="factura-footer">
+                    <p><i class="fas fa-check-circle"></i> ¡Gracias por tu compra!</p>
+                    <p>Garantía de 12 meses en todos los productos</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="imprimirFactura()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+            <button type="button" class="btn-primary" onclick="finalizarCompra()">
+                <i class="fas fa-check"></i> Aceptar
+            </button>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -438,24 +585,428 @@
     box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
 }
 
-@media (max-width: 1024px) {
-    .carrito-content {
+/* Estilos para los modales */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 3% auto;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: slideDown 0.4s ease-out;
+    overflow: hidden;
+}
+
+.modal-factura {
+    max-width: 900px;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.close {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    line-height: 1;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.close:hover,
+.close:focus {
+    transform: rotate(90deg) scale(1.2);
+    text-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+/* Scrollbar personalizado para modal */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.85rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    background: #f7fafc;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.85rem 1.75rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: white;
+    color: #4299e1;
+    border: 2px solid #4299e1;
+}
+
+.btn-secondary:hover {
+    background: #4299e1;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+/* Estilos para la Factura */
+.factura-container {
+    background: white;
+    padding: 2.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.factura-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #667eea;
+    margin-bottom: 1.5rem;
+}
+
+.empresa-info h1 {
+    color: #667eea;
+    margin: 0 0 0.75rem 0;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.empresa-info p {
+    margin: 0.35rem 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.factura-info {
+    text-align: right;
+}
+
+.factura-info h2 {
+    color: #2d3748;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.factura-info p {
+    margin: 0.35rem 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.cliente-info {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #667eea;
+}
+
+.cliente-info h3 {
+    margin: 0 0 1rem 0;
+    color: #2d3748;
+    font-size: 1.2rem;
+}
+
+.cliente-info p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.productos-factura {
+    margin-bottom: 1.5rem;
+}
+
+.productos-factura table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.productos-factura th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.productos-factura td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.productos-factura tbody tr:hover {
+    background: #f7fafc;
+}
+
+.productos-factura tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.totales-factura {
+    text-align: right;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border-right: 4px solid #667eea;
+}
+
+.total-linea {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    color: #4a5568;
+    font-size: 1rem;
+}
+
+.total-final {
+    border-top: 3px solid #2d3748;
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    font-size: 1.4rem;
+    color: #2d3748;
+}
+
+.metodo-pago-factura {
+    text-align: center;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: 2px dashed #4299e1;
+}
+
+.metodo-pago-factura p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2d3748;
+}
+
+.factura-footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e2e8f0;
+    color: #718096;
+}
+
+.factura-footer p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.factura-footer p:first-child {
+    color: #48bb78;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Responsive para modales */
+@media (max-width: 768px) {
+    .form-row {
         grid-template-columns: 1fr;
     }
 
-    .carrito-resumen {
-        position: static;
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
     }
 
-    .carrito-item {
-        grid-template-columns: 80px 1fr;
+    .factura-header {
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    .item-cantidad,
-    .item-precio {
-        grid-column: 2;
+    .factura-info {
+        text-align: left;
     }
+
+    .modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+    }
+
+    .factura-container {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animación para notificaciones */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification {
+    animation: slideIn 0.3s ease-out;
 }
 </style>
 
@@ -514,6 +1065,148 @@ function showNotification(message, type) {
         notification.remove();
     }, 3000);
 }
+
+// Variables globales
+let datosCarrito = {
+    items: {{ items|safe|default:'[]' }},
+    subtotal: {{ totales.subtotal|default:0 }},
+    iva: {{ totales.iva|default:0 }},
+    total: {{ totales.total|default:0 }}
+};
+
+function abrirModalDatos() {
+    document.getElementById('modalDatosCliente').style.display = 'block';
+}
+
+function cerrarModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function cerrarModalFactura() {
+    cerrarModal('modalFactura');
+    // Redirigir después de cerrar
+    window.location.href = "{% url 'administrador:tienda_publica' %}";
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+// Procesar formulario de datos
+document.getElementById('formDatosCliente')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Obtener datos del formulario
+    const formData = new FormData(this);
+    const metodoPago = document.querySelector('input[name="metodo_pago"]:checked').value;
+
+    // Agregar método de pago
+    formData.append('metodo_pago', metodoPago);
+
+    // Mostrar loading
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const btnText = btnSubmit.innerHTML;
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+
+    // Enviar al servidor
+    fetch("{% url 'administrador:procesar_compra' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal de datos
+            cerrarModal('modalDatosCliente');
+
+            // Mostrar factura
+            mostrarFactura(data);
+        } else {
+            alert('Error: ' + (data.error || 'No se pudo procesar la compra'));
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = btnText;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la compra. Por favor intenta nuevamente.');
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = btnText;
+    });
+});
+
+function mostrarFactura(data) {
+    // Llenar datos de la factura
+    document.getElementById('numeroFactura').textContent = data.factura.numero;
+    document.getElementById('fechaFactura').textContent = data.factura.fecha;
+
+    document.getElementById('clienteNombre').textContent = data.cliente.nombre;
+    document.getElementById('clienteDocumento').textContent = data.cliente.documento;
+    document.getElementById('clienteTelefono').textContent = data.cliente.telefono;
+    document.getElementById('clienteDireccion').textContent = data.cliente.direccion;
+
+    // Llenar productos
+    const tbody = document.getElementById('productosFactura');
+    tbody.innerHTML = '';
+    data.productos.forEach(producto => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${producto.nombre}</td>
+            <td>${producto.cantidad}</td>
+            <td>$${parseFloat(producto.precio).toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+            <td>$${parseFloat(producto.subtotal).toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Llenar totales
+    document.getElementById('facturaSubtotal').textContent = '$' + parseFloat(data.totales.subtotal).toLocaleString('es-CO', {minimumFractionDigits: 2});
+    document.getElementById('facturaIva').textContent = '$' + parseFloat(data.totales.iva).toLocaleString('es-CO', {minimumFractionDigits: 2});
+    document.getElementById('facturaTotal').textContent = '$' + parseFloat(data.totales.total).toLocaleString('es-CO', {minimumFractionDigits: 2});
+
+    // Método de pago
+    const metodoPagoTexto = {
+        'EFECTIVO': 'Efectivo',
+        'TARJETA_DEBITO': 'Tarjeta Débito',
+        'TARJETA_CREDITO': 'Tarjeta Crédito',
+        'TRANSFERENCIA': 'Transferencia Bancaria'
+    };
+    document.getElementById('metodoPagoFactura').textContent = metodoPagoTexto[data.metodo_pago] || data.metodo_pago;
+
+    // Mostrar modal de factura
+    document.getElementById('modalFactura').style.display = 'block';
+}
+
+function imprimirFactura() {
+    const contenidoFactura = document.getElementById('facturaContent').innerHTML;
+    const ventana = window.open('', '', 'height=600,width=800');
+    ventana.document.write('<html><head><title>Factura</title>');
+    ventana.document.write('<style>');
+    ventana.document.write(`
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .factura-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #667eea; color: white; }
+        .totales-factura { text-align: right; }
+        .total-final { font-size: 1.2em; font-weight: bold; }
+    `);
+    ventana.document.write('</style></head><body>');
+    ventana.document.write(contenidoFactura);
+    ventana.document.write('</body></html>');
+    ventana.document.close();
+    ventana.print();
+}
+
+function finalizarCompra() {
+    cerrarModalFactura();
+}
 </script>
 {% endblock %}
-

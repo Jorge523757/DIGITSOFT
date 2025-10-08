@@ -29,23 +29,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'DigitSoft',  # Tu aplicación principal
-    'administrador',  # Módulo consolidado con todos los modelos
+
+    # Aplicaciones principales del proyecto
+    'DigitSoft',  # Aplicación principal (frontend público)
+    'administrador',  # Dashboard administrativo
     'autenticacion',  # Sistema de autenticación y gestión de usuarios
-    # MÓDULOS INDIVIDUALES DESACTIVADOS - AHORA TODO ESTÁ EN 'administrador'
-    # 'cliente',
-    # 'tecnico',
-    # 'proveedor',
-    # 'compra',
-    # 'venta',
-    # 'facturacion',
-    # 'servicio_tecnico',
-    # 'orden_servicio',
-    # 'marca',
-    # 'equipo',
-    # 'garantia',
-    # 'carrito',
-    # 'producto',
+
+    # Módulos de negocio (organizados modularmente)
+    'clientes',  # Gestión de clientes
+    'proveedores',  # Gestión de proveedores
+    'inventario',  # Gestión de productos, marcas y equipos
+    'ventas',  # Gestión de ventas y carritos
+    'compras',  # Gestión de compras y técnicos
+    'servicios',  # Gestión de servicios técnicos y órdenes
 ]
 
 MIDDLEWARE = [
@@ -144,13 +140,19 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuración del correo electrónico
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tucorreo@gmail.com'  # Reemplaza con tu dirección de correo
-EMAIL_HOST_PASSWORD = 'tucontraseña'  # Reemplaza con tu contraseña de correo
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# MODO DESARROLLO: Los correos se muestran en la consola del servidor
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Para producción, descomenta las siguientes líneas y configura tus credenciales:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'jorgedavidcristanchoguarin@gmail.com'
+# EMAIL_HOST_PASSWORD = 'tu_contraseña_de_aplicacion_de_gmail_aqui'
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+DEFAULT_FROM_EMAIL = 'noreply@digitsoft.com'
 
 # Configuración de autenticación
 LOGIN_URL = '/autenticacion/login/'

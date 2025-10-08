@@ -2,6 +2,9 @@
 Módulo E-Commerce - Digit Soft
 Sistema completo de tienda online con carrito, facturación y garantías
 """
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Q
 from decimal import Decimal
 
@@ -63,3 +66,73 @@ def generar_numero_garantia():
     ultimo = Garantia.objects.filter(numero_garantia__startswith=f'G{fecha}').count()
     return f'G{fecha}{(ultimo + 1):04d}'
 
+
+# ========================================================================
+# VISTAS DE E-COMMERCE
+# ========================================================================
+
+@login_required
+def tienda_publica(request):
+    """Vista pública de la tienda online"""
+    from .models import Producto
+
+    productos = Producto.objects.filter(activo=True, stock_actual__gt=0)
+
+    # Filtros
+    categoria = request.GET.get('categoria')
+    busqueda = request.GET.get('q')
+
+    if categoria:
+        productos = productos.filter(categoria__nombre=categoria)
+
+    if busqueda:
+        productos = productos.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(descripcion__icontains=busqueda)
+        )
+
+    context = {
+        'titulo': 'Tienda Online',
+        'productos': productos,
+        'seccion': 'tienda'
+    }
+    return render(request, 'administrador/tienda_publica.html', context)
+
+
+@login_required
+def ver_carrito(request):
+    """Vista del carrito de compras del usuario"""
+    from .models import Carrito, ItemCarrito
+
+    # Obtener o crear carrito del usuario
+    carrito, created = Carrito.objects.get_or_create(
+        cliente=request.user,
+        estado='ACTIVO'
+    )
+
+    items = ItemCarrito.objects.filter(carrito=carrito).select_related('producto')
+    totales = calcular_totales_carrito(items)
+
+    context = {
+        'titulo': 'Mi Carrito',
+        'carrito': carrito,
+        'items': items,
+        'totales': totales,
+        'seccion': 'carrito'
+    }
+    return render(request, 'administrador/ver_carrito.html', context)
+
+
+@login_required
+def mis_compras(request):
+    """Vista de compras del usuario"""
+    from .models import Venta
+
+    compras = Venta.objects.filter(cliente=request.user).order_by('-fecha_venta')
+
+    context = {
+        'titulo': 'Mis Compras',
+        'compras': compras,
+        'seccion': 'mis_compras'
+    }
+    return render(request, 'administrador/mis_compras.html', context)

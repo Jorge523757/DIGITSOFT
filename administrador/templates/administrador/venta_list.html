@@ -1,104 +1,407 @@
-{% extends 'administrador/base_list.html' %}
+{% extends 'administrador/base_dashboard.html' %}
 {% load static %}
 
 {% block title %}Ventas | Digit Soft{% endblock %}
-{% block page_header %}Ventas{% endblock %}
 
-{% block list_title %}Gestión de Ventas{% endblock %}
-{% block list_description %}Administra las ventas y facturación{% endblock %}
+{% block content %}
+<div class="ventas-container">
+    <!-- Header con Estadísticas -->
+    <div class="page-header">
+        <div>
+            <h1><i class="fas fa-shopping-cart"></i> Gestión de Ventas</h1>
+            <p>Administra todas las ventas del sistema</p>
+        </div>
+    </div>
 
-{% block table_headers %}
-<th>Número</th>
-<th>Cliente</th>
-<th>Fecha</th>
-<th>Subtotal</th>
-<th>Impuestos</th>
-<th>Total</th>
-<th>Método Pago</th>
-<th>Estado</th>
-<th style="width: 200px;">Acciones</th>
-{% endblock %}
-
-{% block table_body %}
-{% if ventas %}
-    {% for venta in ventas %}
-    <tr>
-        <td><strong>{{ venta.numero_venta }}</strong></td>
-        <td>{{ venta.cliente.nombre_completo }}</td>
-        <td>{{ venta.fecha_venta|date:"d/m/Y H:i" }}</td>
-        <td>${{ venta.subtotal|floatformat:2 }}</td>
-        <td>${{ venta.impuestos|floatformat:2 }}</td>
-        <td><strong>${{ venta.total|floatformat:2 }}</strong></td>
-        <td>
-            <span class="badge badge-info">{{ venta.get_metodo_pago_display }}</span>
-        </td>
-        <td>
-            {% if venta.estado == 'PAGADA' %}
-                <span class="badge badge-success">{{ venta.get_estado_display }}</span>
-            {% elif venta.estado == 'PENDIENTE' %}
-                <span class="badge badge-warning">{{ venta.get_estado_display }}</span>
-            {% else %}
-                <span class="badge badge-danger">{{ venta.get_estado_display }}</span>
-            {% endif %}
-        </td>
-        <td>
-            <div class="actions-cell">
-                <button class="btn btn-info btn-sm" onclick="viewDetails({{ venta.id }})" title="Ver detalles">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn btn-primary btn-sm" onclick="editRecord({{ venta.id }})" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ venta.id }}, '{{ venta.numero_venta }}')" title="Historial">
-                    <i class="fas fa-history"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ venta.id }}, '{{ venta.numero_venta }}')" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
+    <!-- Tarjetas de Estadísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #667eea;">
+                <i class="fas fa-shopping-bag"></i>
             </div>
-        </td>
-    </tr>
-    {% endfor %}
-{% else %}
-    <tr>
-        <td colspan="9" class="empty-state">
-            <i class="fas fa-shopping-cart"></i>
-            <p>No hay ventas registradas</p>
-            <button class="btn btn-primary" onclick="openModal('createModal')">
-                <i class="fas fa-plus"></i> Agregar Primera Venta
-            </button>
-        </td>
-    </tr>
-{% endif %}
+            <div class="stat-content">
+                <span class="stat-label">Total Ventas</span>
+                <span class="stat-value">{{ stats.total_ventas }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #48bb78;">
+                <i class="fas fa-laptop"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Ventas Online</span>
+                <span class="stat-value">{{ stats.ventas_online }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #4299e1;">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Ventas Presenciales</span>
+                <span class="stat-value">{{ stats.ventas_presencial }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #ed8936;">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Ingresos</span>
+                <span class="stat-value">${{ stats.total_ingresos|floatformat:0 }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+        <form method="GET" class="filters-form">
+            <div class="filter-group">
+                <label>Tipo de Venta</label>
+                <select name="tipo" class="form-control" onchange="this.form.submit()">
+                    <option value="">Todas</option>
+                    <option value="online" {% if request.GET.tipo == 'online' %}selected{% endif %}>Online (Carrito)</option>
+                    <option value="presencial" {% if request.GET.tipo == 'presencial' %}selected{% endif %}>Presencial</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Estado</label>
+                <select name="estado" class="form-control" onchange="this.form.submit()">
+                    <option value="">Todos</option>
+                    <option value="PAGADA" {% if request.GET.estado == 'PAGADA' %}selected{% endif %}>Pagada</option>
+                    <option value="PENDIENTE" {% if request.GET.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+                    <option value="CREDITO" {% if request.GET.estado == 'CREDITO' %}selected{% endif %}>A Crédito</option>
+                    <option value="ANULADA" {% if request.GET.estado == 'ANULADA' %}selected{% endif %}>Anulada</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Desde</label>
+                <input type="date" name="fecha_desde" class="form-control" value="{{ request.GET.fecha_desde }}" onchange="this.form.submit()">
+            </div>
+
+            <div class="filter-group">
+                <label>Hasta</label>
+                <input type="date" name="fecha_hasta" class="form-control" value="{{ request.GET.fecha_hasta }}" onchange="this.form.submit()">
+            </div>
+
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <a href="{% url 'administrador:venta_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de Ventas -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Tipo</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Método Pago</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if ventas %}
+                    {% for venta in ventas %}
+                    <tr>
+                        <td><strong>{{ venta.numero_venta }}</strong></td>
+                        <td>
+                            {% if venta.vendedor %}
+                                <span class="badge badge-blue">
+                                    <i class="fas fa-store"></i> Presencial
+                                </span>
+                            {% else %}
+                                <span class="badge badge-green">
+                                    <i class="fas fa-laptop"></i> Online
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ venta.cliente.nombre_completo }}</td>
+                        <td>{{ venta.fecha_venta|date:"d/m/Y H:i" }}</td>
+                        <td><strong>${{ venta.total|floatformat:2 }}</strong></td>
+                        <td>
+                            <span class="badge badge-info">{{ venta.get_metodo_pago_display }}</span>
+                        </td>
+                        <td>
+                            {% if venta.estado == 'PAGADA' %}
+                                <span class="badge badge-success">{{ venta.get_estado_display }}</span>
+                            {% elif venta.estado == 'PENDIENTE' %}
+                                <span class="badge badge-warning">{{ venta.get_estado_display }}</span>
+                            {% else %}
+                                <span class="badge badge-danger">{{ venta.get_estado_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="{% url 'administrador:venta_detail' venta.id %}" class="btn btn-info btn-sm" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>No hay ventas que coincidan con los filtros</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.ventas-container {
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: #718096;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    color: #2d3748;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.filters-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: #f7fafc;
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #2d3748;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table tbody tr:hover {
+    background: #f7fafc;
+}
+
+.badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge-green {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-blue {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.badge-info {
+    background: #e6fffa;
+    color: #234e52;
+}
+
+.badge-success {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-warning {
+    background: #feebc8;
+    color: #7c2d12;
+}
+
+.badge-danger {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-info {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #3182ce;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.btn-secondary {
+    background: #718096;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4a5568;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #718096;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-form {
+        grid-template-columns: 1fr;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+}
+</style>
 {% endblock %}
-
-{% block form_content %}
-<div class="form-group">
-    <label class="form-label">Cliente *</label>
-    <select name="cliente" class="form-control" required>
-        <option value="">Seleccione un cliente...</option>
-        {% for cliente in clientes %}
-            <option value="{{ cliente.id }}">{{ cliente.nombre_completo }}</option>
-        {% endfor %}
-    </select>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Método de Pago *</label>
-    <select name="metodo_pago" class="form-control" required>
-        <option value="">Seleccione...</option>
-        <option value="EFECTIVO">Efectivo</option>
-        <option value="TARJETA_DEBITO">Tarjeta Débito</option>
-        <option value="TARJETA_CREDITO">Tarjeta Crédito</option>
-        <option value="TRANSFERENCIA">Transferencia</option>
-        <option value="CREDITO">A Crédito</option>
-        <option value="MIXTO">Mixto</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Observaciones</label>
-    <textarea name="observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales (opcional)"></textarea>
-</div>
-{% endblock %}
-

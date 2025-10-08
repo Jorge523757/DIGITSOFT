@@ -3,167 +3,846 @@
 {% block title %}Iniciar Sesión - DigitSoft{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-header">
-        <div class="logo">
-            <i class="fas fa-laptop-code"></i>
-        </div>
-        <h1>
-            <i class="fas fa-sign-in-alt"></i>
-            DigitSoft
-        </h1>
-        <p>Inicia sesión para continuar</p>
-    </div>
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <!-- Columna Izquierda: Información -->
+        <div class="auth-left">
+            <div class="auth-header">
+                <div class="logo-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h1>DigitSoft</h1>
+                <p class="subtitle">Sistema de Gestión Empresarial</p>
+            </div>
 
-    <!-- Información de tipos de usuario -->
-    <div style="background: #f0f4ff; border-left: 4px solid #667eea; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <i class="fas fa-info-circle" style="color: #667eea;"></i>
-            <strong style="color: #2d3748;">Tipos de Usuario</strong>
-        </div>
-        <div style="font-size: 0.875rem; color: #4a5568; line-height: 1.6;">
-            El sistema identifica automáticamente tu tipo de usuario al iniciar sesión:
-            <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
-                <li><strong>Super Administrador:</strong> Acceso completo al sistema</li>
-                <li><strong>Administrador:</strong> Gestión de usuarios y configuración</li>
-                <li><strong>Cliente:</strong> Compras y seguimiento de órdenes</li>
-                <li><strong>Técnico:</strong> Servicios técnicos y reparaciones</li>
-                <li><strong>Proveedor:</strong> Gestión de inventario y productos</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="auth-body">
-        <!-- Mensajes -->
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {% if message.tags == 'success' %}
-                    <i class="fas fa-check-circle"></i>
-                {% elif message.tags == 'error' %}
-                    <i class="fas fa-exclamation-circle"></i>
-                {% elif message.tags == 'warning' %}
-                    <i class="fas fa-exclamation-triangle"></i>
-                {% else %}
+            <!-- Información de tipos de usuario compacta -->
+            <div class="info-box">
+                <div class="info-header">
                     <i class="fas fa-info-circle"></i>
-                {% endif %}
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- Formulario de Login -->
-        <form method="POST" novalidate>
-            {% csrf_token %}
-
-            <!-- Campo Usuario -->
-            <div class="form-group">
-                <label for="id_username" class="form-label">
-                    <i class="fas fa-user"></i> Usuario o Correo
-                </label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.username.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-
-            <!-- Campo Contraseña -->
-            <div class="form-group">
-                <label for="id_password" class="form-label">
-                    <i class="fas fa-lock"></i> Contraseña
-                </label>
-                <div class="password-wrapper">
-                    {{ form.password }}
-                    <button type="button" class="password-toggle" id="togglePassword" onclick="togglePassword('togglePassword', 'id_password')">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                    <strong>Tipos de Usuario</strong>
                 </div>
-                {% if form.password.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.password.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-
-            <!-- Recordarme -->
-            <div class="form-check">
-                {{ form.remember_me }}
-                <label for="remember_me" class="form-check-label">
-                    Mantener sesión iniciada
-                </label>
-            </div>
-
-            <!-- Errores generales del formulario -->
-            {% if form.non_field_errors %}
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i>
-                    {{ form.non_field_errors }}
+                <div class="user-types-compact">
+                    <div class="type-item">
+                        <i class="fas fa-crown"></i>
+                        <span><strong>Super Admin:</strong> Control total</span>
+                    </div>
+                    <div class="type-item">
+                        <i class="fas fa-user-shield"></i>
+                        <span><strong>Administrador:</strong> Gestión usuarios</span>
+                    </div>
+                    <div class="type-item">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span><strong>Cliente:</strong> Compras y órdenes</span>
+                    </div>
+                    <div class="type-item">
+                        <i class="fas fa-tools"></i>
+                        <span><strong>Técnico:</strong> Servicios técnicos</span>
+                    </div>
+                    <div class="type-item">
+                        <i class="fas fa-boxes"></i>
+                        <span><strong>Proveedor:</strong> Inventario</span>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Formulario -->
+        <div class="auth-right">
+            <div class="form-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+                <p>Ingresa tus credenciales</p>
+            </div>
+
+            <!-- Mensajes -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle"></i>
+                    {% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
             {% endif %}
 
-            <!-- Botón de envío -->
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt"></i>
-                Iniciar Sesión
-            </button>
-        </form>
+            <!-- Formulario de Login -->
+            <form method="POST" id="loginForm" novalidate>
+                {% csrf_token %}
 
-        <!-- Footer con enlaces -->
-        <div class="auth-footer">
-            <a href="{% url 'autenticacion:recuperar_password' %}">
-                <i class="fas fa-key"></i> ¿Olvidaste tu contraseña?
-            </a>
-            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; text-align: center;">
-                <p style="color: #718096; margin-bottom: 0.5rem;">¿No tienes una cuenta?</p>
-                <a href="{% url 'autenticacion:registro_publico' %}" style="color: #667eea; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-user-plus"></i> Registrarse ahora
+                <!-- Campo Usuario -->
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user"></i> Usuario o Correo
+                    </label>
+                    <div class="input-wrapper">
+                        {{ form.username }}
+                        <span class="input-icon">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                    {% if form.username.errors %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="validation-message" id="usernameError"></div>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="form-group">
+                    <label for="id_password" class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <div class="password-wrapper">
+                        {{ form.password }}
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="validation-message" id="passwordError"></div>
+                </div>
+
+                <!-- Recordarme y Olvidaste contraseña en línea -->
+                <div class="form-actions-row">
+                    <div class="form-check">
+                        {{ form.remember_me }}
+                        <label for="id_remember_me" class="form-check-label">
+                            <span class="checkbox-custom"></span>
+                            Recordarme
+                        </label>
+                    </div>
+                    <a href="{% url 'autenticacion:recuperar_password' %}" class="link-forgot">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <!-- Botón de envío -->
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Iniciar Sesión</span>
+                </button>
+            </form>
+
+            <!-- Footer con registro -->
+            <div class="auth-footer">
+                <p>¿No tienes una cuenta?</p>
+                <a href="{% url 'autenticacion:registro_publico' %}" class="link-register">
+                    <i class="fas fa-user-plus"></i> Regístrarse ahora
                 </a>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+<style>
+:root {
+    --primary-color: #667eea;
+    --primary-dark: #5568d3;
+    --secondary-color: #48bb78;
+    --danger-color: #e53e3e;
+    --warning-color: #ed8936;
+    --info-color: #4299e1;
+    --success-color: #48bb78;
+    --text-dark: #2d3748;
+    --text-medium: #4a5568;
+    --text-light: #718096;
+    --border-color: #e2e8f0;
+    --bg-light: #f7fafc;
+    --bg-white: #ffffff;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-container {
+    max-width: 1100px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Columna Izquierda */
+.auth-left {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2.5rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.25rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.auth-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    color: white;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.info-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-header i {
+    font-size: 1.25rem;
+}
+
+.info-header strong {
+    font-size: 1.05rem;
+}
+
+.user-types-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.type-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.type-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.type-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.type-item strong {
+    color: white;
+}
+
+/* Columna Derecha */
+.auth-right {
+    padding: 3rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-header h2 i {
+    color: var(--primary-color);
+}
+
+.form-header p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.alert {
+    padding: 0.875rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.alert i {
+    font-size: 1.1rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-left: 4px solid var(--success-color);
+    color: #22543d;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-left: 4px solid var(--danger-color);
+    color: #742a2a;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
+    border-left: 4px solid var(--warning-color);
+    color: #7c2d12;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border-left: 4px solid var(--info-color);
+    color: #2c5282;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.form-label i {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+}
+
+.input-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.input-wrapper input:focus + .input-icon {
+    color: var(--primary-color);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding: 0.85rem 3rem 0.85rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+}
+
+.password-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    background: var(--bg-light);
+    color: var(--primary-color);
+}
+
+.password-toggle i {
+    font-size: 1rem;
+}
+
+.error-message,
+.validation-message {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.validation-message {
+    display: none;
+}
+
+.validation-message.show {
+    display: flex;
+}
+
+.form-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.75rem;
+    gap: 1rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+}
+
+.form-check input[type="checkbox"] {
+    display: none;
+}
+
+.form-check-label {
+    position: relative;
+    padding-left: 1.75rem;
+    cursor: pointer;
+    color: var(--text-medium);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    user-select: none;
+}
+
+.checkbox-custom {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.form-check input[type="checkbox"]:checked + .form-check-label .checkbox-custom {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-color: var(--primary-color);
+}
+
+.form-check input[type="checkbox"]:checked + .form-check-label .checkbox-custom::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.link-forgot {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.link-forgot:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.95rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary i {
+    font-size: 1.1rem;
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.auth-footer p {
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.link-register {
+    color: var(--primary-color);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.link-register:hover {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+/* Loading state */
+.btn-primary.loading span {
+    opacity: 0;
+}
+
+.btn-primary.loading::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .auth-container {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+    }
+
+    .auth-left {
+        padding: 2rem;
+    }
+
+    .auth-right {
+        padding: 2rem;
+    }
+
+    .user-types-compact {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .type-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .type-item:hover {
+        transform: translateY(-3px);
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-wrapper {
+        padding: 1rem;
+    }
+
+    .auth-left,
+    .auth-right {
+        padding: 1.5rem;
+    }
+
+    .form-actions-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .user-types-compact {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
 <script>
-    // Validación en tiempo real
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        const usernameInput = document.getElementById('id_username');
-        const passwordInput = document.getElementById('id_password');
+// Toggle password visibility
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('id_password');
 
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
 
-            // Validar usuario
-            if (!usernameInput.value.trim()) {
-                isValid = false;
-                usernameInput.style.borderColor = 'var(--danger-color)';
+            // Cambiar icono
+            const icon = this.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             } else {
-                usernameInput.style.borderColor = 'var(--border-color)';
-            }
-
-            // Validar contraseña
-            if (!passwordInput.value) {
-                isValid = false;
-                passwordInput.style.borderColor = 'var(--danger-color)';
-            } else {
-                passwordInput.style.borderColor = 'var(--border-color)';
-            }
-
-            if (!isValid) {
-                e.preventDefault();
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             }
         });
+    }
 
-        // Focus automático en el primer campo
+    // Validación en tiempo real
+    const form = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('id_username');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Focus automático
+    if (usernameInput) {
         usernameInput.focus();
+    }
+
+    // Validación de usuario
+    if (usernameInput) {
+        usernameInput.addEventListener('blur', function() {
+            validateUsername();
+        });
+
+        usernameInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('usernameError').classList.remove('show');
+                this.style.borderColor = 'var(--border-color)';
+            }
+        });
+    }
+
+    // Validación de contraseña
+    if (passwordInput) {
+        passwordInput.addEventListener('blur', function() {
+            validatePassword();
+        });
+
+        passwordInput.addEventListener('input', function() {
+            if (this.value) {
+                document.getElementById('passwordError').classList.remove('show');
+                this.style.borderColor = 'var(--border-color)';
+            }
+        });
+    }
+
+    // Validación del formulario
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isUsernameValid = validateUsername();
+            const isPasswordValid = validatePassword();
+
+            if (isUsernameValid && isPasswordValid) {
+                // Agregar estado de loading
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+
+                // Enviar formulario
+                this.submit();
+            }
+        });
+    }
+
+    function validateUsername() {
+        const errorDiv = document.getElementById('usernameError');
+        const value = usernameInput.value.trim();
+
+        if (!value) {
+            showError(usernameInput, errorDiv, 'Por favor, ingresa tu usuario o correo');
+            return false;
+        }
+
+        if (value.length < 3) {
+            showError(usernameInput, errorDiv, 'El usuario debe tener al menos 3 caracteres');
+            return false;
+        }
+
+        hideError(usernameInput, errorDiv);
+        return true;
+    }
+
+    function validatePassword() {
+        const errorDiv = document.getElementById('passwordError');
+        const value = passwordInput.value;
+
+        if (!value) {
+            showError(passwordInput, errorDiv, 'Por favor, ingresa tu contraseña');
+            return false;
+        }
+
+        if (value.length < 4) {
+            showError(passwordInput, errorDiv, 'La contraseña es demasiado corta');
+            return false;
+        }
+
+        hideError(passwordInput, errorDiv);
+        return true;
+    }
+
+    function showError(input, errorDiv, message) {
+        input.style.borderColor = 'var(--danger-color)';
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+        errorDiv.classList.add('show');
+    }
+
+    function hideError(input, errorDiv) {
+        input.style.borderColor = 'var(--success-color)';
+        errorDiv.classList.remove('show');
+    }
+
+    // Animación de entrada para los elementos
+    const elements = document.querySelectorAll('.form-group');
+    elements.forEach((element, index) => {
+        element.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
     });
+});
 </script>
 {% endblock %}
+

@@ -5,10 +5,10 @@ from django.db import models
 class Notificacion(models.Model):
     """Modelo para notificaciones del sistema"""
     TIPO_CHOICES = [
-        ('INFO', 'Información'),
+        ('INFO', 'Informacin'),
         ('WARNING', 'Advertencia'),
         ('ERROR', 'Error'),
-        ('SUCCESS', 'Éxito'),
+        ('SUCCESS', '‰xito'),
     ]
 
     CATEGORIA_CHOICES = [
@@ -16,31 +16,31 @@ class Notificacion(models.Model):
         ('VENTA', 'Venta'),
         ('SERVICIO', 'Servicio'),
         ('INVENTARIO', 'Inventario'),
-        ('FACTURACION', 'Facturación'),
-        ('GARANTIA', 'Garantía'),
+        ('FACTURACION', 'Facturacin'),
+        ('GARANTIA', 'Garanta'),
     ]
 
-    titulo = models.CharField(max_length=200, verbose_name="Título")
+    titulo = models.CharField(max_length=200, verbose_name="Ttulo")
     mensaje = models.TextField(verbose_name="Mensaje")
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, verbose_name="Tipo")
-    categoria = models.CharField(max_length=15, choices=CATEGORIA_CHOICES, verbose_name="Categoría")
+    categoria = models.CharField(max_length=15, choices=CATEGORIA_CHOICES, verbose_name="Categora")
 
     # Destinatarios
     para_administradores = models.BooleanField(default=False, verbose_name="Para administradores")
-    para_tecnicos = models.BooleanField(default=False, verbose_name="Para técnicos")
-    usuario_especifico = models.ForeignKey('administrador.Administrador', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Usuario específico")
+    para_tecnicos = models.BooleanField(default=False, verbose_name="Para tcnicos")
+    usuario_especifico = models.ForeignKey('administrador.Administrador', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Usuario especfico")
 
-    leida = models.BooleanField(default=False, verbose_name="Leída")
-    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    leida = models.BooleanField(default=False, verbose_name="Leda")
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creacin")
     fecha_lectura = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de lectura")
 
-    # Referencias actualizadas al módulo administrador consolidado
-    orden_servicio_ref = models.ForeignKey('administrador.OrdenServicio', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Orden servicio referencia")
-    venta_ref = models.ForeignKey('administrador.Venta', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Venta referencia")
-    factura_ref = models.ForeignKey('administrador.Factura', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Factura referencia")
+    # Referencias deshabilitadas temporalmente hasta que se creen estos modelos
+    # orden_servicio_ref = models.ForeignKey('administrador.OrdenServicio', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Orden servicio referencia")
+    # venta_ref = models.ForeignKey('administrador.Venta', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Venta referencia")
+    # factura_ref = models.ForeignKey('administrador.Factura', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Factura referencia")
 
     class Meta:
-        verbose_name = "Notificación"
+        verbose_name = "Notificacin"
         verbose_name_plural = "Notificaciones"
         ordering = ['-fecha_creacion']
         db_table = 'notificaciones'
@@ -63,9 +63,9 @@ class HistorialCambios(models.Model):
     valor_anterior = models.TextField(blank=True, null=True, verbose_name="Valor anterior")
     valor_nuevo = models.TextField(blank=True, null=True, verbose_name="Valor nuevo")
 
-    usuario = models.ForeignKey('administrador.Administrador', on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Usuario que realizó el cambio")
+    usuario = models.ForeignKey('administrador.Administrador', on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Usuario que realiz el cambio")
     fecha_cambio = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del cambio")
-    razon_cambio = models.TextField(blank=True, null=True, verbose_name="Razón del cambio")
+    razon_cambio = models.TextField(blank=True, null=True, verbose_name="Razn del cambio")
 
     class Meta:
         verbose_name = "Historial de Cambios"

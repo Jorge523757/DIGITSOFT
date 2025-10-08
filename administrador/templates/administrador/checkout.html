@@ -1,0 +1,1017 @@
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    color: var(--text-dark);
+    font-size: 2.2rem;
+    font-weight: 700;
+{% block title %}Checkout | Digit Soft{% endblock %}
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+{% block content %}
+.page-header h1 i {
+    color: var(--primary-color);
+            <div class="paso activo">
+                <div class="paso-content">
+                    <span class="numero">1</span>
+                    <span class="texto">Datos</span>
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+            </div>
+            <div class="paso">
+                <div class="paso-content">
+                    <span class="numero">2</span>
+                    <span class="texto">Confirmar</span>
+    flex: 1;
+    position: relative;
+}
+
+.paso-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+                </div>
+    z-index: 2;
+    background: white;
+    padding: 0 1rem;
+                    <span class="texto">Pago</span>
+                </div>
+            </div>
+    width: 48px;
+    height: 48px;
+
+    background: var(--bg-light);
+    border: 3px solid var(--border-color);
+        <div class="checkout-form">
+            <div class="form-card">
+                <div class="card-header">
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.paso .texto {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.paso-line {
+    flex: 1;
+    height: 3px;
+    background: var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.paso:last-child .paso-line {
+    display: none;
+                    <div>
+                        <h2>Información del Cliente</h2>
+                        <p class="form-description">Por favor, verifica y completa tus datos para el envío</p>
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-color: var(--primary-color);
+                </div>
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: scale(1.1);
+}
+
+.paso.activo .texto {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.paso.activo .paso-line {
+    background: var(--primary-color);
+
+                <form method="POST" id="formCheckout">
+                    {% csrf_token %}
+
+    grid-template-columns: 1fr 420px;
+                        <h3><i class="fas fa-user-tag"></i> Datos Personales</h3>
+    align-items: start;
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.nombres.id_for_label }}">
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                                </label>
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.card-header i {
+    font-size: 3rem;
+                                {% if form.nombres.errors %}
+                                    <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.nombres.errors.0 }}</span>
+.card-header h2 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+                                <label for="{{ form.apellidos.id_for_label }}">
+                                    <i class="fas fa-user"></i> Apellidos *
+                                </label>
+    margin: 0;
+    opacity: 0.95;
+    font-size: 0.95rem;
+}
+
+.form-card form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--bg-light);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+}
+
+.form-section h3 i {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+                                    <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.apellidos.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+                            <div class="form-group">
+                                <label for="{{ form.numero_documento.id_for_label }}">
+                                    <i class="fas fa-id-card"></i> Número de Documento *
+                                </label>
+                                {{ form.numero_documento }}
+                                {% if form.numero_documento.errors %}
+                                    <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.numero_documento.errors.0 }}</span>
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group label i {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+                                <label for="{{ form.telefono.id_for_label }}">
+                                    <i class="fas fa-phone"></i> Teléfono *
+                                </label>
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+    padding: 0.9rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+                        </div>
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">
+                                <i class="fas fa-envelope"></i> Correo Electrónico *
+    min-height: 100px;
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: var(--primary-color);
+                    <div class="form-section">
+                        <h3><i class="fas fa-map-marked-alt"></i> Dirección de Envío</h3>
+
+    color: var(--danger-color);
+                            <label for="{{ form.direccion.id_for_label }}">
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+                            {{ form.direccion }}
+                            {% if form.direccion.errors %}
+                                <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.direccion.errors.0 }}</span>
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.ciudad.id_for_label }}">
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-subtitle {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+                                {% if form.ciudad.errors %}
+                                    <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.ciudad.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.departamento.id_for_label }}">
+                                    <i class="fas fa-map"></i> Departamento *
+                                </label>
+    position: relative;
+                                {{ form.departamento }}
+                                {% if form.departamento.errors %}
+                                    <span class="error"><i class="fas fa-exclamation-circle"></i> {{ form.departamento.errors.0 }}</span>
+    padding: 1.5rem;
+    border: 3px solid var(--border-color);
+    border-radius: var(--radius-md);
+                    </div>
+    transition: all 0.3s ease;
+    background: white;
+                                <input type="radio" name="metodo_pago" value="EFECTIVO" checked>
+                                <div class="metodo-content">
+                                    <i class="fas fa-money-bill-wave"></i>
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.metodo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+                                    <span class="metodo-descripcion">Pago al recibir</span>
+                                </div>
+                                <div class="check-mark">
+    font-size: 2.5rem;
+    color: var(--primary-color);
+                            </label>
+    transition: all 0.3s ease;
+}
+
+.metodo-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.metodo-descripcion {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.check-mark {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.metodo-pago-option:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #ebf8ff 0%, #f7fafc 100%);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.metodo-pago-option:hover i {
+    transform: scale(1.1);
+
+                            <label class="metodo-pago-option">
+.metodo-pago-option input:checked + .metodo-content + .check-mark {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.metodo-pago-option:has(input:checked) {
+    border-color: var(--secondary-color);
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    box-shadow: 0 4px 16px rgba(72, 187, 120, 0.2);
+}
+
+.metodo-pago-option:has(input:checked) i {
+    color: var(--secondary-color);
+                                    <span class="metodo-titulo">Tarjeta Débito</span>
+                                    <span class="metodo-descripcion">Pago inmediato</span>
+                                </div>
+                                <div class="check-mark">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </label>
+    border-top: 2px solid var(--border-color);
+                            <label class="metodo-pago-option">
+                                <input type="radio" name="metodo_pago" value="TARJETA_CREDITO">
+                                <div class="metodo-content">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span class="metodo-titulo">Tarjeta Crédito</span>
+    padding: 1.1rem 2rem;
+    border-radius: var(--radius-md);
+                                <div class="check-mark">
+    font-weight: 700;
+                                </div>
+    transition: all 0.3s ease;
+
+                            <label class="metodo-pago-option">
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+                                <div class="metodo-content">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span class="metodo-titulo">Transferencia</span>
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+                                </div>
+                                <div class="check-mark">
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </label>
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+                    <div class="form-actions">
+                        <a href="{% url 'administrador:ver_carrito' %}" class="btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver al Carrito
+                        </a>
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+                        </button>
+                    </div>
+                </form>
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        </div>
+
+        <div class="checkout-summary">
+            <div class="summary-card">
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+
+                <div class="productos-resumen">
+    overflow: hidden;
+    animation: slideLeft 0.6s ease-out;
+}
+
+@keyframes slideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+                    {% for item in items %}
+                    <div class="producto-item">
+.summary-header {
+    background: linear-gradient(135deg, var(--text-dark) 0%, #1a202c 100%);
+    padding: 1.5rem;
+    color: white;
+}
+
+.summary-header h3 {
+    margin: 0;
+                            <span class="producto-nombre">{{ item.producto.nombre }}</span>
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+                        <span class="producto-precio">${{ item.subtotal|floatformat:2 }}</span>
+                    </div>
+                    {% endfor %}
+    max-height: 350px;
+
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--bg-light);
+}
+
+.productos-resumen::-webkit-scrollbar {
+    width: 6px;
+}
+
+.productos-resumen::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+.productos-resumen::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+                <div class="totales">
+                    <div class="linea-total">
+                        <span>Subtotal:</span>
+                        <span class="valor">${{ totales.subtotal|floatformat:2 }}</span>
+                    </div>
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+}
+
+.producto-item:last-child {
+    border-bottom: none;
+}
+
+.producto-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+                        <span class="valor">${{ totales.iva|floatformat:2 }}</span>
+                    </div>
+                    <div class="linea-total envio">
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.producto-cantidad {
+    color: var(--text-light);
+    font-size: 0.85rem;
+                    </div>
+                    <div class="linea-total total">
+                        <span><strong>Total a Pagar:</strong></span>
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+                </div>
+
+                <div class="garantias">
+    padding: 1.5rem;
+    background: var(--bg-light);
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Compra Segura</strong>
+                            <p>Tus datos están protegidos</p>
+                        </div>
+    align-items: center;
+                    </div>
+    color: var(--text-medium);
+}
+
+.linea-total .valor {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.linea-total.envio {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.valor-gratis {
+    color: var(--secondary-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+                    <div class="garantia-item">
+                        <i class="fas fa-truck"></i>
+                        <div>
+    border-top: 3px solid var(--border-color);
+    margin-top: 0.75rem;
+                        </div>
+    font-size: 1.1rem;
+}
+
+.total-precio {
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+                    <div class="garantia-item">
+                        <i class="fas fa-undo-alt"></i>
+.garantias {
+    padding: 1.5rem;
+                            <strong>Devoluciones</strong>
+    flex-direction: column;
+                            <p>30 días para devolver</p>
+}
+
+.garantia-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+                </div>
+    background: linear-gradient(135deg, #ebf8ff 0%, #f7fafc 100%);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.garantia-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-sm);
+    </div>
+</div>
+.garantia-item i {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+:root {
+    --primary-color: #667eea;
+.garantia-item strong {
+    --secondary-color: #48bb78;
+    color: var(--text-dark);
+    --danger-color: #e53e3e;
+    font-size: 0.95rem;
+    --text-dark: #2d3748;
+    --text-medium: #4a5568;
+.garantia-item p {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    --bg-white: #ffffff;
+    line-height: 1.4;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+/* Responsive Design */
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
+
+.checkout-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease-out;
+}
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .checkout-container {
+        padding: 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .pasos-compra {
+        padding: 1rem;
+    }
+
+    .paso-content {
+        gap: 0.25rem;
+    }
+
+    .paso .numero {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .paso .texto {
+        font-size: 0.85rem;
+    }
+
+    .card-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .form-card form {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+
+<script>
+// Animación de entrada para elementos
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar clases de animación
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+        group.style.animation = `fadeInUp 0.5s ease-out ${index * 0.05}s both`;
+    });
+
+    // Validación en tiempo real
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() !== '') {
+                this.style.borderColor = 'var(--secondary-color)';
+            }
+        });
+    });
+
+    // Mejorar interacción con métodos de pago
+    const metodoPagoOptions = document.querySelectorAll('.metodo-pago-option');
+    metodoPagoOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            metodoPagoOptions.forEach(opt => opt.style.transform = 'scale(1)');
+            this.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
+        });
+    });
+});
+
+// Animación adicional
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+.page-header h1 {
+    color: #2d3748;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.pasos-compra {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.paso {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a0aec0;
+}
+
+.paso.activo {
+    color: #4299e1;
+}
+
+.paso .numero {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.paso.activo .numero {
+    background: #4299e1;
+    color: white;
+}
+
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+}
+
+.form-description {
+    color: #718096;
+    margin-bottom: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.error {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.metodo-pago-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e2e8f0;
+}
+
+.metodo-pago-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.metodos-pago-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.metodo-pago-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.metodo-pago-option:hover {
+    border-color: #4299e1;
+    background: #ebf8ff;
+}
+
+.metodo-pago-option input {
+    margin-bottom: 0.5rem;
+}
+
+.metodo-pago-option i {
+    font-size: 2rem;
+    color: #4299e1;
+    margin-bottom: 0.5rem;
+}
+
+.metodo-pago-option span {
+    font-size: 0.9rem;
+    color: #2d3748;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e2e8f0;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #48bb78;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    color: #4299e1;
+    border: 2px solid #4299e1;
+}
+
+.btn-secondary:hover {
+    background: #ebf8ff;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 2rem;
+}
+
+.summary-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+}
+
+.productos-resumen {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.producto-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.producto-nombre {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.producto-precio {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.totales {
+    margin-top: 1rem;
+}
+
+.linea-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+}
+
+.linea-total.total {
+    border-top: 2px solid #2d3748;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    font-size: 1.2rem;
+}
+
+.garantia-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #ebf8ff;
+    border-radius: 8px;
+}
+
+.garantia-info i {
+    font-size: 2rem;
+    color: #4299e1;
+}
+
+.garantia-info strong {
+    display: block;
+    color: #2d3748;
+    margin-bottom: 0.25rem;
+}
+
+.garantia-info p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .checkout-content {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        position: static;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .metodos-pago-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+

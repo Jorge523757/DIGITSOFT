@@ -1,13 +1,96 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from .models import (
     Tecnico, Marca, Proveedor, Producto, Cliente, Equipo, 
     Compra, Venta, Garantia, ServicioTecnico, 
-    OrdenServicio, Carrito, Administrador
+    OrdenServicio
 )
+
+# ========== FORMULARIO DE DATOS DE ENVÍO/FACTURACIÓN ========== #
+class DatosCheckoutForm(forms.Form):
+    """Formulario para capturar datos del cliente en el checkout"""
+    nombres = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nombres completos'
+        })
+    )
+    apellidos = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Apellidos'
+        })
+    )
+    numero_documento = forms.CharField(
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Número de documento'
+        })
+    )
+    telefono = forms.CharField(
+        max_length=17,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Teléfono de contacto'
+        })
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'correo@ejemplo.com'
+        })
+    )
+    direccion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Dirección completa de envío'
+        })
+    )
+    ciudad = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ciudad'
+        })
+    )
+    departamento = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Departamento'
+        })
+    )
+
 
 # ========== FORMULARIO DE PRODUCTO ========== #
 class ProductoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Si estamos editando, incluir la opción actual aunque esté inactiva
+        if self.instance and self.instance.pk:
+            if 'marca' in self.fields and self.instance.marca:
+                self.fields['marca'].queryset = Marca.objects.filter(Q(activa=True) | Q(pk=self.instance.marca.pk))
+            if 'proveedor_principal' in self.fields and self.instance.proveedor_principal:
+                self.fields['proveedor_principal'].queryset = Proveedor.objects.filter(Q(activo=True) | Q(pk=self.instance.proveedor_principal.pk))
+        else:
+            if 'marca' in self.fields:
+                self.fields['marca'].queryset = Marca.objects.filter(activa=True)
+            if 'proveedor_principal' in self.fields:
+                self.fields['proveedor_principal'].queryset = Proveedor.objects.filter(activo=True)
+
     class Meta:
         model = Producto
         fields = [

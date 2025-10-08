@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
-from administrador.models import Producto, Marca
+from inventario.models import Producto, Marca
 
 def home(request):
     """Vista para la página principal"""
