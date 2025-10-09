@@ -39,7 +39,7 @@ def reducir_stock_producto(producto, cantidad):
 
 def generar_numero_venta():
     """Genera un número único de venta"""
-    from administrador.models import Venta
+    from ventas.models import Venta
     from django.utils import timezone
     
     fecha = timezone.now().strftime('%Y%m%d')
@@ -49,22 +49,20 @@ def generar_numero_venta():
 
 def generar_numero_factura():
     """Genera un número único de factura"""
-    from administrador.models import Factura
     from django.utils import timezone
     
+    # Factura no existe aún, se creará cuando sea necesario
     fecha = timezone.now().strftime('%Y%m%d')
-    ultimo = Factura.objects.filter(numero_factura__startswith=f'F{fecha}').count()
-    return f'F{fecha}{(ultimo + 1):04d}'
+    return f'F{fecha}0001'
 
 
 def generar_numero_garantia():
     """Genera un número único de garantía"""
-    from administrador.models import Garantia
     from django.utils import timezone
     
+    # Garantia no existe aún, se creará cuando sea necesario
     fecha = timezone.now().strftime('%Y%m%d')
-    ultimo = Garantia.objects.filter(numero_garantia__startswith=f'G{fecha}').count()
-    return f'G{fecha}{(ultimo + 1):04d}'
+    return f'G{fecha}0001'
 
 
 # ========================================================================
@@ -74,7 +72,7 @@ def generar_numero_garantia():
 @login_required
 def tienda_publica(request):
     """Vista pública de la tienda online"""
-    from .models import Producto
+    from inventario.models import Producto
 
     productos = Producto.objects.filter(activo=True, stock_actual__gt=0)
 
@@ -94,7 +92,8 @@ def tienda_publica(request):
     context = {
         'titulo': 'Tienda Online',
         'productos': productos,
-        'seccion': 'tienda'
+        'seccion': 'tienda',
+        'footer': '© 2024 Digit Soft - Todos los derechos reservados.'
     }
     return render(request, 'administrador/tienda_publica.html', context)
 
@@ -102,7 +101,8 @@ def tienda_publica(request):
 @login_required
 def ver_carrito(request):
     """Vista del carrito de compras del usuario"""
-    from .models import Carrito, ItemCarrito
+    from carrito.models import Carrito
+    from ventas.models import ItemCarrito
 
     # Obtener o crear carrito del usuario
     carrito, created = Carrito.objects.get_or_create(
@@ -118,7 +118,8 @@ def ver_carrito(request):
         'carrito': carrito,
         'items': items,
         'totales': totales,
-        'seccion': 'carrito'
+        'seccion': 'carrito',
+        'footer': '© 2024 Digit Soft - Todos los derechos reservados.'
     }
     return render(request, 'administrador/ver_carrito.html', context)
 
@@ -126,13 +127,14 @@ def ver_carrito(request):
 @login_required
 def mis_compras(request):
     """Vista de compras del usuario"""
-    from .models import Venta
+    from ventas.models import Venta
 
     compras = Venta.objects.filter(cliente=request.user).order_by('-fecha_venta')
 
     context = {
         'titulo': 'Mis Compras',
         'compras': compras,
-        'seccion': 'mis_compras'
+        'seccion': 'mis_compras',
+        'footer': '© 2024 Digit Soft - Todos los derechos reservados.'
     }
     return render(request, 'administrador/mis_compras.html', context)

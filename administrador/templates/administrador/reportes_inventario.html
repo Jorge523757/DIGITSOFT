@@ -1,0 +1,110 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'administrador:generar_pdf_reporte' %}?tipo=inventario" class="btn btn-danger btn-sm" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Estadísticas -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-box"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total de Productos</span>
+                                    <span class="info-box-number">{{ total_productos }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Productos Bajo Stock</span>
+                                    <span class="info-box-number">{{ productos_bajo_stock.count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Productos Activos</span>
+                                    <span class="info-box-number">{{ productos|length }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerta de productos con bajo stock -->
+                    {% if productos_bajo_stock %}
+                    <div class="alert alert-warning">
+                        <h5><i class="icon fas fa-exclamation-triangle"></i> Atención!</h5>
+                        Hay {{ productos_bajo_stock.count }} producto(s) con stock bajo que requieren reabastecimiento.
+                    </div>
+                    {% endif %}
+
+                    <!-- Tabla de inventario -->
+                    <h5 class="mt-4">Listado de Productos</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Marca</th>
+                                    <th>Categoría</th>
+                                    <th>Stock Actual</th>
+                                    <th>Stock Mínimo</th>
+                                    <th>Precio Venta</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for producto in productos %}
+                                <tr {% if producto.stock_actual <= producto.stock_minimo %}class="table-warning"{% endif %}>
+                                    <td>{{ producto.codigo_producto }}</td>
+                                    <td>{{ producto.nombre }}</td>
+                                    <td>{{ producto.marca }}</td>
+                                    <td>{{ producto.get_categoria_display }}</td>
+                                    <td>
+                                        <strong>{{ producto.stock_actual }}</strong>
+                                        {% if producto.stock_actual <= producto.stock_minimo %}
+                                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ producto.stock_minimo }}</td>
+                                    <td>${{ producto.precio_venta|floatformat:2 }}</td>
+                                    <td>
+                                        <span class="badge badge-{{ producto.estado|lower }}">
+                                            {{ producto.get_estado_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No hay productos registrados</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

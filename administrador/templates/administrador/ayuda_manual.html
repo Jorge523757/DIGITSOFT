@@ -1,0 +1,222 @@
+                                    <li><strong>Inventario:</strong> Estado actual del inventario y productos con stock bajo</li>
+                                    <li><strong>Clientes:</strong> Listado completo de clientes registrados</li>
+                                </ul>
+                                <p>Todos los reportes se pueden exportar a PDF.</p>
+                            </section>
+
+                            <section id="backup" class="mb-5">
+                                <h3>Backup y Restauración</h3>
+                                <h5>Crear un Backup</h5>
+                                <ol>
+                                    <li>Vaya al menú <strong>Backup</strong></li>
+                                    <li>Haga clic en el botón <strong>Crear Backup</strong></li>
+                                    <li>El sistema generará automáticamente una copia de seguridad</li>
+                                    <li>Puede descargar el archivo de backup para guardarlo externamente</li>
+                                </ol>
+
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>Recomendación:</strong> Realice backups periódicos de su base de datos, especialmente antes de realizar cambios importantes.
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <!-- Menú lateral -->
+                            <div class="list-group">
+                                <a href="#inicio" class="list-group-item list-group-item-action active">
+                                    <i class="fas fa-home"></i> Introducción
+                                </a>
+                                <a href="#marcas" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-tag"></i> Gestión de Marcas
+                                </a>
+                                <a href="#productos" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-box"></i> Gestión de Productos
+                                </a>
+                                <a href="#ventas" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-shopping-cart"></i> Gestión de Ventas
+                                </a>
+                                <a href="#reportes" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-chart-bar"></i> Reportes
+                                </a>
+                                <a href="#backup" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-database"></i> Backup y Restauración
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-9">
+                            <!-- Contenido del manual -->
+                            <section id="inicio" class="mb-5">
+                                <h3>Introducción al Sistema DigitSoft</h3>
+                                <p>Bienvenido al sistema de gestión DigitSoft. Este manual le ayudará a utilizar todas las funcionalidades del sistema.</p>
+                            </section>
+
+                            <section id="marcas" class="mb-5">
+                                <h3>Gestión de Marcas</h3>
+                                <h5>Agregar una Nueva Marca</h5>
+                                <ol>
+                                    <li>Vaya al menú <strong>Marcas</strong></li>
+                                    <li>Haga clic en el botón <strong>Nueva Marca</strong></li>
+                                    <li>Complete el formulario con la información de la marca</li>
+                                    <li>Opcionalmente, agregue el logo de la marca</li>
+                                    <li>Haga clic en <strong>Guardar</strong></li>
+                                </ol>
+
+                                <h5>Editar una Marca</h5>
+                                <ol>
+                                    <li>En la lista de marcas, haga clic en el botón <strong>Editar</strong></li>
+                                    <li>Modifique los datos necesarios</li>
+                                    <li>Haga clic en <strong>Guardar</strong></li>
+                                </ol>
+                            </section>
+
+                            <section id="productos" class="mb-5">
+                                <h3>Gestión de Productos</h3>
+                                <p>Los productos están vinculados a las marcas. Asegúrese de crear primero las marcas antes de agregar productos.</p>
+                            </section>
+
+                            <section id="ventas" class="mb-5">
+                                <h3>Gestión de Ventas</h3>
+                                <p>El sistema permite registrar y gestionar todas las ventas realizadas.</p>
+                            </section>
+
+                            <section id="reportes" class="mb-5">
+                                <h3>Reportes</h3>
+                                <p>Puede generar reportes de:</p>
+                                <ul>
+                                    <li><strong>Ventas:</strong> Reporte de todas las ventas realizadas con filtros por fecha</li>
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'administrador:marca_list' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> Por favor corrija los errores a continuación.
+                            {{ form.errors }}
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.nombre.id_for_label }}">Nombre de la Marca *</label>
+                                    {{ form.nombre }}
+                                    {% if form.nombre.errors %}
+                                        <small class="text-danger">{{ form.nombre.errors.0 }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.tipo_marca.id_for_label }}">Tipo de Marca *</label>
+                                    {{ form.tipo_marca }}
+                                    {% if form.tipo_marca.errors %}
+                                        <small class="text-danger">{{ form.tipo_marca.errors.0 }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.pais_origen.id_for_label }}">País de Origen</label>
+                                    {{ form.pais_origen }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.sitio_web.id_for_label }}">Sitio Web</label>
+                                    {{ form.sitio_web }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+                            {{ form.descripcion }}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.logo.id_for_label }}">Logo</label>
+                                    {{ form.logo }}
+                                    {% if marca and marca.logo %}
+                                        <div class="mt-2">
+                                            <img src="{{ marca.logo.url }}" alt="{{ marca.nombre }}" class="img-thumbnail" style="max-width: 200px;">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-check mt-4">
+                                        {{ form.activa }}
+                                        <label class="form-check-label" for="{{ form.activa.id_for_label }}">
+                                            Marca Activa
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                            <a href="{% url 'administrador:marca_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
