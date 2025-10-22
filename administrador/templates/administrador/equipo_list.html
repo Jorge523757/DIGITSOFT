@@ -26,7 +26,7 @@
         <td>{{ equipo.nombre }}</td>
         <td>{{ equipo.get_tipo_equipo_display }}</td>
         <td>{{ equipo.marca.nombre }}</td>
-        <td>{{ equipo.cliente.nombre_completo }}</td>
+        <td>{{ equipo.cliente.nombre }} {{ equipo.cliente.apellido }}</td>
         <td>
             {% if equipo.estado_fisico == 'NUEVO' %}
                 <span class="badge badge-success">{{ equipo.get_estado_fisico_display }}</span>
@@ -56,7 +56,7 @@
                 <button class="btn btn-warning btn-sm" onclick="viewHistory({{ equipo.id }}, '{{ equipo.nombre }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ equipo.id }}, '{{ equipo.nombre }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ equipo.id }}, '{{ equipo.nombre }}', '', '', '')" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -77,80 +77,77 @@
 {% endblock %}
 
 {% block form_content %}
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Código del Equipo *</label>
-        <input type="text" name="codigo_equipo" class="form-control" required placeholder="Ej: EQ-001">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Nombre del Equipo *</label>
-        <input type="text" name="nombre" class="form-control" required placeholder="Ej: Portátil HP">
-    </div>
-</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_codigo_equipo">Código del Equipo *</label>
+            {{ form.codigo_equipo }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Tipo de Equipo *</label>
-        <select name="tipo_equipo" class="form-control" required>
-            <option value="">Seleccione...</option>
-            <option value="DESKTOP">Computador de Escritorio</option>
-            <option value="LAPTOP">Computador Portátil</option>
-            <option value="SERVER">Servidor</option>
-            <option value="PRINTER">Impresora</option>
-            <option value="SCANNER">Escáner</option>
-            <option value="NETWORK">Equipo de Red</option>
-            <option value="MONITOR">Monitor</option>
-            <option value="UPS">UPS</option>
-            <option value="OTROS">Otros</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="form-label">Cliente *</label>
-        <select name="cliente" class="form-control" required>
-            <option value="">Seleccione un cliente...</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.id }}">{{ cliente.nombre_completo }}</option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_nombre">Nombre del Equipo *</label>
+            {{ form.nombre }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Marca *</label>
-        <select name="marca" class="form-control" required>
-            <option value="">Seleccione una marca...</option>
-            {% for marca in marcas %}
-                <option value="{{ marca.id }}">{{ marca.nombre }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="form-label">Modelo *</label>
-        <input type="text" name="modelo" class="form-control" required placeholder="Ej: Pavilion 15">
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_cliente">Cliente *</label>
+            {{ form.cliente }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Número de Serie *</label>
-        <input type="text" name="serial" class="form-control" required placeholder="Número de serie único">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Estado Físico *</label>
-        <select name="estado_fisico" class="form-control" required>
-            <option value="NUEVO">Nuevo</option>
-            <option value="BUENO">Bueno</option>
-            <option value="REGULAR">Regular</option>
-            <option value="MALO">Malo</option>
-            <option value="DAÑADO">Dañado</option>
-            <option value="EN_REPARACION">En Reparación</option>
-        </select>
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_tipo_equipo">Tipo de Equipo *</label>
+            {{ form.tipo_equipo }}
+        </div>
 
-<div class="form-group">
-    <label class="form-label">Especificaciones Técnicas *</label>
-    <textarea name="especificaciones" class="form-control" rows="4" required placeholder="Procesador, RAM, Disco duro, etc."></textarea>
+        <div class="form-group">
+            <label for="id_marca">Marca *</label>
+            {{ form.marca }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_modelo">Modelo</label>
+            {{ form.modelo }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_serial">Número de Serie</label>
+            {{ form.serial }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_estado_fisico">Estado Físico *</label>
+            {{ form.estado_fisico }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_especificaciones">Especificaciones Técnicas</label>
+            {{ form.especificaciones }}
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de equipos
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombre = document.querySelector('[name="nombre"]').value.trim();
+    const codigo = document.querySelector('[name="codigo_equipo"]').value.trim();
+
+    if (!nombre) {
+        e.preventDefault();
+        alert('⚠️ El nombre del equipo es obligatorio');
+        return false;
+    }
+
+    if (!codigo) {
+        e.preventDefault();
+        alert('⚠️ El código del equipo es obligatorio');
+        return false;
+    }
+});
+</script>
 {% endblock %}

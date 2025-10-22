@@ -1,0 +1,204 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>{{ titulo }}</h2>
+            <a href="{% url 'administrador:equipo_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        <form method="post" class="equipo-form">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.codigo_equipo.id_for_label }}">Código del Equipo *</label>
+                        {{ form.codigo_equipo }}
+                        {% if form.codigo_equipo.errors %}
+                            <div class="error-message">{{ form.codigo_equipo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.nombre.id_for_label }}">Nombre del Equipo *</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <div class="error-message">{{ form.nombre.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.cliente.id_for_label }}">Cliente *</label>
+                        {{ form.cliente }}
+                        {% if form.cliente.errors %}
+                            <div class="error-message">{{ form.cliente.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.tipo_equipo.id_for_label }}">Tipo de Equipo *</label>
+                        {{ form.tipo_equipo }}
+                        {% if form.tipo_equipo.errors %}
+                            <div class="error-message">{{ form.tipo_equipo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.marca.id_for_label }}">Marca *</label>
+                        {{ form.marca }}
+                        {% if form.marca.errors %}
+                            <div class="error-message">{{ form.marca.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.modelo.id_for_label }}">Modelo</label>
+                        {{ form.modelo }}
+                        {% if form.modelo.errors %}
+                            <div class="error-message">{{ form.modelo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.serial.id_for_label }}">Número de Serie</label>
+                        {{ form.serial }}
+                        {% if form.serial.errors %}
+                            <div class="error-message">{{ form.serial.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.estado_fisico.id_for_label }}">Estado Físico *</label>
+                        {{ form.estado_fisico }}
+                        {% if form.estado_fisico.errors %}
+                            <div class="error-message">{{ form.estado_fisico.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.especificaciones.id_for_label }}">Especificaciones Técnicas</label>
+                        {{ form.especificaciones }}
+                        {% if form.especificaciones.errors %}
+                            <div class="error-message">{{ form.especificaciones.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="{% url 'administrador:equipo_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Equipo
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-card {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+

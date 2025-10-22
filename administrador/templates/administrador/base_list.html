@@ -190,10 +190,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 9999;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
 
 .modal.show {
@@ -202,35 +203,43 @@
 
 .modal-content {
     background: var(--card-bg);
-    border-radius: 12px;
-    padding: 2rem;
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 1200px !important;
+    width: 95% !important;
+    max-height: 85vh !important;
     overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .modal-header h3 {
     color: var(--text-primary);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
 }
 
 .close-modal {
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     cursor: pointer;
     color: var(--text-secondary);
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+}
+
+.close-modal:hover {
+    color: var(--danger-color);
+    transform: scale(1.2);
 }
 
 .modal-body {
@@ -238,7 +247,7 @@
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem !important;
     clear: both;
 }
 
@@ -246,8 +255,8 @@
     display: block;
     color: var(--text-primary);
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
 }
 
 .form-control, .form-control select, .form-control textarea, .form-control input {

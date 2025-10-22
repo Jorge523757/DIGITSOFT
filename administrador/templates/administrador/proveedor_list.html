@@ -9,11 +9,11 @@
 
 {% block table_headers %}
 <th>NIT/Documento</th>
-<th>Razón Social</th>
+<th>Nombre</th>
 <th>Categoría</th>
 <th>Email</th>
 <th>Teléfono</th>
-<th>Calificación</th>
+<th>Ciudad</th>
 <th>Estado</th>
 <th style="width: 200px;">Acciones</th>
 {% endblock %}
@@ -23,13 +23,13 @@
     {% for proveedor in proveedores %}
     <tr>
         <td><strong>{{ proveedor.numero_documento }}</strong></td>
-        <td>{{ proveedor.razon_social }}</td>
+        <td>{{ proveedor.nombre }}</td>
         <td>
             <span class="badge badge-info">{{ proveedor.get_categoria_principal_display }}</span>
         </td>
         <td>{{ proveedor.email }}</td>
         <td>{{ proveedor.telefono }}</td>
-        <td>⭐ {{ proveedor.calificacion|floatformat:1 }}</td>
+        <td>{{ proveedor.ciudad }}</td>
         <td>
             {% if proveedor.activo %}
                 <span class="badge badge-success">Activo</span>
@@ -45,10 +45,10 @@
                 <button class="btn btn-primary btn-sm" onclick="editRecord({{ proveedor.id }})" title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ proveedor.id }}, '{{ proveedor.razon_social }}')" title="Historial">
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ proveedor.id }}, '{{ proveedor.nombre }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ proveedor.id }}, '{{ proveedor.razon_social }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ proveedor.id }}, '{{ proveedor.nombre }}', '', '', '')" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -69,96 +69,116 @@
 {% endblock %}
 
 {% block form_content %}
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Tipo de Documento *</label>
-        <select name="tipo_documento" class="form-control" required>
-            <option value="NIT">NIT</option>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="CE">Cédula de Extranjería</option>
-        </select>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_tipo_documento">Tipo de Documento *</label>
+            {{ form.tipo_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_numero_documento">Número de Documento *</label>
+            {{ form.numero_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_razon_social">Razón Social *</label>
+            {{ form.razon_social }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nombre_comercial">Nombre Comercial</label>
+            {{ form.nombre_comercial }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email *</label>
+            {{ form.email }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefono">Teléfono *</label>
+            {{ form.telefono }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_sitio_web">Sitio Web</label>
+            {{ form.sitio_web }}
+        </div>
     </div>
-    <div class="form-group">
-        <label class="form-label">Número de Documento *</label>
-        <input type="text" name="numero_documento" class="form-control" required placeholder="Ej: 900123456-7">
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_direccion">Dirección *</label>
+            {{ form.direccion }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_ciudad">Ciudad *</label>
+            {{ form.ciudad }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_departamento">Departamento *</label>
+            {{ form.departamento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_categoria_principal">Categoría Principal *</label>
+            {{ form.categoria_principal }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_contacto_principal">Contacto Principal</label>
+            {{ form.contacto_principal }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefono_contacto">Teléfono Contacto</label>
+            {{ form.telefono_contacto }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email_contacto">Email Contacto</label>
+            {{ form.email_contacto }}
+        </div>
     </div>
 </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Razón Social *</label>
-        <input type="text" name="razon_social" class="form-control" required placeholder="Nombre legal de la empresa">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Nombre Comercial</label>
-        <input type="text" name="nombre_comercial" class="form-control" placeholder="Nombre comercial">
-    </div>
-</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="id_condiciones_pago">Condiciones de Pago</label>
+            {{ form.condiciones_pago }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input type="email" name="email" class="form-control" required placeholder="correo@proveedor.com">
+        <div class="form-group">
+            <label for="id_tiempo_entrega_dias">Tiempo de Entrega (días)</label>
+            {{ form.tiempo_entrega_dias }}
+        </div>
     </div>
-    <div class="form-group">
-        <label class="form-label">Teléfono *</label>
-        <input type="tel" name="telefono" class="form-control" required placeholder="6012345678">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Categoría Principal *</label>
-    <select name="categoria_principal" class="form-control" required>
-        <option value="">Seleccione...</option>
-        <option value="EQUIPOS">Equipos de Cómputo</option>
-        <option value="COMPONENTES">Componentes y Partes</option>
-        <option value="SOFTWARE">Software y Licencias</option>
-        <option value="ACCESORIOS">Accesorios</option>
-        <option value="CONSUMIBLES">Consumibles</option>
-        <option value="SERVICIOS">Servicios</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Dirección *</label>
-    <textarea name="direccion" class="form-control" rows="2" required placeholder="Dirección completa"></textarea>
-</div>
-
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Ciudad *</label>
-        <input type="text" name="ciudad" class="form-control" required placeholder="Ciudad">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Departamento *</label>
-        <input type="text" name="departamento" class="form-control" required placeholder="Departamento">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Contacto Principal *</label>
-    <input type="text" name="contacto_principal" class="form-control" required placeholder="Nombre del contacto">
-</div>
-
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Email Contacto</label>
-        <input type="email" name="email_contacto" class="form-control" placeholder="Email del contacto">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Teléfono Contacto</label>
-        <input type="tel" name="telefono_contacto" class="form-control" placeholder="Teléfono del contacto">
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Condiciones de Pago</label>
-    <textarea name="condiciones_pago" class="form-control" rows="2" placeholder="Ej: 30 días, Contado, etc."></textarea>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Tiempo de Entrega (días) *</label>
-    <input type="number" name="tiempo_entrega_dias" class="form-control" required value="1" min="1">
 </div>
 {% endblock %}
 
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de proveedores
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const razonSocial = document.querySelector('[name="razon_social"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
+
+    if (!razonSocial) {
+        e.preventDefault();
+        alert('⚠️ La razón social es obligatoria');
+        return false;
+    }
+
+    if (!email) {
+        e.preventDefault();
+        alert('⚠️ El email es obligatorio');
+        return false;
+    }
+});
+</script>
+{% endblock %}

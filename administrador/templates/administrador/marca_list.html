@@ -52,7 +52,7 @@
                 <button class="btn btn-warning btn-sm" onclick="viewHistory({{ marca.id }}, '{{ marca.nombre }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ marca.id }}, '{{ marca.nombre }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ marca.id }}, '{{ marca.nombre }}', '', '', '')" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -62,7 +62,7 @@
 {% else %}
     <tr>
         <td colspan="7" class="empty-state">
-            <i class="fas fa-tag"></i>
+            <i class="fas fa-tags"></i>
             <p>No hay marcas registradas</p>
             <button class="btn btn-primary" onclick="openModal('createModal')">
                 <i class="fas fa-plus"></i> Agregar Primera Marca
@@ -73,58 +73,70 @@
 {% endblock %}
 
 {% block form_content %}
-<div class="form-group">
-    <label class="form-label">Nombre de la Marca *</label>
-    {{ form.nombre }}
-    {% if form.nombre.errors %}
-        <small class="text-danger">{{ form.nombre.errors.0 }}</small>
-    {% endif %}
-</div>
-
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            <label class="form-label">Tipo de Marca *</label>
+            <label for="id_nombre">Nombre de la Marca *</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo_marca">Tipo de Marca *</label>
             {{ form.tipo_marca }}
-            {% if form.tipo_marca.errors %}
-                <small class="text-danger">{{ form.tipo_marca.errors.0 }}</small>
-            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_pais_origen">País de Origen</label>
+            {{ form.pais_origen }}
         </div>
     </div>
+
     <div class="col-md-6">
         <div class="form-group">
-            <label class="form-label">País de Origen</label>
-            {{ form.pais_origen }}
-            {% if form.pais_origen.errors %}
-                <small class="text-danger">{{ form.pais_origen.errors.0 }}</small>
-            {% endif %}
+            <label for="id_descripcion">Descripción</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_sitio_web">Sitio Web</label>
+            {{ form.sitio_web }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_logo">Logo de la Marca</label>
+            {{ form.logo }}
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                {{ form.activa }}
+                <label class="form-check-label" for="id_activa">
+                    <strong>Marca Activa</strong>
+                </label>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="form-group">
-    <label class="form-label">Descripción</label>
-    {{ form.descripcion }}
-    {% if form.descripcion.errors %}
-        <small class="text-danger">{{ form.descripcion.errors.0 }}</small>
-    {% endif %}
-</div>
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de marcas
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombre = document.querySelector('[name="nombre"]').value.trim();
 
-<div class="form-group">
-    <label class="form-label">Sitio Web</label>
-    {{ form.sitio_web }}
-    {% if form.sitio_web.errors %}
-        <small class="text-danger">{{ form.sitio_web.errors.0 }}</small>
-    {% endif %}
-    <small class="text-muted">Ejemplo: https://www.ejemplo.com</small>
-</div>
+    if (!nombre) {
+        e.preventDefault();
+        alert('⚠️ El nombre de la marca es obligatorio');
+        return false;
+    }
 
-<div class="form-group">
-    <label class="form-label">Logo</label>
-    {{ form.logo }}
-    {% if form.logo.errors %}
-        <small class="text-danger">{{ form.logo.errors.0 }}</small>
-    {% endif %}
-    <small class="text-muted">Formatos permitidos: JPG, PNG. Tamaño máximo: 2MB</small>
-</div>
+    if (nombre.length < 2) {
+        e.preventDefault();
+        alert('⚠️ El nombre de la marca debe tener al menos 2 caracteres');
+        return false;
+    }
+});
+</script>
 {% endblock %}

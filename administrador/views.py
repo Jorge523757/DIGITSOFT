@@ -75,11 +75,16 @@ def logs_actividad(request):
 def producto_list(request):
     """Vista para listar productos"""
     from inventario.models import Producto
+    from .forms import ProductoForm
+
     productos = Producto.objects.all().select_related('marca', 'proveedor_principal').order_by('-fecha_registro')
+    form = ProductoForm()  # Crear instancia del formulario
+
     context = {
         'titulo': 'Gestión de Productos',
         'seccion': 'productos',
-        'productos': productos
+        'productos': productos,
+        'form': form  # Agregar el formulario al contexto
     }
     return render(request, 'administrador/producto_list.html', context)
 
@@ -90,16 +95,16 @@ def producto_create(request):
     """Vista para crear producto"""
     from .forms import ProductoForm
     if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES)
+        form = ProductoForm(request.POST, request.FILES)  # Agregar request.FILES para manejar imágenes
         if form.is_valid():
             producto = form.save(commit=False)
             # Manejar el campo activo manualmente
             producto.activo = request.POST.get('activo') == 'on'
             producto.save()
-            messages.success(request, f'Producto "{producto.nombre}" creado exitosamente y listo para la tienda online.')
+            messages.success(request, f'✅ Producto "{producto.nombre}" creado exitosamente y disponible en la tienda online.')
             return redirect('administrador:producto_list')
         else:
-            messages.error(request, 'Por favor corrija los errores en el formulario.')
+            messages.error(request, '❌ Por favor corrija los errores en el formulario.')
     else:
         form = ProductoForm()
 
@@ -117,16 +122,16 @@ def producto_update(request, pk):
 
     producto = get_object_or_404(Producto, pk=pk)
     if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        form = ProductoForm(request.POST, request.FILES, instance=producto)  # Agregar request.FILES
         if form.is_valid():
             producto = form.save(commit=False)
             # Manejar el campo activo manualmente
             producto.activo = request.POST.get('activo') == 'on'
             producto.save()
-            messages.success(request, f'Producto "{producto.nombre}" actualizado exitosamente.')
+            messages.success(request, f'✅ Producto "{producto.nombre}" actualizado exitosamente.')
             return redirect('administrador:producto_list')
         else:
-            messages.error(request, 'Por favor corrija los errores en el formulario.')
+            messages.error(request, '❌ Por favor corrija los errores en el formulario.')
     else:
         form = ProductoForm(instance=producto)
 
@@ -217,8 +222,17 @@ def venta_detail(request, pk):
 def cliente_list(request):
     """Vista para listar clientes"""
     from clientes.models import Cliente
-    clientes = Cliente.objects.all()
-    context = {'titulo': 'Gestión de Clientes', 'seccion': 'clientes', 'clientes': clientes}
+    from .forms import ClienteForm
+
+    clientes = Cliente.objects.all().order_by('-fecha_registro')
+    form = ClienteForm()
+
+    context = {
+        'titulo': 'Gestión de Clientes',
+        'seccion': 'clientes',
+        'clientes': clientes,
+        'form': form
+    }
     return render(request, 'administrador/cliente_list.html', context)
 
 
@@ -226,7 +240,20 @@ def cliente_list(request):
 @admin_required
 def cliente_create(request):
     """Vista para crear cliente"""
-    context = {'titulo': 'Nuevo Cliente'}
+    from .forms import ClienteForm
+
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = form.save()
+            messages.success(request, f'✅ Cliente "{cliente.nombres} {cliente.apellidos}" creado exitosamente.')
+            return redirect('administrador:cliente_list')
+        else:
+            messages.error(request, '❌ Error al crear el cliente. Revisa los datos.')
+    else:
+        form = ClienteForm()
+
+    context = {'titulo': 'Nuevo Cliente', 'form': form}
     return render(request, 'administrador/cliente_form.html', context)
 
 
@@ -234,7 +261,24 @@ def cliente_create(request):
 @admin_required
 def cliente_update(request, pk):
     """Vista para actualizar cliente"""
-    context = {'titulo': 'Editar Cliente', 'cliente_id': pk}
+    from clientes.models import Cliente
+    from .forms import ClienteForm
+    from django.shortcuts import get_object_or_404
+
+    cliente = get_object_or_404(Cliente, pk=pk)
+
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            cliente = form.save()
+            messages.success(request, f'✅ Cliente "{cliente.nombres} {cliente.apellidos}" actualizado exitosamente.')
+            return redirect('administrador:cliente_list')
+        else:
+            messages.error(request, '❌ Error al actualizar el cliente.')
+    else:
+        form = ClienteForm(instance=cliente)
+
+    context = {'titulo': 'Editar Cliente', 'form': form, 'cliente': cliente}
     return render(request, 'administrador/cliente_form.html', context)
 
 
@@ -242,7 +286,18 @@ def cliente_update(request, pk):
 @admin_required
 def cliente_delete(request, pk):
     """Vista para eliminar cliente"""
-    context = {'titulo': 'Eliminar Cliente', 'cliente_id': pk}
+    from clientes.models import Cliente
+    from django.shortcuts import get_object_or_404
+
+    cliente = get_object_or_404(Cliente, pk=pk)
+
+    if request.method == 'POST':
+        nombre_completo = f"{cliente.nombres} {cliente.apellidos}"
+        cliente.delete()
+        messages.success(request, f'✅ Cliente "{nombre_completo}" eliminado exitosamente.')
+        return redirect('administrador:cliente_list')
+
+    context = {'titulo': 'Eliminar Cliente', 'cliente': cliente}
     return render(request, 'administrador/cliente_confirm_delete.html', context)
 
 
@@ -254,8 +309,17 @@ def cliente_delete(request, pk):
 def equipo_list(request):
     """Vista para listar equipos"""
     from .models import Equipo
-    equipos = Equipo.objects.all()
-    context = {'titulo': 'Gestión de Equipos', 'seccion': 'equipos', 'equipos': equipos}
+    from .forms import EquipoForm
+
+    equipos = Equipo.objects.all().select_related('cliente', 'marca').order_by('-fecha_registro')
+    form = EquipoForm()
+
+    context = {
+        'titulo': 'Gestión de Equipos',
+        'seccion': 'equipos',
+        'equipos': equipos,
+        'form': form
+    }
     return render(request, 'administrador/equipo_list.html', context)
 
 
@@ -263,7 +327,20 @@ def equipo_list(request):
 @admin_required
 def equipo_create(request):
     """Vista para crear equipo"""
-    context = {'titulo': 'Nuevo Equipo'}
+    from .forms import EquipoForm
+
+    if request.method == 'POST':
+        form = EquipoForm(request.POST)
+        if form.is_valid():
+            equipo = form.save()
+            messages.success(request, f'✅ Equipo "{equipo.nombre}" creado exitosamente.')
+            return redirect('administrador:equipo_list')
+        else:
+            messages.error(request, '❌ Error al crear el equipo. Revisa los datos.')
+    else:
+        form = EquipoForm()
+
+    context = {'titulo': 'Nuevo Equipo', 'form': form}
     return render(request, 'administrador/equipo_form.html', context)
 
 
@@ -271,7 +348,24 @@ def equipo_create(request):
 @admin_required
 def equipo_update(request, pk):
     """Vista para actualizar equipo"""
-    context = {'titulo': 'Editar Equipo', 'equipo_id': pk}
+    from .models import Equipo
+    from .forms import EquipoForm
+    from django.shortcuts import get_object_or_404
+
+    equipo = get_object_or_404(Equipo, pk=pk)
+
+    if request.method == 'POST':
+        form = EquipoForm(request.POST, instance=equipo)
+        if form.is_valid():
+            equipo = form.save()
+            messages.success(request, f'✅ Equipo "{equipo.nombre}" actualizado exitosamente.')
+            return redirect('administrador:equipo_list')
+        else:
+            messages.error(request, '❌ Error al actualizar el equipo.')
+    else:
+        form = EquipoForm(instance=equipo)
+
+    context = {'titulo': 'Editar Equipo', 'form': form, 'equipo': equipo}
     return render(request, 'administrador/equipo_form.html', context)
 
 
@@ -279,7 +373,18 @@ def equipo_update(request, pk):
 @admin_required
 def equipo_delete(request, pk):
     """Vista para eliminar equipo"""
-    context = {'titulo': 'Eliminar Equipo', 'equipo_id': pk}
+    from .models import Equipo
+    from django.shortcuts import get_object_or_404
+
+    equipo = get_object_or_404(Equipo, pk=pk)
+
+    if request.method == 'POST':
+        nombre = equipo.nombre
+        equipo.delete()
+        messages.success(request, f'✅ Equipo "{nombre}" eliminado exitosamente.')
+        return redirect('administrador:equipo_list')
+
+    context = {'titulo': 'Eliminar Equipo', 'equipo': equipo}
     return render(request, 'administrador/equipo_confirm_delete.html', context)
 
 
@@ -361,9 +466,18 @@ def mis_garantias(request):
 @admin_required
 def marca_list(request):
     """Vista para listar marcas"""
-    from .models import Marca
+    from inventario.models import Marca
+    from .forms import MarcaForm
+
     marcas = Marca.objects.all()
-    context = {'titulo': 'Gestión de Marcas', 'seccion': 'marcas', 'marcas': marcas}
+    form = MarcaForm()
+
+    context = {
+        'titulo': 'Gestión de Marcas',
+        'seccion': 'marcas',
+        'marcas': marcas,
+        'form': form
+    }
     return render(request, 'administrador/marca_list.html', context)
 
 
@@ -371,7 +485,20 @@ def marca_list(request):
 @admin_required
 def marca_create(request):
     """Vista para crear marca"""
-    context = {'titulo': 'Nueva Marca'}
+    from .forms import MarcaForm
+
+    if request.method == 'POST':
+        form = MarcaForm(request.POST, request.FILES)
+        if form.is_valid():
+            marca = form.save()
+            messages.success(request, f'✅ Marca "{marca.nombre}" creada exitosamente.')
+            return redirect('administrador:marca_list')
+        else:
+            messages.error(request, '❌ Error al crear la marca. Revisa los datos.')
+    else:
+        form = MarcaForm()
+
+    context = {'titulo': 'Nueva Marca', 'form': form}
     return render(request, 'administrador/marca_form.html', context)
 
 
@@ -379,7 +506,24 @@ def marca_create(request):
 @admin_required
 def marca_update(request, pk):
     """Vista para actualizar marca"""
-    context = {'titulo': 'Editar Marca', 'marca_id': pk}
+    from inventario.models import Marca
+    from .forms import MarcaForm
+    from django.shortcuts import get_object_or_404
+
+    marca = get_object_or_404(Marca, pk=pk)
+
+    if request.method == 'POST':
+        form = MarcaForm(request.POST, request.FILES, instance=marca)
+        if form.is_valid():
+            marca = form.save()
+            messages.success(request, f'✅ Marca "{marca.nombre}" actualizada exitosamente.')
+            return redirect('administrador:marca_list')
+        else:
+            messages.error(request, '❌ Error al actualizar la marca.')
+    else:
+        form = MarcaForm(instance=marca)
+
+    context = {'titulo': 'Editar Marca', 'form': form, 'marca': marca}
     return render(request, 'administrador/marca_form.html', context)
 
 
@@ -387,7 +531,18 @@ def marca_update(request, pk):
 @admin_required
 def marca_delete(request, pk):
     """Vista para eliminar marca"""
-    context = {'titulo': 'Eliminar Marca', 'marca_id': pk}
+    from inventario.models import Marca
+    from django.shortcuts import get_object_or_404
+
+    marca = get_object_or_404(Marca, pk=pk)
+
+    if request.method == 'POST':
+        nombre = marca.nombre
+        marca.delete()
+        messages.success(request, f'✅ Marca "{nombre}" eliminada exitosamente.')
+        return redirect('administrador:marca_list')
+
+    context = {'titulo': 'Eliminar Marca', 'marca': marca}
     return render(request, 'administrador/marca_confirm_delete.html', context)
 
 
@@ -399,8 +554,17 @@ def marca_delete(request, pk):
 def proveedor_list(request):
     """Vista para listar proveedores"""
     from .models import Proveedor
-    proveedores = Proveedor.objects.all()
-    context = {'titulo': 'Gestión de Proveedores', 'seccion': 'proveedores', 'proveedores': proveedores}
+    from .forms import ProveedorForm
+
+    proveedores = Proveedor.objects.all().order_by('nombre')
+    form = ProveedorForm()
+
+    context = {
+        'titulo': 'Gestión de Proveedores',
+        'seccion': 'proveedores',
+        'proveedores': proveedores,
+        'form': form
+    }
     return render(request, 'administrador/proveedor_list.html', context)
 
 
@@ -408,7 +572,20 @@ def proveedor_list(request):
 @admin_required
 def proveedor_create(request):
     """Vista para crear proveedor"""
-    context = {'titulo': 'Nuevo Proveedor'}
+    from .forms import ProveedorForm
+
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            proveedor = form.save()
+            messages.success(request, f'✅ Proveedor "{proveedor.nombre}" creado exitosamente.')
+            return redirect('administrador:proveedor_list')
+        else:
+            messages.error(request, '❌ Error al crear el proveedor. Revisa los datos.')
+    else:
+        form = ProveedorForm()
+
+    context = {'titulo': 'Nuevo Proveedor', 'form': form}
     return render(request, 'administrador/proveedor_form.html', context)
 
 
@@ -416,7 +593,24 @@ def proveedor_create(request):
 @admin_required
 def proveedor_update(request, pk):
     """Vista para actualizar proveedor"""
-    context = {'titulo': 'Editar Proveedor', 'proveedor_id': pk}
+    from .models import Proveedor
+    from .forms import ProveedorForm
+    from django.shortcuts import get_object_or_404
+
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST, instance=proveedor)
+        if form.is_valid():
+            proveedor = form.save()
+            messages.success(request, f'✅ Proveedor "{proveedor.nombre}" actualizado exitosamente.')
+            return redirect('administrador:proveedor_list')
+        else:
+            messages.error(request, '❌ Error al actualizar el proveedor.')
+    else:
+        form = ProveedorForm(instance=proveedor)
+
+    context = {'titulo': 'Editar Proveedor', 'form': form, 'proveedor': proveedor}
     return render(request, 'administrador/proveedor_form.html', context)
 
 
@@ -424,7 +618,18 @@ def proveedor_update(request, pk):
 @admin_required
 def proveedor_delete(request, pk):
     """Vista para eliminar proveedor"""
-    context = {'titulo': 'Eliminar Proveedor', 'proveedor_id': pk}
+    from .models import Proveedor
+    from django.shortcuts import get_object_or_404
+
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+
+    if request.method == 'POST':
+        nombre = proveedor.nombre
+        proveedor.delete()
+        messages.success(request, f'✅ Proveedor "{nombre}" eliminado exitosamente.')
+        return redirect('administrador:proveedor_list')
+
+    context = {'titulo': 'Eliminar Proveedor', 'proveedor': proveedor}
     return render(request, 'administrador/proveedor_confirm_delete.html', context)
 
 
@@ -436,8 +641,17 @@ def proveedor_delete(request, pk):
 def tecnico_list(request):
     """Vista para listar técnicos"""
     from .models import Tecnico
-    tecnicos = Tecnico.objects.all()
-    context = {'titulo': 'Gestión de Técnicos', 'seccion': 'tecnicos', 'tecnicos': tecnicos}
+    from .forms import TecnicoForm
+
+    tecnicos = Tecnico.objects.all().order_by('nombre')
+    form = TecnicoForm()
+
+    context = {
+        'titulo': 'Gestión de Técnicos',
+        'seccion': 'tecnicos',
+        'tecnicos': tecnicos,
+        'form': form
+    }
     return render(request, 'administrador/tecnico_list.html', context)
 
 
@@ -445,7 +659,20 @@ def tecnico_list(request):
 @admin_required
 def tecnico_create(request):
     """Vista para crear técnico"""
-    context = {'titulo': 'Nuevo Técnico'}
+    from .forms import TecnicoForm
+
+    if request.method == 'POST':
+        form = TecnicoForm(request.POST)
+        if form.is_valid():
+            tecnico = form.save()
+            messages.success(request, f'✅ Técnico "{tecnico.nombre} {tecnico.apellido}" creado exitosamente.')
+            return redirect('administrador:tecnico_list')
+        else:
+            messages.error(request, '❌ Error al crear el técnico. Revisa los datos.')
+    else:
+        form = TecnicoForm()
+
+    context = {'titulo': 'Nuevo Técnico', 'form': form}
     return render(request, 'administrador/tecnico_form.html', context)
 
 
@@ -453,7 +680,24 @@ def tecnico_create(request):
 @admin_required
 def tecnico_update(request, pk):
     """Vista para actualizar técnico"""
-    context = {'titulo': 'Editar Técnico', 'tecnico_id': pk}
+    from .models import Tecnico
+    from .forms import TecnicoForm
+    from django.shortcuts import get_object_or_404
+
+    tecnico = get_object_or_404(Tecnico, pk=pk)
+
+    if request.method == 'POST':
+        form = TecnicoForm(request.POST, instance=tecnico)
+        if form.is_valid():
+            tecnico = form.save()
+            messages.success(request, f'✅ Técnico "{tecnico.nombre} {tecnico.apellido}" actualizado exitosamente.')
+            return redirect('administrador:tecnico_list')
+        else:
+            messages.error(request, '❌ Error al actualizar el técnico.')
+    else:
+        form = TecnicoForm(instance=tecnico)
+
+    context = {'titulo': 'Editar Técnico', 'form': form, 'tecnico': tecnico}
     return render(request, 'administrador/tecnico_form.html', context)
 
 
@@ -461,7 +705,18 @@ def tecnico_update(request, pk):
 @admin_required
 def tecnico_delete(request, pk):
     """Vista para eliminar técnico"""
-    context = {'titulo': 'Eliminar Técnico', 'tecnico_id': pk}
+    from .models import Tecnico
+    from django.shortcuts import get_object_or_404
+
+    tecnico = get_object_or_404(Tecnico, pk=pk)
+
+    if request.method == 'POST':
+        nombre_completo = f"{tecnico.nombre} {tecnico.apellido}"
+        tecnico.delete()
+        messages.success(request, f'✅ Técnico "{nombre_completo}" eliminado exitosamente.')
+        return redirect('administrador:tecnico_list')
+
+    context = {'titulo': 'Eliminar Técnico', 'tecnico': tecnico}
     return render(request, 'administrador/tecnico_confirm_delete.html', context)
 
 

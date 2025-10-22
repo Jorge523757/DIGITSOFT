@@ -75,25 +75,498 @@
 {% endblock %}
 
 {% block form_content %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Guardar</button>
-</form>
-{% endblock %}
+<!-- ESTILOS CSS MEJORADOS -->
+<style>
+/* Contenedor principal con scroll personalizado */
+.form-container {
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    padding: 10px 15px !important;
+}
 
-<form method="get" class="form-inline mb-3">
-    <input type="text" name="q" class="form-control mr-2" placeholder="Buscar por nombre o código" value="{{ query }}" />
-    <button type="submit" class="btn btn-primary">Buscar</button>
-    <a href="{% url 'administrador:producto_list' %}" class="btn btn-secondary ml-2">Limpiar</a>
-</form>
+.form-container::-webkit-scrollbar {
+    width: 10px !important;
+}
+
+.form-container::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+    border-radius: 10px !important;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #007bff 0%, #0056b3 100%) !important;
+    border-radius: 10px !important;
+}
+
+/* Preview de imagen mejorado */
+.preview-imagen {
+    max-width: 100% !important;
+    max-height: 200px !important;
+    margin-top: 15px !important;
+    border: 3px solid #007bff !important;
+    border-radius: 12px !important;
+    display: none !important;
+    box-shadow: 0 8px 16px rgba(0,123,255,0.3) !important;
+    transition: all 0.4s ease !important;
+}
+
+.preview-imagen:hover {
+    transform: scale(1.08) !important;
+    box-shadow: 0 12px 24px rgba(0,123,255,0.4) !important;
+}
+
+/* Área de carga de imagen ultra mejorada */
+.upload-area {
+    border: 3px dashed #007bff !important;
+    border-radius: 16px !important;
+    padding: 35px 25px !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.upload-area::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(0,123,255,0.2), transparent) !important;
+    transition: left 0.5s !important;
+}
+
+.upload-area:hover::before {
+    left: 100% !important;
+}
+
+.upload-area:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+    border-color: #0056b3 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(0,123,255,0.25) !important;
+}
+
+.upload-area i {
+    font-size: 4rem !important;
+    color: #007bff !important;
+    margin-bottom: 15px !important;
+    display: block !important;
+    animation: bounce 2s infinite !important;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.upload-area p {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #495057 !important;
+    margin-bottom: 10px !important;
+}
+
+.upload-area small {
+    color: #6c757d !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+}
+
+/* Títulos de sección mejorados */
+.form-section-title {
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    color: #2c3e50 !important;
+    margin-bottom: 25px !important;
+    padding: 12px 15px !important;
+    border-left: 5px solid #007bff !important;
+    background: linear-gradient(90deg, #e3f2fd 0%, transparent 100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border-radius: 8px !important;
+}
+
+.form-section-title i {
+    font-size: 1.5rem !important;
+    color: #007bff !important;
+}
+
+/* Grupos de formulario mejorados */
+.form-group {
+    margin-bottom: 1.8rem !important;
+}
+
+.form-group label {
+    font-weight: 700 !important;
+    color: #495057 !important;
+    margin-bottom: 10px !important;
+    display: block !important;
+    font-size: 1rem !important;
+}
+
+/* CORREGIR INPUTS - ESTILOS UNIVERSALES */
+.form-control,
+input[type="text"].form-control,
+input[type="number"].form-control,
+select.form-control,
+textarea.form-control {
+    width: 100% !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    transition: all 0.3s ease !important;
+    font-size: 1rem !important;
+    background-color: #fff !important;
+    color: #495057 !important;
+    box-sizing: border-box !important;
+}
+
+.form-control:focus,
+input.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.25rem rgba(0,123,255,0.2) !important;
+    transform: translateY(-2px) !important;
+    background-color: #f8f9fa !important;
+    outline: none !important;
+}
+
+/* Input groups con gradiente - CORREGIR */
+.input-group {
+    display: flex !important;
+    width: 100% !important;
+}
+
+.input-group-prepend {
+    display: flex !important;
+}
+
+.input-group-text {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 800 !important;
+    border-radius: 10px 0 0 10px !important;
+    padding: 12px 18px !important;
+    font-size: 1.1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.input-group .form-control,
+.input-group input.form-control {
+    border-left: none !important;
+    border-radius: 0 10px 10px 0 !important;
+    flex: 1 !important;
+}
+
+/* Checkbox mejorado */
+.form-check {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    padding: 20px 25px !important;
+    border-radius: 12px !important;
+    border: 2px solid #e0e0e0 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.form-check:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+    border-color: #007bff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(0,123,255,0.2) !important;
+}
+
+.form-check-input {
+    width: 24px !important;
+    height: 24px !important;
+    margin-top: 0 !important;
+    margin-right: 12px !important;
+    cursor: pointer !important;
+    border: 2px solid #007bff !important;
+}
+
+.form-check-input:checked {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+.form-check-label {
+    cursor: pointer !important;
+    user-select: none !important;
+    font-size: 1.05rem !important;
+    margin: 0 !important;
+}
+
+/* Texto de ayuda */
+.form-text {
+    font-size: 0.9rem !important;
+    color: #6c757d !important;
+    font-style: italic !important;
+    margin-top: 8px !important;
+    display: block !important;
+}
+
+/* Divisor de sección */
+.section-divider {
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent 0%, #007bff 50%, transparent 100%) !important;
+    margin: 30px 0 !important;
+}
+
+/* Input de imagen oculto */
+#id_imagen {
+    display: none !important;
+}
+
+/* Contenedor de preview */
+.image-preview-container {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Botón para eliminar imagen */
+.remove-image-btn {
+    position: absolute !important;
+    top: -12px !important;
+    right: -12px !important;
+    background: #dc3545 !important;
+    color: white !important;
+    border: 3px solid white !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    cursor: pointer !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.3rem !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+    transition: all 0.3s ease !important;
+    z-index: 10 !important;
+}
+
+.remove-image-btn:hover {
+    background: #c82333 !important;
+    transform: scale(1.2) rotate(90deg) !important;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4) !important;
+}
+
+/* CORREGIR ROWS Y COLUMNAS */
+.row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin: 0 -10px !important;
+}
+
+.col-md-6 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    padding: 0 10px !important;
+}
+
+@media (max-width: 768px) {
+    .col-md-6 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Info de margen mejorado */
+#margenInfo {
+    animation: slideIn 0.5s ease !important;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<div class="form-container">
+    <div class="row">
+        <!-- Columna izquierda -->
+        <div class="col-md-6">
+            <h5 class="form-section-title">
+                <i class="fas fa-info-circle"></i>
+                Información Básica
+            </h5>
+
+            <div class="form-group">
+                <label for="id_codigo_producto">Código del Producto</label>
+                {{ form.codigo_producto }}
+                <small class="form-text text-muted">
+                    <i class="fas fa-lightbulb"></i> Código único del producto
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="id_nombre">Nombre del Producto</label>
+                {{ form.nombre }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_descripcion">Descripción</label>
+                {{ form.descripcion }}
+                <small class="form-text text-muted">
+                    <i class="fas fa-edit"></i> Describe las características principales
+                </small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_categoria">Categoría</label>
+                        {{ form.categoria }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_marca">Marca</label>
+                        {{ form.marca }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_modelo">Modelo</label>
+                {{ form.modelo }}
+                <small class="form-text text-muted">
+                    <i class="fas fa-tag"></i> Opcional
+                </small>
+            </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="col-md-6">
+            <h5 class="form-section-title">
+                <i class="fas fa-dollar-sign"></i>
+                Precios y Stock
+            </h5>
+
+            <div class="form-group">
+                <label for="id_proveedor_principal">Proveedor Principal</label>
+                {{ form.proveedor_principal }}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_precio_compra">Precio de Compra</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            {{ form.precio_compra }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_precio_venta">Precio de Venta</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            {{ form.precio_venta }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_stock_actual">Stock Actual</label>
+                        {{ form.stock_actual }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id_stock_minimo">Stock Mínimo</label>
+                        {{ form.stock_minimo }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h5 class="form-section-title">
+                <i class="fas fa-image"></i>
+                Imagen del Producto
+            </h5>
+
+            <div class="form-group">
+                <div class="image-preview-container">
+                    <label class="upload-area" for="id_imagen" id="uploadLabel">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Haz clic para subir una imagen</p>
+                        <small>JPG, PNG o GIF - Máx. 5MB</small>
+                    </label>
+                    {{ form.imagen }}
+                    <img id="preview-img" class="preview-imagen" alt="Vista previa">
+                    <button type="button" class="remove-image-btn" id="removeImageBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    {{ form.activo }}
+                    <label class="form-check-label" for="id_activo">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Producto Activo</strong>
+                        <small class="d-block text-muted mt-1" style="margin-left: 0 !important;">Visible en la tienda online</small>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="margenInfo" style="margin-top: 2rem; padding: 1.2rem; border-radius: 12px; display: none; font-size: 1.05rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+</div>
+{% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
 <script>
+// Preview de la imagen
+document.getElementById('id_imagen').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const preview = document.getElementById('preview-img');
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 // Calcular margen de ganancia automáticamente
 const precioCompra = document.querySelector('[name="precio_compra"]');
 const precioVenta = document.querySelector('[name="precio_venta"]');
+const margenInfo = document.getElementById('margenInfo');
 
 if (precioCompra && precioVenta) {
     function calcularMargen() {
@@ -102,16 +575,22 @@ if (precioCompra && precioVenta) {
 
         if (compra > 0 && venta > 0) {
             const margen = ((venta - compra) / compra * 100).toFixed(2);
-            const mensaje = margen >= 0 ? `Margen: ${margen}%` : `⚠️ Pérdida: ${Math.abs(margen)}%`;
+            const ganancia = (venta - compra).toFixed(2);
 
-            // Mostrar mensaje temporal
-            if (!document.getElementById('margenInfo')) {
-                const info = document.createElement('small');
-                info.id = 'margenInfo';
-                info.style.color = margen >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
-                precioVenta.parentNode.appendChild(info);
+            if (margen >= 0) {
+                margenInfo.innerHTML = `<i class="fas fa-check-circle"></i> <strong>Margen de Ganancia:</strong> ${margen}% | <strong>Ganancia:</strong> $${ganancia}`;
+                margenInfo.style.backgroundColor = '#d4edda';
+                margenInfo.style.color = '#155724';
+                margenInfo.style.border = '1px solid #c3e6cb';
+            } else {
+                margenInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>⚠️ Pérdida:</strong> ${Math.abs(margen)}% | <strong>Pérdida:</strong> $${Math.abs(ganancia)}`;
+                margenInfo.style.backgroundColor = '#f8d7da';
+                margenInfo.style.color = '#721c24';
+                margenInfo.style.border = '1px solid #f5c6cb';
             }
-            document.getElementById('margenInfo').textContent = mensaje;
+            margenInfo.style.display = 'block';
+        } else {
+            margenInfo.style.display = 'none';
         }
     }
 
@@ -120,19 +599,21 @@ if (precioCompra && precioVenta) {
 }
 
 // Validar que el precio de venta no sea menor al de compra
-precioVenta.addEventListener('blur', function() {
-    const compra = parseFloat(precioCompra.value) || 0;
-    const venta = parseFloat(precioVenta.value) || 0;
+if (precioVenta) {
+    precioVenta.addEventListener('blur', function() {
+        const compra = parseFloat(precioCompra.value) || 0;
+        const venta = parseFloat(precioVenta.value) || 0;
 
-    if (venta < compra && compra > 0) {
-        if (confirm('El precio de venta es menor al de compra. ¿Deseas continuar?')) {
-            // Continuar
-        } else {
-            precioVenta.value = (compra * 1.3).toFixed(2); // Sugerir 30% de margen
-            calcularMargen();
+        if (venta < compra && compra > 0) {
+            if (confirm('⚠️ El precio de venta es menor al de compra. ¿Deseas continuar?')) {
+                // Continuar
+            } else {
+                precioVenta.value = (compra * 1.3).toFixed(2); // Sugerir 30% de margen
+                calcularMargen();
+            }
         }
-    }
-});
+    });
+}
 
 // Alertar cuando el stock esté bajo
 const stockActual = document.querySelector('[name="stock_actual"]');
@@ -144,7 +625,7 @@ if (stockActual && stockMinimo) {
         const minimo = parseInt(stockMinimo.value) || 0;
 
         if (actual <= minimo && minimo > 0) {
-            showNotification('⚠️ Stock bajo o igual al mínimo', 'warning');
+            alert('⚠️ Advertencia: El stock actual está en el nivel mínimo o por debajo');
         }
     });
 }

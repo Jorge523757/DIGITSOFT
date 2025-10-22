@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('administrador', '0005_remove_carrito_cliente_remove_carrito_venta_generada_and_more'),
+        ('administrador', '0004_detallecompra_detalleventa'),
         ('clientes', '0001_initial'),
         ('inventario', '0001_initial'),
     ]

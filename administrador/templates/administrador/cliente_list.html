@@ -22,10 +22,10 @@
     {% for cliente in clientes %}
     <tr>
         <td><strong>{{ cliente.numero_documento }}</strong></td>
-        <td>{{ cliente.nombre_completo }}</td>
+        <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
         <td>
             <span class="badge badge-info">
-                {{ cliente.get_tipo_cliente_display }}
+                {{ cliente.get_tipo_documento_display }}
             </span>
         </td>
         <td>{{ cliente.email }}</td>
@@ -45,10 +45,10 @@
                 <button class="btn btn-primary btn-sm" onclick="editRecord({{ cliente.id }})" title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ cliente.id }}, '{{ cliente.nombre_completo }}')" title="Historial">
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ cliente.id }}, '{{ cliente.nombres }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ cliente.id }}, '{{ cliente.nombre_completo }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ cliente.id }}, '{{ cliente.nombres }} {{ cliente.apellidos }}', '', '', '')" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -69,71 +69,89 @@
 {% endblock %}
 
 {% block form_content %}
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Tipo de Documento *</label>
-        <select name="tipo_documento" class="form-control" required>
-            <option value="">Seleccione...</option>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="NIT">NIT</option>
-            <option value="PAS">Pasaporte</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="form-label">Número de Documento *</label>
-        <input type="text" name="numero_documento" class="form-control" required placeholder="Ej: 1234567890">
-    </div>
-</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_tipo_documento">Tipo de Documento *</label>
+            {{ form.tipo_documento }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Nombres *</label>
-        <input type="text" name="nombres" class="form-control" required placeholder="Nombres completos">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Apellidos</label>
-        <input type="text" name="apellidos" class="form-control" placeholder="Apellidos">
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_numero_documento">Número de Documento *</label>
+            {{ form.numero_documento }}
+        </div>
 
-<div class="form-group">
-    <label class="form-label">Tipo de Cliente *</label>
-    <select name="tipo_cliente" class="form-control" required>
-        <option value="NATURAL">Persona Natural</option>
-        <option value="JURIDICA">Persona Jurídica</option>
-    </select>
-</div>
+        <div class="form-group">
+            <label for="id_nombres">Nombres *</label>
+            {{ form.nombres }}
+        </div>
 
-<div class="form-group">
-    <label class="form-label">Razón Social (Solo para empresas)</label>
-    <input type="text" name="razon_social" class="form-control" placeholder="Nombre de la empresa">
-</div>
+        <div class="form-group">
+            <label for="id_apellidos">Apellidos *</label>
+            {{ form.apellidos }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input type="email" name="email" class="form-control" required placeholder="correo@ejemplo.com">
+        <div class="form-group">
+            <label for="id_email">Email *</label>
+            {{ form.email }}
+        </div>
     </div>
-    <div class="form-group">
-        <label class="form-label">Teléfono *</label>
-        <input type="tel" name="telefono" class="form-control" required placeholder="3001234567">
-    </div>
-</div>
 
-<div class="form-group">
-    <label class="form-label">Dirección *</label>
-    <textarea name="direccion" class="form-control" rows="2" required placeholder="Dirección completa"></textarea>
-</div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_telefono">Teléfono *</label>
+            {{ form.telefono }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Ciudad *</label>
-        <input type="text" name="ciudad" class="form-control" required placeholder="Ciudad">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Departamento *</label>
-        <input type="text" name="departamento" class="form-control" required placeholder="Departamento">
+        <div class="form-group">
+            <label for="id_direccion">Dirección *</label>
+            {{ form.direccion }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_ciudad">Ciudad *</label>
+            {{ form.ciudad }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_departamento">Departamento</label>
+            {{ form.departamento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo_cliente">Tipo de Cliente *</label>
+            {{ form.tipo_cliente }}
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de clientes
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombres = document.querySelector('[name="nombres"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
+    const telefono = document.querySelector('[name="telefono"]').value.trim();
+
+    if (!nombres) {
+        e.preventDefault();
+        alert('⚠️ El nombre del cliente es obligatorio');
+        return false;
+    }
+
+    if (!email) {
+        e.preventDefault();
+        alert('⚠️ El email del cliente es obligatorio');
+        return false;
+    }
+
+    if (!telefono) {
+        e.preventDefault();
+        alert('⚠️ El teléfono del cliente es obligatorio');
+        return false;
+    }
+});
+</script>
 {% endblock %}

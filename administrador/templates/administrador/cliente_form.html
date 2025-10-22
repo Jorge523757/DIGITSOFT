@@ -1,0 +1,311 @@
+</div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-card {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>{{ titulo }}</h2>
+            <a href="{% url 'administrador:cliente_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        <form method="post" class="cliente-form">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.tipo_documento.id_for_label }}">Tipo de Documento *</label>
+                        {{ form.tipo_documento }}
+                        {% if form.tipo_documento.errors %}
+                            <div class="error-message">{{ form.tipo_documento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.numero_documento.id_for_label }}">Número de Documento *</label>
+                        {{ form.numero_documento }}
+                        {% if form.numero_documento.errors %}
+                            <div class="error-message">{{ form.numero_documento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.nombres.id_for_label }}">Nombres *</label>
+                        {{ form.nombres }}
+                        {% if form.nombres.errors %}
+                            <div class="error-message">{{ form.nombres.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.apellidos.id_for_label }}">Apellidos *</label>
+                        {{ form.apellidos }}
+                        {% if form.apellidos.errors %}
+                            <div class="error-message">{{ form.apellidos.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="error-message">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.telefono.id_for_label }}">Teléfono *</label>
+                        {{ form.telefono }}
+                        {% if form.telefono.errors %}
+                            <div class="error-message">{{ form.telefono.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.direccion.id_for_label }}">Dirección *</label>
+                        {{ form.direccion }}
+                        {% if form.direccion.errors %}
+                            <div class="error-message">{{ form.direccion.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.ciudad.id_for_label }}">Ciudad *</label>
+                        {{ form.ciudad }}
+                        {% if form.ciudad.errors %}
+                            <div class="error-message">{{ form.ciudad.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                        {{ form.departamento }}
+                        {% if form.departamento.errors %}
+                            <div class="error-message">{{ form.departamento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.tipo_cliente.id_for_label }}">Tipo de Cliente *</label>
+                        {{ form.tipo_cliente }}
+                        {% if form.tipo_cliente.errors %}
+                            <div class="error-message">{{ form.tipo_cliente.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="{% url 'administrador:cliente_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-card {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

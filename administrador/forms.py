@@ -81,13 +81,15 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = [
-            'codigo', 'nombre', 'descripcion', 'stock_actual', 'stock_minimo',
-            'precio_compra', 'precio_venta', 'activo', 'imagen'
+            'codigo_producto', 'nombre', 'descripcion', 'categoria', 'marca', 'modelo',
+            'proveedor_principal', 'precio_compra', 'precio_venta',
+            'stock_actual', 'stock_minimo', 'imagen', 'activo'
         ]
         widgets = {
-            'codigo': forms.TextInput(attrs={
+            'codigo_producto': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Dejar vacío para generar automáticamente'
+                'placeholder': 'Código único',
+                'required': True
             }),
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -96,21 +98,25 @@ class ProductoForm(forms.ModelForm):
             }),
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Descripción detallada del producto',
+                'rows': 3,
+                'placeholder': 'Descripción detallada',
                 'required': True
             }),
-            'stock_actual': forms.NumberInput(attrs={
+            'categoria': forms.Select(attrs={
                 'class': 'form-control',
-                'min': '0',
-                'required': True,
-                'value': '0'
+                'required': True
             }),
-            'stock_minimo': forms.NumberInput(attrs={
+            'marca': forms.Select(attrs={
                 'class': 'form-control',
-                'min': '0',
-                'required': True,
-                'value': '1'
+                'required': True
+            }),
+            'modelo': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Modelo'
+            }),
+            'proveedor_principal': forms.Select(attrs={
+                'class': 'form-control',
+                'required': True
             }),
             'precio_compra': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -126,9 +132,24 @@ class ProductoForm(forms.ModelForm):
                 'required': True,
                 'placeholder': '0.00'
             }),
+            'stock_actual': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'required': True,
+                'value': '0'
+            }),
+            'stock_minimo': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'required': True,
+                'value': '1'
+            }),
             'imagen': forms.FileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*'
+            }),
+            'activo': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
             }),
         }
 
@@ -140,32 +161,6 @@ class ProductoForm(forms.ModelForm):
             raise ValidationError('El precio de venta no puede ser menor al precio de compra.')
         
         return precio_venta
-
-    def clean_stock_maximo(self):
-        stock_maximo = self.cleaned_data.get('stock_maximo')
-        stock_minimo = self.cleaned_data.get('stock_minimo')
-        
-        if stock_minimo and stock_maximo and stock_maximo < stock_minimo:
-            raise ValidationError('El stock máximo no puede ser menor al stock mínimo.')
-        
-        return stock_maximo
-
-    def clean_imagen(self):
-        imagen = self.cleaned_data.get('imagen')
-
-        if imagen:
-            # Validar tamaño (máximo 2MB)
-            if imagen.size > 2 * 1024 * 1024:
-                raise ValidationError('La imagen no puede superar los 2MB.')
-
-            # Validar tipo de archivo
-            import os
-            ext = os.path.splitext(imagen.name)[1].lower()
-            valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-            if ext not in valid_extensions:
-                raise ValidationError(f'Formato de imagen no válido. Use: {", ".join(valid_extensions)}')
-
-        return imagen
 
 
 # ========== FORMULARIO DE CLIENTE ========== #

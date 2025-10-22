@@ -10,11 +10,11 @@
 {% block table_headers %}
 <th>Documento</th>
 <th>Técnico</th>
+<th>Email</th>
+<th>Teléfono</th>
 <th>Especialidades</th>
 <th>Nivel</th>
 <th>Estado</th>
-<th>Servicios</th>
-<th>Calificación</th>
 <th style="width: 200px;">Acciones</th>
 {% endblock %}
 
@@ -23,22 +23,20 @@
     {% for tecnico in tecnicos %}
     <tr>
         <td><strong>{{ tecnico.numero_documento }}</strong></td>
-        <td>{{ tecnico.nombre_completo }}</td>
-        <td>{{ tecnico.especialidades|truncatewords:5 }}</td>
+        <td>{{ tecnico.nombre }} {{ tecnico.apellido }}</td>
+        <td>{{ tecnico.email }}</td>
+        <td>{{ tecnico.telefono }}</td>
+        <td>{{ tecnico.especialidades|truncatewords:3 }}</td>
         <td>
             <span class="badge badge-info">{{ tecnico.get_nivel_experiencia_display }}</span>
         </td>
         <td>
-            {% if tecnico.estado_actual == 'DISPONIBLE' %}
-                <span class="badge badge-success">{{ tecnico.get_estado_actual_display }}</span>
-            {% elif tecnico.estado_actual == 'OCUPADO' %}
-                <span class="badge badge-warning">{{ tecnico.get_estado_actual_display }}</span>
+            {% if tecnico.activo %}
+                <span class="badge badge-success">Activo</span>
             {% else %}
-                <span class="badge badge-danger">{{ tecnico.get_estado_actual_display }}</span>
+                <span class="badge badge-danger">Inactivo</span>
             {% endif %}
         </td>
-        <td>{{ tecnico.servicios_completados }}</td>
-        <td>⭐ {{ tecnico.calificacion_promedio|floatformat:1 }}</td>
         <td>
             <div class="actions-cell">
                 <button class="btn btn-info btn-sm" onclick="viewDetails({{ tecnico.id }})" title="Ver detalles">
@@ -47,10 +45,10 @@
                 <button class="btn btn-primary btn-sm" onclick="editRecord({{ tecnico.id }})" title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ tecnico.id }}, '{{ tecnico.nombre_completo }}')" title="Historial">
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ tecnico.id }}, '{{ tecnico.nombre }}')" title="Historial">
                     <i class="fas fa-history"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ tecnico.id }}, '{{ tecnico.nombre_completo }}')" title="Eliminar">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ tecnico.id }}, '{{ tecnico.nombre }} {{ tecnico.apellido }}', '', '', '')" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -71,76 +69,72 @@
 {% endblock %}
 
 {% block form_content %}
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Número de Documento *</label>
-        <input type="text" name="numero_documento" class="form-control" required placeholder="1234567890">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Tipo de Documento *</label>
-        <select name="tipo_documento" class="form-control" required>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="PAS">Pasaporte</option>
-        </select>
-    </div>
-</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_numero_documento">Número de Documento *</label>
+            {{ form.numero_documento }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Nombres *</label>
-        <input type="text" name="nombres" class="form-control" required placeholder="Nombres completos">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Apellidos *</label>
-        <input type="text" name="apellidos" class="form-control" required placeholder="Apellidos">
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_nombres">Nombres *</label>
+            {{ form.nombres }}
+        </div>
 
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input type="email" name="email" class="form-control" required placeholder="correo@ejemplo.com">
-    </div>
-    <div class="form-group">
-        <label class="form-label">Teléfono *</label>
-        <input type="tel" name="telefono" class="form-control" required placeholder="3001234567">
-    </div>
-</div>
+        <div class="form-group">
+            <label for="id_apellidos">Apellidos *</label>
+            {{ form.apellidos }}
+        </div>
 
-<div class="form-group">
-    <label class="form-label">Dirección *</label>
-    <textarea name="direccion" class="form-control" rows="2" required placeholder="Dirección completa"></textarea>
-</div>
-
-<div class="form-group">
-    <label class="form-label">Especialidades *</label>
-    <textarea name="especialidades" class="form-control" rows="3" required placeholder="Hardware, Software, Redes, etc."></textarea>
-</div>
-
-<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-    <div class="form-group">
-        <label class="form-label">Nivel de Experiencia *</label>
-        <select name="nivel_experiencia" class="form-control" required>
-            <option value="JUNIOR">Junior</option>
-            <option value="INTERMEDIO">Intermedio</option>
-            <option value="SENIOR">Senior</option>
-            <option value="ESPECIALISTA">Especialista</option>
-        </select>
+        <div class="form-group">
+            <label for="id_email">Email *</label>
+            {{ form.email }}
+        </div>
     </div>
-    <div class="form-group">
-        <label class="form-label">Fecha de Ingreso *</label>
-        <input type="date" name="fecha_ingreso" class="form-control" required>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_telefono">Teléfono *</label>
+            {{ form.telefono }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nivel_experiencia">Nivel de Experiencia *</label>
+            {{ form.nivel_experiencia }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_especialidades">Especialidades *</label>
+            {{ form.especialidades }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_certificaciones">Certificaciones</label>
+            {{ form.certificaciones }}
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="form-group">
-    <label class="form-label">Certificaciones</label>
-    <textarea name="certificaciones" class="form-control" rows="2" placeholder="Certificaciones obtenidas (opcional)"></textarea>
-</div>
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de técnicos
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombres = document.querySelector('[name="nombres"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
 
-<div class="form-group">
-    <label class="form-label">Salario *</label>
-    <input type="number" name="salario" class="form-control" step="0.01" required placeholder="0.00">
-</div>
+    if (!nombres) {
+        e.preventDefault();
+        alert('⚠️ El nombre del técnico es obligatorio');
+        return false;
+    }
+
+    if (!email) {
+        e.preventDefault();
+        alert('⚠️ El email del técnico es obligatorio');
+        return false;
+    }
+});
+</script>
 {% endblock %}
