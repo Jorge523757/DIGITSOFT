@@ -1,0 +1,153 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Equipos | Digit Soft{% endblock %}
+{% block page_header %}Equipos{% endblock %}
+
+{% block list_title %}Gestión de Equipos{% endblock %}
+{% block list_description %}Administra el registro de equipos de los clientes{% endblock %}
+
+{% block table_headers %}
+<th>Código</th>
+<th>Nombre</th>
+<th>Tipo</th>
+<th>Marca</th>
+<th>Cliente</th>
+<th>Estado Físico</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if equipos %}
+    {% for equipo in equipos %}
+    <tr>
+        <td><strong>{{ equipo.codigo_equipo }}</strong></td>
+        <td>{{ equipo.nombre }}</td>
+        <td>{{ equipo.get_tipo_equipo_display }}</td>
+        <td>{{ equipo.marca.nombre }}</td>
+        <td>{{ equipo.cliente.nombres }} {{ equipo.cliente.apellidos }}</td>
+        <td>
+            {% if equipo.estado_fisico == 'NUEVO' %}
+                <span class="badge badge-success">{{ equipo.get_estado_fisico_display }}</span>
+            {% elif equipo.estado_fisico == 'BUENO' %}
+                <span class="badge badge-info">{{ equipo.get_estado_fisico_display }}</span>
+            {% elif equipo.estado_fisico == 'REGULAR' %}
+                <span class="badge badge-warning">{{ equipo.get_estado_fisico_display }}</span>
+            {% else %}
+                <span class="badge badge-danger">{{ equipo.get_estado_fisico_display }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if equipo.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ equipo.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ equipo.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ equipo.id }}, '{{ equipo.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ equipo.id }}, '{{ equipo.nombre }}', '', '', '')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-laptop"></i>
+            <p>No hay equipos registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Equipo
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_codigo_equipo">Código del Equipo *</label>
+            {{ form.codigo_equipo }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nombre">Nombre del Equipo *</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_cliente">Cliente *</label>
+            {{ form.cliente }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo_equipo">Tipo de Equipo *</label>
+            {{ form.tipo_equipo }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_marca">Marca *</label>
+            {{ form.marca }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_modelo">Modelo</label>
+            {{ form.modelo }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_serial">Número de Serie</label>
+            {{ form.serial }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_estado_fisico">Estado Físico *</label>
+            {{ form.estado_fisico }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_especificaciones">Especificaciones Técnicas</label>
+            {{ form.especificaciones }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de equipos
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombre = document.querySelector('[name="nombre"]').value.trim();
+    const codigo = document.querySelector('[name="codigo_equipo"]').value.trim();
+
+    if (!nombre) {
+        e.preventDefault();
+        alert('⚠️ El nombre del equipo es obligatorio');
+        return false;
+    }
+
+    if (!codigo) {
+        e.preventDefault();
+        alert('⚠️ El código del equipo es obligatorio');
+        return false;
+    }
+});
+</script>
+{% endblock %}

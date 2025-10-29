@@ -1,0 +1,72 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Advertencia -->
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> ¡Advertencia!</h5>
+                <p><strong>Restaurar un backup reemplazará TODA la información actual del sistema con la información del backup seleccionado.</strong></p>
+                <p>Esta acción no se puede deshacer. Asegúrese de tener un backup reciente de los datos actuales antes de continuar.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h3 class="card-title"><i class="fas fa-undo"></i> {{ titulo }}</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'administrador:backup_database' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5>Seleccione un Backup para Restaurar</h5>
+
+                    {% if backups %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Archivo de Backup:</label>
+                            <select name="backup_file" class="form-control" required>
+                                <option value="">-- Seleccione un backup --</option>
+                                {% for backup in backups %}
+                                <option value="{{ backup.nombre }}">
+                                    {{ backup.nombre }} - {{ backup.tamano }} - {{ backup.fecha }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Nota:</strong> La restauración debe ser realizada por un administrador del sistema. El sistema preparará el archivo pero la restauración requiere acceso directo al servidor.
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-undo"></i> Preparar Restauración
+                            </button>
+                            <a href="{% url 'administrador:backup_database' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> No hay backups disponibles para restaurar.
+                    </div>
+                    <a href="{% url 'administrador:backup_database' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Crear un Backup
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

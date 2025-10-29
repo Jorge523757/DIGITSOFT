@@ -1,0 +1,216 @@
+{% extends 'autenticacion/base_auth.html' %}
+
+{% block title %}Registrar Usuario - DigitSoft{% endblock %}
+
+{% block content %}
+<div class="auth-container" style="max-width: 600px;">
+    <div class="auth-header">
+        <div class="logo">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <h1>
+            <i class="fas fa-user-plus"></i>
+            Registrar Usuario
+        </h1>
+        <p>Crear una nueva cuenta de usuario</p>
+    </div>
+
+    <div class="auth-body">
+        <a href="{% url 'autenticacion:lista_usuarios' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Volver a lista de usuarios
+        </a>
+
+        <!-- Mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                {% else %}
+                    <i class="fas fa-info-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Formulario -->
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Nombres -->
+                <div class="form-group">
+                    <label for="id_first_name" class="form-label">
+                        <i class="fas fa-user"></i> Nombres *
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.first_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Apellidos -->
+                <div class="form-group">
+                    <label for="id_last_name" class="form-label">
+                        <i class="fas fa-user"></i> Apellidos *
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.last_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Usuario -->
+            <div class="form-group">
+                <label for="id_username" class="form-label">
+                    <i class="fas fa-at"></i> Nombre de Usuario *
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="id_email" class="form-label">
+                        <i class="fas fa-envelope"></i> Correo *
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label for="id_telefono" class="form-label">
+                        <i class="fas fa-phone"></i> Teléfono
+                    </label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.telefono.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Documento -->
+                <div class="form-group">
+                    <label for="id_documento" class="form-label">
+                        <i class="fas fa-id-card"></i> Documento *
+                    </label>
+                    {{ form.documento }}
+                    {% if form.documento.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.documento.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Tipo de Usuario -->
+                <div class="form-group">
+                    <label for="id_tipo_usuario" class="form-label">
+                        <i class="fas fa-user-tag"></i> Tipo de Usuario *
+                    </label>
+                    {{ form.tipo_usuario }}
+                    {% if form.tipo_usuario.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.tipo_usuario.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                <label for="id_password1" class="form-label">
+                    <i class="fas fa-lock"></i> Contraseña *
+                </label>
+                <div class="password-wrapper">
+                    {{ form.password1 }}
+                    <button type="button" class="password-toggle" id="togglePassword1" onclick="togglePassword('togglePassword1', 'id_password1')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                {% if form.password1.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password1.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Confirmar Contraseña -->
+            <div class="form-group">
+                <label for="id_password2" class="form-label">
+                    <i class="fas fa-lock"></i> Confirmar Contraseña *
+                </label>
+                <div class="password-wrapper">
+                    {{ form.password2 }}
+                    <button type="button" class="password-toggle" id="togglePassword2" onclick="togglePassword('togglePassword2', 'id_password2')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                {% if form.password2.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password2.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <a href="{% url 'autenticacion:lista_usuarios' %}" class="btn btn-secondary" style="width: auto; flex: 1;">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary" style="flex: 2;">
+                    <i class="fas fa-save"></i> Registrar Usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        div[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}
+

@@ -1,0 +1,246 @@
+{% extends 'administrador/base_dashboard.html' %}
+
+{% block title %}Gestión de Usuarios - DigitSoft{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-users"></i> Gestión de Usuarios</h1>
+        <p class="text-muted">Administración de usuarios del sistema</p>
+    </div>
+    <div>
+        <a href="{% url 'autenticacion:registro' %}" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Nuevo Usuario
+        </a>
+    </div>
+</div>
+
+<!-- Mensajes -->
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+        {% else %}
+            <i class="fas fa-exclamation-circle"></i>
+        {% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Tabla de usuarios -->
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre Completo</th>
+                <th>Correo</th>
+                <th>Tipo</th>
+                <th>Documento</th>
+                <th>Estado</th>
+                <th>Fecha Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>
+                    <strong>{{ usuario.username }}</strong>
+                </td>
+                <td>{{ usuario.get_full_name|default:"Sin nombre" }}</td>
+                <td>
+                    <i class="fas fa-envelope"></i> {{ usuario.email }}
+                </td>
+                <td>
+                    {% if usuario.perfil %}
+                        <span class="badge badge-{% if usuario.perfil.tipo_usuario == 'SUPER_ADMIN' %}danger{% elif usuario.perfil.tipo_usuario == 'ADMINISTRADOR' %}warning{% else %}info{% endif %}">
+                            {{ usuario.perfil.get_tipo_usuario_display }}
+                        </span>
+                    {% else %}
+                        <span class="badge badge-secondary">Sin perfil</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if usuario.perfil %}
+                        {{ usuario.perfil.documento }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if usuario.perfil %}
+                        <span class="badge badge-{% if usuario.perfil.estado == 'ACTIVO' %}success{% elif usuario.perfil.estado == 'SUSPENDIDO' %}danger{% else %}secondary{% endif %}">
+                            {{ usuario.perfil.get_estado_display }}
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
+                <td>
+                    <div class="actions-cell">
+                        {% if usuario != request.user %}
+                            <button onclick="toggleEstadoUsuario({{ usuario.id }}, '{{ usuario.username }}')"
+                                    class="btn btn-sm btn-{% if usuario.is_active %}warning{% else %}success{% endif %}">
+                                <i class="fas fa-{% if usuario.is_active %}ban{% else %}check{% endif %}"></i>
+                                {% if usuario.is_active %}Desactivar{% else %}Activar{% endif %}
+                            </button>
+                        {% else %}
+                            <span class="badge badge-info">Tú</span>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>No hay usuarios registrados</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid var(--danger-color);
+}
+
+.table-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-sidebar);
+    color: white;
+}
+
+.data-table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.data-table tbody tr:hover {
+    background: var(--hover-bg);
+}
+
+.data-table tbody td {
+    padding: 1rem;
+    color: var(--text-primary);
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-success { background: rgba(40, 167, 69, 0.2); color: var(--success-color); }
+.badge-warning { background: rgba(255, 193, 7, 0.2); color: var(--warning-color); }
+.badge-danger { background: rgba(220, 53, 69, 0.2); color: var(--danger-color); }
+.badge-info { background: rgba(23, 162, 184, 0.2); color: var(--info-color); }
+.badge-secondary { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: #333;
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+</style>
+
+<script>
+function toggleEstadoUsuario(userId, username) {
+    if (confirm(`¿Estás seguro de cambiar el estado del usuario ${username}?`)) {
+        window.location.href = `{% url 'autenticacion:lista_usuarios' %}`.replace('/usuarios/', `/usuarios/${userId}/toggle/`);
+    }
+}
+</script>
+{% endblock %}
+

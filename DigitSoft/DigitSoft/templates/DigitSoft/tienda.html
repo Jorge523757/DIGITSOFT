@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .cart-button {
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .cart-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Tienda Layout */
+        .tienda-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        /* Sidebar Filtros */
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .clear-filters {
+            width: 100%;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters:hover {
+            background: #e2e8f0;
+        }
+
+        /* Productos */
+        .productos-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .productos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .productos-count {
+            color: #718096;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .producto-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .producto-imagen {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .producto-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .producto-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .producto-info {
+            padding: 1.5rem;
+        }
+
+        .producto-categoria {
+            color: #667eea;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .producto-nombre {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .producto-marca {
+            color: #718096;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .producto-precio {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .producto-stock {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .stock-disponible {
+            color: #48bb78;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #5568d3;
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Sin resultados */
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            color: #718096;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Notificación */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification.success {
+            border-left: 4px solid #48bb78;
+        }
+
+        .notification.show {
+            display: flex;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .tienda-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .productos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="window.location.href='{% url 'main:pagina_principal' %}'">
+                    <i class="fas fa-laptop-code"></i>
+                    Digit Soft
+                </div>
+                <nav>
+                    <a href="{% url 'main:pagina_principal' %}">Inicio</a>
+                    <a href="{% url 'main:tienda' %}" class="active">Tienda</a>
+                    <a href="{% url 'main:servicios' %}">Servicios</a>
+                    <a href="{% url 'main:nosotros' %}">Nosotros</a>
+                    <a href="{% url 'main:contacto' %}">Contacto</a>
+                </nav>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="cart-button" onclick="window.location.href='{% url 'main:carrito' %}'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <a href="{% url 'administrador:dashboard' %}" style="background: rgba(255,255,255,0.15); color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none;">
+                        <i class="fas fa-user-shield"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="container">
+            <a href="{% url 'main:pagina_principal' %}"><i class="fas fa-home"></i> Inicio</a>
+            <span> / </span>
+            <span>Tienda</span>
+        </div>
+    </div>
+
+    <!-- Tienda -->
+    <div class="container">
+        <div class="tienda-layout">
+            <!-- Sidebar Filtros -->
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Buscar productos..."
+                           value="{{ search_query }}" id="searchInput">
+                </div>
+
+                <form method="GET" id="filterForm">
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-layer-group"></i>
+                            Categorías
+                        </div>
+                        {% for cat in categorias %}
+                        <div class="filter-option">
+                            <input type="radio" name="categoria" value="{{ cat.categoria }}"
+                                   id="cat_{{ cat.categoria }}"
+                                   {% if categoria_selected == cat.categoria %}checked{% endif %}>
+                            <label for="cat_{{ cat.categoria }}">
+                                {{ cat.categoria|title }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-tag"></i>
+                            Marcas
+                        </div>
+                        {% for marca in marcas %}
+                        <div class="filter-option">
+                            <input type="radio" name="marca" value="{{ marca.id }}"
+                                   id="marca_{{ marca.id }}"
+                                   {% if marca_selected == marca.id|stringformat:"s" %}checked{% endif %}>
+                            <label for="marca_{{ marca.id }}">
+                                {{ marca.nombre }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="button" class="clear-filters" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </button>
+                </form>
+            </aside>
+
+            <!-- Productos -->
+            <div class="productos-container">
+                <div class="productos-header">
+                    <div>
+                        <h1>Catálogo de Productos</h1>
+                        <p class="productos-count">
+                            {{ productos.count }} producto{{ productos.count|pluralize }}
+                        </p>
+                    </div>
+                    <select class="sort-select" onchange="sortProducts(this.value)">
+                        <option value="">Ordenar por...</option>
+                        <option value="precio_asc">Precio: Menor a Mayor</option>
+                        <option value="precio_desc">Precio: Mayor a Menor</option>
+                        <option value="nombre">Nombre: A-Z</option>
+                        <option value="reciente">Más recientes</option>
+                    </select>
+                </div>
+
+                {% if productos %}
+                <div class="productos-grid" id="productosGrid">
+                    {% for producto in productos %}
+                    <div class="producto-card" onclick="window.location.href='{% url 'main:producto_detalle' producto.id %}'">
+                        <div class="producto-imagen">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                                <i class="fas fa-laptop"></i>
+                            {% endif %}
+                            {% if producto.stock_actual < 5 and producto.stock_actual > 0 %}
+                                <span class="producto-badge">¡Últimas unidades!</span>
+                            {% endif %}
+                        </div>
+                        <div class="producto-info">
+                            <div class="producto-categoria">{{ producto.get_categoria_display }}</div>
+                            <div class="producto-nombre">{{ producto.nombre }}</div>
+                            <div class="producto-marca">
+                                <i class="fas fa-tag"></i> {{ producto.marca.nombre|default:"Digit Soft" }}
+                            </div>
+                            <div class="producto-precio">
+                                ${{ producto.precio_venta|floatformat:0 }}
+                            </div>
+                            <div class="producto-stock stock-disponible">
+                                <i class="fas fa-boxes"></i>
+                                {{ producto.stock_actual }} disponibles
+                            </div>
+                            <button class="add-to-cart-btn"
+                                    onclick="event.stopPropagation(); agregarAlCarrito({{ producto.id }})"
+                                    {% if producto.stock_actual == 0 %}disabled{% endif %}>
+                                <i class="fas fa-cart-plus"></i>
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h2>No se encontraron productos</h2>
+                    <p>Intenta con otros filtros o búsqueda</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification success" id="notification">
+        <i class="fas fa-check-circle" style="color: #48bb78; font-size: 1.5rem;"></i>
+        <span id="notificationMessage">Producto agregado al carrito</span>
+    </div>
+
+    <script>
+        // Actualizar contador del carrito
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(sessionStorage.getItem('carrito') || '{}');
+            const totalItems = Object.values(carrito).reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+
+        // Agregar al carrito
+        function agregarAlCarrito(productoId) {
+            fetch('{% url "main:agregar_al_carrito" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    producto_id: productoId,
+                    cantidad: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('cartCount').textContent = data.total_items;
+
+                    const notification = document.getElementById('notification');
+                    document.getElementById('notificationMessage').textContent = data.message;
+                    notification.classList.add('show');
+
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    alert('Error al agregar el producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el producto al carrito');
+            });
+        }
+
+        // Filtros
+        document.querySelectorAll('input[name="categoria"], input[name="marca"]').forEach(input => {
+            input.addEventListener('change', () => {
+                document.getElementById('filterForm').submit();
+            });
+        });
+
+        // Búsqueda
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const form = document.getElementById('filterForm');
+                const searchInput = document.createElement('input');
+                searchInput.type = 'hidden';
+                searchInput.name = 'search';
+                searchInput.value = this.value;
+                form.appendChild(searchInput);
+                form.submit();
+            }, 500);
+        });
+
+        // Limpiar filtros
+        function clearFilters() {
+            window.location.href = '{% url "main:tienda" %}';
+        }
+
+        // Ordenar
+        function sortProducts(sortType) {
+            if (!sortType) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', sortType);
+            window.location.href = url.toString();
+        }
+
+        // Cargar contador al inicio
+        document.addEventListener('DOMContentLoaded', actualizarContadorCarrito);
+    </script>
+</body>
+</html>
+

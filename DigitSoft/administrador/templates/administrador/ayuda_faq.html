@@ -1,0 +1,374 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Preguntas Frecuentes | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1><i class="fas fa-question-circle"></i> Preguntas Frecuentes</h1>
+        <p class="page-description">Encuentra respuestas rápidas a las preguntas más comunes</p>
+    </div>
+
+    <div class="faq-container">
+        <!-- Categoría: Productos -->
+        <div class="faq-category">
+            <h2><i class="fas fa-box"></i> Gestión de Productos</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo agregar un nuevo producto?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Para agregar un nuevo producto:</p>
+                    <ol>
+                        <li>Ve al módulo "Productos" en el menú lateral</li>
+                        <li>Haz clic en el botón "Nuevo Producto"</li>
+                        <li>Completa todos los campos requeridos (nombre, código, precio, stock)</li>
+                        <li>Selecciona la marca y categoría correspondiente</li>
+                        <li>Haz clic en "Guardar"</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo actualizar el stock de un producto?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Existen dos formas de actualizar el stock:</p>
+                    <ul>
+                        <li><strong>Manual:</strong> Edita el producto y modifica el campo "Stock Actual"</li>
+                        <li><strong>Automático:</strong> El stock se actualiza automáticamente al registrar compras o ventas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Qué significa "Stock Mínimo"?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>El stock mínimo es la cantidad mínima de unidades que debe tener un producto antes de recibir una alerta de inventario bajo. El sistema te notificará cuando un producto alcance o esté por debajo de este nivel.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoría: Ventas -->
+        <div class="faq-category">
+            <h2><i class="fas fa-shopping-cart"></i> Ventas</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo registrar una venta?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Para registrar una venta:</p>
+                    <ol>
+                        <li>Ve a la tienda pública o al módulo de ventas</li>
+                        <li>Agrega productos al carrito</li>
+                        <li>Selecciona el cliente o regístralo si es nuevo</li>
+                        <li>Revisa el resumen de la compra</li>
+                        <li>Confirma la venta</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Puedo cancelar una venta?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Sí, puedes cancelar una venta desde el módulo de ventas. Al cancelar, el stock de los productos se restaurará automáticamente. Sin embargo, esta acción debe ser aprobada por un administrador.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoría: Clientes -->
+        <div class="faq-category">
+            <h2><i class="fas fa-users"></i> Clientes</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo registrar un nuevo cliente?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Puedes registrar un cliente de dos formas:</p>
+                    <ul>
+                        <li><strong>Desde el módulo Clientes:</strong> Haz clic en "Nuevo Cliente" y completa el formulario</li>
+                        <li><strong>Durante una venta:</strong> Si el cliente no existe, el sistema te permite crearlo en el momento</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Puedo ver el historial de compras de un cliente?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Sí, desde el módulo de Clientes puedes ver el detalle de cada cliente, incluyendo su historial completo de compras, garantías activas y servicios técnicos realizados.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoría: Sistema -->
+        <div class="faq-category">
+            <h2><i class="fas fa-cog"></i> Sistema</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo hacer un respaldo de la base de datos?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Para hacer un respaldo:</p>
+                    <ol>
+                        <li>Ve a "Configuración" en el menú</li>
+                        <li>Selecciona "Backup y Restauración"</li>
+                        <li>Haz clic en "Crear Backup"</li>
+                        <li>El sistema creará un archivo de respaldo con fecha y hora</li>
+                    </ol>
+                    <p><strong>Recomendación:</strong> Haz respaldos periódicos para proteger tu información.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Cómo cambiar mi contraseña?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Para cambiar tu contraseña:</p>
+                    <ol>
+                        <li>Haz clic en tu nombre de usuario en la esquina superior derecha</li>
+                        <li>Selecciona "Mi Perfil"</li>
+                        <li>Ve a la sección "Seguridad"</li>
+                        <li>Ingresa tu contraseña actual y la nueva contraseña</li>
+                        <li>Confirma los cambios</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>¿Qué navegadores son compatibles?</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Digit Soft es compatible con los siguientes navegadores:</p>
+                    <ul>
+                        <li>Google Chrome (recomendado) - Versión 90 o superior</li>
+                        <li>Mozilla Firefox - Versión 88 o superior</li>
+                        <li>Microsoft Edge - Versión 90 o superior</li>
+                        <li>Safari - Versión 14 o superior</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de soporte -->
+    <div class="support-section">
+        <div class="support-box">
+            <i class="fas fa-headset"></i>
+            <div>
+                <h3>¿No encontraste tu respuesta?</h3>
+                <p>Nuestro equipo de soporte está disponible para ayudarte</p>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> soporte@digitsoft.com</li>
+                    <li><i class="fas fa-phone"></i> +57 300 123 4567</li>
+                    <li><i class="fas fa-clock"></i> Lun - Vie: 8:00 AM - 6:00 PM</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.content-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.page-description {
+    color: #718096;
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.faq-category {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.faq-category h2 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.faq-category h2 i {
+    color: #667eea;
+}
+
+.faq-item {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 0;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+    background: #f7fafc;
+}
+
+.faq-question h3 {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin: 0;
+}
+
+.faq-question i {
+    color: #667eea;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    padding: 0 0.75rem;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+    padding: 1rem 0.75rem;
+}
+
+.faq-answer p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.faq-answer ol, .faq-answer ul {
+    color: #4a5568;
+    line-height: 1.8;
+    padding-left: 1.5rem;
+}
+
+.faq-answer li {
+    margin-bottom: 0.5rem;
+}
+
+.support-section {
+    margin-top: 3rem;
+}
+
+.support-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.support-box i {
+    font-size: 3rem;
+    opacity: 0.9;
+    flex-shrink: 0;
+}
+
+.support-box h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+}
+
+.support-box p {
+    margin: 0 0 1rem 0;
+    opacity: 0.9;
+}
+
+.support-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.support-box li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.support-box li i {
+    width: 20px;
+    font-size: 1rem;
+}
+</style>
+
+<script>
+function toggleFaq(element) {
+    const faqItem = element.parentElement;
+    const wasActive = faqItem.classList.contains('active');
+
+    // Cerrar todos los FAQs
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    // Abrir el clickeado si no estaba activo
+    if (!wasActive) {
+        faqItem.classList.add('active');
+    }
+}
+</script>
+{% endblock %}
+

@@ -1,0 +1,420 @@
+    .search-input:focus, .filter-select:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .btn-search, .btn-export {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-search {
+        background: #8b5cf6;
+        color: white;
+    }
+
+    .btn-export {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-search:hover, .btn-export:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .stat-card.total {
+        border-left: 4px solid #8b5cf6;
+    }
+
+    .stat-card.hoy {
+        border-left: 4px solid #10b981;
+    }
+
+    .stat-card.mes {
+        border-left: 4px solid #3b82f6;
+    }
+
+    .stat-card.pendientes {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2d3748;
+    }
+
+    .stat-subtitle {
+        color: #10b981;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(139, 92, 246, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: #2d3748;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .badge-completada {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-pendiente {
+        background: #fef3c7;
+        color: #78350f;
+    }
+
+    .badge-proceso {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .badge-cancelada {
+        background: #fee2e2;
+        color: #7f1d1d;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-view {
+        background: #3b82f6;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+    }
+
+    .btn-print {
+        background: #10b981;
+    }
+
+    .btn-cancel {
+        background: #ef4444;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem;
+        color: #718096;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .search-box {
+            grid-template-columns: 1fr;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .data-table {
+            min-width: 1100px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ventas-container">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-cash-register"></i>
+            Gestión de Ventas
+        </h1>
+        <a href="#" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Nueva Venta
+        </a>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Buscar por cliente, factura...">
+            <select class="filter-select">
+                <option value="">Todos los estados</option>
+                <option value="COMPLETADA">Completada</option>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="PROCESO">En Proceso</option>
+                <option value="CANCELADA">Cancelada</option>
+            </select>
+            <input type="date" class="filter-select">
+            <button class="btn-search">
+                <i class="fas fa-search"></i>
+                Buscar
+            </button>
+            <button class="btn-export">
+                <i class="fas fa-file-excel"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="table-stats">
+                <div class="stat-card total">
+                    <div class="stat-label">Total Ventas</div>
+                    <div class="stat-value">$0</div>
+                    <div class="stat-subtitle">0 ventas</div>
+                </div>
+                <div class="stat-card hoy">
+                    <div class="stat-label">Ventas Hoy</div>
+                    <div class="stat-value">$0</div>
+                    <div class="stat-subtitle">0 ventas</div>
+                </div>
+                <div class="stat-card mes">
+                    <div class="stat-label">Ventas del Mes</div>
+                    <div class="stat-value">$0</div>
+                    <div class="stat-subtitle">0 ventas</div>
+                </div>
+                <div class="stat-card pendientes">
+                    <div class="stat-label">Ventas Pendientes</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-subtitle">Por procesar</div>
+                </div>
+            </div>
+        </div>
+
+        {% if False %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Factura</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Items</th>
+                    <th>Subtotal</th>
+                    <th>IVA</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>#FAC-001</strong></td>
+                    <td>09/10/2025</td>
+                    <td>Juan Pérez</td>
+                    <td>3 items</td>
+                    <td>$1,500,000</td>
+                    <td>$285,000</td>
+                    <td><strong>$1,785,000</strong></td>
+                    <td><span class="badge badge-completada">Completada</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-action btn-print" title="Imprimir">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button class="btn-action btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-cancel" title="Anular">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h2>No hay ventas registradas</h2>
+            <p>Las ventas aparecerán aquí cuando los clientes realicen compras</p>
+            <br>
+            <a href="#" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Registrar primera venta
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% extends 'administrador/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestión de Ventas - DigitSoft{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ventas-container {
+        padding: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: #8b5cf6;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .filters-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .search-box {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto auto;
+        gap: 1rem;
+    }
+
+    .search-input, .filter-select {
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+

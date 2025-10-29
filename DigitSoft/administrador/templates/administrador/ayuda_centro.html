@@ -1,0 +1,251 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1><i class="fas fa-life-ring"></i> {{ titulo }}</h1>
+        <p class="page-description">Recursos y soporte para usar el sistema Digit Soft</p>
+    </div>
+
+    <div class="help-grid">
+        <!-- Preguntas Frecuentes -->
+        <div class="help-card">
+            <div class="help-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>Preguntas Frecuentes</h3>
+            <p>Encuentra respuestas rápidas a las preguntas más comunes sobre el uso del sistema.</p>
+            <a href="{% url 'administrador:ayuda_faq' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i> Ver FAQs
+            </a>
+        </div>
+
+        <!-- Guía de Usuario -->
+        <div class="help-card">
+            <div class="help-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <i class="fas fa-book"></i>
+            </div>
+            <h3>Guía de Usuario</h3>
+            <p>Aprende a usar cada módulo del sistema con nuestras guías paso a paso.</p>
+            <a href="#" class="btn btn-success">
+                <i class="fas fa-arrow-right"></i> Ver Guías
+            </a>
+        </div>
+
+        <!-- Videos Tutoriales -->
+        <div class="help-card">
+            <div class="help-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <i class="fas fa-video"></i>
+            </div>
+            <h3>Videos Tutoriales</h3>
+            <p>Mira videos explicativos sobre las funcionalidades principales del sistema.</p>
+            <a href="#" class="btn btn-warning">
+                <i class="fas fa-arrow-right"></i> Ver Videos
+            </a>
+        </div>
+
+        <!-- Contacto Soporte -->
+        <div class="help-card">
+            <div class="help-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3>Contactar Soporte</h3>
+            <p>¿Tienes un problema? Nuestro equipo de soporte está listo para ayudarte.</p>
+            <a href="mailto:soporte@digitsoft.com" class="btn btn-info">
+                <i class="fas fa-envelope"></i> Contactar
+            </a>
+        </div>
+    </div>
+
+    <!-- Módulos del Sistema -->
+    <div class="modules-section">
+        <h2><i class="fas fa-th-large"></i> Módulos del Sistema</h2>
+        <div class="modules-list">
+            <div class="module-item">
+                <i class="fas fa-shopping-cart"></i>
+                <div>
+                    <h4>Gestión de Productos</h4>
+                    <p>Administra tu inventario, precios, stock y catálogo completo de productos.</p>
+                </div>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h4>Gestión de Clientes</h4>
+                    <p>Registra y administra toda la información de tus clientes.</p>
+                </div>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-tools"></i>
+                <div>
+                    <h4>Servicios Técnicos</h4>
+                    <p>Gestiona órdenes de servicio, técnicos y equipos de clientes.</p>
+                </div>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-file-invoice"></i>
+                <div>
+                    <h4>Ventas y Facturación</h4>
+                    <p>Procesa ventas, genera facturas y lleva el control financiero.</p>
+                </div>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                    <h4>Reportes</h4>
+                    <p>Genera reportes detallados de ventas, inventario, clientes y más.</p>
+                </div>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-database"></i>
+                <div>
+                    <h4>Backup y Restauración</h4>
+                    <p>Respalda y restaura la información del sistema de manera segura.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.content-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.page-description {
+    color: #718096;
+}
+
+.help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.help-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.help-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.help-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.help-card h3 {
+    font-size: 1.25rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.help-card p {
+    color: #718096;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.btn-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.btn-warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.btn-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modules-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.modules-section h2 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+.modules-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.module-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.module-item:hover {
+    border-color: #667eea;
+    background: #f7fafc;
+}
+
+.module-item i {
+    font-size: 2rem;
+    color: #667eea;
+    flex-shrink: 0;
+}
+
+.module-item h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+}
+
+.module-item p {
+    margin: 0;
+    color: #718096;
+    line-height: 1.5;
+}
+</style>
+{% endblock %}
+

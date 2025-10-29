@@ -1,0 +1,109 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Compras | Digit Soft{% endblock %}
+{% block page_header %}Compras{% endblock %}
+
+{% block list_title %}Gestión de Compras{% endblock %}
+{% block list_description %}Administra las compras a proveedores{% endblock %}
+
+{% block table_headers %}
+<th>Número</th>
+<th>Proveedor</th>
+<th>Fecha Solicitud</th>
+<th>Estado</th>
+<th>Subtotal</th>
+<th>Impuestos</th>
+<th>Total</th>
+<th>Método Pago</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if compras %}
+    {% for compra in compras %}
+    <tr>
+        <td><strong>{{ compra.numero_compra }}</strong></td>
+        <td>{{ compra.proveedor.razon_social }}</td>
+        <td>{{ compra.fecha_solicitud|date:"d/m/Y" }}</td>
+        <td>
+            {% if compra.estado == 'RECIBIDA_COMPLETA' or compra.estado == 'PAGADA' %}
+                <span class="badge badge-success">{{ compra.get_estado_display }}</span>
+            {% elif compra.estado == 'APROBADA' or compra.estado == 'PEDIDO_ENVIADO' %}
+                <span class="badge badge-info">{{ compra.get_estado_display }}</span>
+            {% elif compra.estado == 'CANCELADA' %}
+                <span class="badge badge-danger">{{ compra.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-warning">{{ compra.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>${{ compra.subtotal|floatformat:2 }}</td>
+        <td>${{ compra.impuestos|floatformat:2 }}</td>
+        <td><strong>${{ compra.total|floatformat:2 }}</strong></td>
+        <td>
+            {% if compra.metodo_pago %}
+                <span class="badge badge-info">{{ compra.get_metodo_pago_display }}</span>
+            {% else %}
+                <span class="badge badge-secondary">Pendiente</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ compra.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ compra.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ compra.id }}, '{{ compra.numero_compra }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ compra.id }}, '{{ compra.numero_compra }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="9" class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <p>No hay compras registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Registrar Primera Compra
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="form-group">
+    <label class="form-label">Proveedor *</label>
+    <select name="proveedor" class="form-control" required>
+        <option value="">Seleccione un proveedor...</option>
+        {% for proveedor in proveedores %}
+            <option value="{{ proveedor.id }}">{{ proveedor.razon_social }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Método de Pago</label>
+    <select name="metodo_pago" class="form-control">
+        <option value="">Seleccione...</option>
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+        <option value="CHEQUE">Cheque</option>
+        <option value="CREDITO">Crédito</option>
+        <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Observaciones</label>
+    <textarea name="observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales (opcional)"></textarea>
+</div>
+{% endblock %}
+

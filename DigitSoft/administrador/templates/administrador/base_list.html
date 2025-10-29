@@ -1,0 +1,758 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* Estilos para las tablas y acciones */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.search-container {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.search-box {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.search-icon {
+    position: absolute;
+    left: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1a5fcf;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-info {
+    background: var(--info-color);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: #333;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+.table-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-sidebar);
+    color: white;
+}
+
+.data-table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.data-table tbody tr:hover {
+    background: var(--hover-bg);
+}
+
+.data-table tbody td {
+    padding: 1rem;
+    color: var(--text-primary);
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-success {
+    background: rgba(40, 167, 69, 0.2);
+    color: var(--success-color);
+}
+
+.badge-warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: var(--warning-color);
+}
+
+.badge-danger {
+    background: rgba(220, 53, 69, 0.2);
+    color: var(--danger-color);
+}
+
+.badge-info {
+    background: rgba(23, 162, 184, 0.2);
+    color: var(--info-color);
+}
+
+.badge-secondary {
+    background: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 1200px !important;
+    width: 95% !important;
+    max-height: 85vh !important;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modal-header h3 {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+}
+
+.close-modal:hover {
+    color: var(--danger-color);
+    transform: scale(1.2);
+}
+
+.modal-body {
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 1.8rem !important;
+    clear: both;
+}
+
+.form-label {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.form-control, .form-control select, .form-control textarea, .form-control input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(42, 122, 228, 0.1);
+}
+
+select.form-control {
+    appearance: none;
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+    height: auto;
+    min-height: 44px;
+}
+
+select.form-control option {
+    padding: 0.75rem;
+    background: white;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+select.form-control:hover {
+    border-color: var(--primary-color);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+input.form-control {
+    height: auto;
+    min-height: 44px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.pagination a, .pagination span {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination .current {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{% block list_title %}Listado{% endblock %}</h1>
+        <p class="text-muted">{% block list_description %}Gestión de registros{% endblock %}</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="openModal('createModal')">
+            <i class="fas fa-plus"></i> Nuevo Registro
+        </button>
+    </div>
+</div>
+
+<!-- Mensajes -->
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+        {% else %}
+            <i class="fas fa-exclamation-circle"></i>
+        {% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Barra de búsqueda -->
+<div class="search-container">
+    <div class="search-box" style="position: relative;">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
+        <button class="btn btn-info btn-sm" onclick="exportData()">
+            <i class="fas fa-file-excel"></i> Exportar
+        </button>
+    </div>
+</div>
+
+<!-- Tabla de datos -->
+<div class="table-container">
+    <table class="data-table" id="dataTable">
+        <thead>
+            <tr>
+                {% block table_headers %}
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+                {% endblock %}
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            {% block table_body %}
+            <tr>
+                <td colspan="100%" class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay registros disponibles</p>
+                </td>
+            </tr>
+            {% endblock %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+{% block pagination %}{% endblock %}
+
+<!-- Modal Crear/Editar -->
+<div class="modal" id="createModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Nuevo Registro</h3>
+            <button class="close-modal" onclick="closeModal('createModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" enctype="multipart/form-data" id="mainForm">
+                {% csrf_token %}
+                {% block form_content %}
+                <!-- El contenido del formulario se define en cada template específico -->
+                {% endblock %}
+
+                <div class="form-group" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('createModal')">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Historial -->
+<div class="modal" id="historialModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Historial de Cambios</h3>
+            <button class="close-modal" onclick="closeModal('historialModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="historialContent">
+            <!-- El contenido del historial se carga dinámicamente -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ========== BÚSQUEDA DINÁMICA ========== //
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const tableBody = document.getElementById('tableBody');
+    const rows = tableBody.getElementsByTagName('tr');
+    let visibleCount = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent.toLowerCase();
+
+        if (text.includes(searchTerm)) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    }
+});
+
+// ========== MODALES ========== //
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    // Si es el modal de crear, configurar la acción del formulario
+    if (modalId === 'createModal') {
+        const form = document.getElementById('mainForm');
+        const pathParts = window.location.pathname.split('/');
+        const seccion = pathParts[pathParts.length - 2] || pathParts[pathParts.length - 3];
+
+        // Configurar la acción del formulario para que envíe a la URL de creación
+        form.action = `/administrador/${seccion}/crear/`;
+
+        console.log('Formulario configurado para:', form.action);
+    }
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// Cerrar modal al hacer clic fuera
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal(this.id);
+        }
+    });
+});
+
+// ========== FUNCIONES DE ACCIONES ========== //
+function editRecord(id) {
+    // Obtener el nombre de la sección actual desde la URL
+    const pathParts = window.location.pathname.split('/');
+    const seccion = pathParts[pathParts.length - 2] || pathParts[pathParts.length - 3];
+
+    // Construir la URL de edición correcta
+    window.location.href = `/administrador/${seccion}/${id}/editar/`;
+}
+
+function deleteRecord(id, nombre) {
+    // Usar el modal de confirmación personalizado
+    confirmDelete(id, nombre);
+}
+
+function viewDetails(id) {
+    // Obtener el nombre de la sección actual desde la URL
+    const pathParts = window.location.pathname.split('/');
+    const seccion = pathParts[pathParts.length - 2] || pathParts[pathParts.length - 3];
+
+    // Construir la URL de detalle correcta
+    window.location.href = `/administrador/${seccion}/${id}/detalle/`;
+}
+
+function viewHistory(id, nombre) {
+    openModal('historialModal');
+    const content = document.getElementById('historialContent');
+    content.innerHTML = `
+        <h4 style="color: var(--text-primary);">Historial de: ${nombre}</h4>
+        <p style="color: var(--text-secondary);">Función en desarrollo...</p>
+    `;
+}
+
+function exportData() {
+    alert('Función de exportación en desarrollo');
+}
+
+// ========== VALIDACIÓN DE FORMULARIO ========== //
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            isValid = false;
+            field.style.borderColor = 'var(--danger-color)';
+        } else {
+            field.style.borderColor = 'var(--border-color)';
+        }
+    });
+
+    if (!isValid) {
+        e.preventDefault();
+        alert('Por favor completa todos los campos requeridos');
+    }
+});
+</script>
+{% endblock %}
+
+<!-- Contenido extra para modales y otros elementos personalizados -->
+{% block extra_content %}
+<!-- Los templates hijos pueden agregar contenido adicional aquí -->
+{% endblock %}
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal" id="deleteConfirmModal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="background: #fee; border-bottom: 2px solid #ef4444;">
+            <h3 style="color: #ef4444; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                ¿Eliminar Registro?
+            </h3>
+            <button class="close-modal" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #856404; font-weight: 600;">
+                    <i class="fas fa-info-circle"></i>
+                    Esta acción desactivará el registro. Podrás reactivarlo después si lo necesitas.
+                </p>
+            </div>
+
+            <div id="deleteInfo" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <!-- La información se llenará dinámicamente con JavaScript -->
+            </div>
+
+            <p style="color: #718096; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                ¿Estás seguro de que deseas continuar?
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #deleteConfirmModal .modal-content {
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row strong {
+        color: #2d3748;
+    }
+
+    .info-row span {
+        color: #4a5568;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+// Función para mostrar el modal de confirmación de eliminación con información del producto
+function confirmDelete(id, nombre, codigo = '', precio = '', stock = '') {
+    const modal = document.getElementById('deleteConfirmModal');
+    const deleteInfo = document.getElementById('deleteInfo');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    // Construir la información del registro
+    let infoHTML = `
+        <div class="info-row">
+            <strong><i class="fas fa-tag"></i> Nombre:</strong>
+            <span>${nombre}</span>
+        </div>
+    `;
+
+    if (codigo) {
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-barcode"></i> Código:</strong>
+                <span>${codigo}</span>
+            </div>
+        `;
+    }
+
+    if (precio) {
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-dollar-sign"></i> Precio:</strong>
+                <span>$${parseFloat(precio).toLocaleString('es-CO', {minimumFractionDigits: 2})}</span>
+            </div>
+        `;
+    }
+
+    if (stock !== '' && stock !== undefined) {
+        const stockBadge = stock <= 10
+            ? `<span style="color: #ef4444;">${stock} unidades</span>`
+            : `<span style="color: #48bb78;">${stock} unidades</span>`;
+
+        infoHTML += `
+            <div class="info-row">
+                <strong><i class="fas fa-boxes"></i> Stock:</strong>
+                ${stockBadge}
+            </div>
+        `;
+    }
+
+    deleteInfo.innerHTML = infoHTML;
+
+    // Configurar el botón de confirmación
+    confirmBtn.onclick = function() {
+        executeDelete(id, nombre);
+    };
+
+    // Mostrar el modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Función para cerrar el modal de eliminación
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// Función para ejecutar la eliminación
+function executeDelete(id, nombre) {
+    // Obtener el nombre de la sección actual desde la URL
+    const pathParts = window.location.pathname.split('/');
+    const seccion = pathParts[pathParts.length - 2] || pathParts[pathParts.length - 3];
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/administrador/${seccion}/${id}/eliminar/`;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = csrfToken;
+
+    form.appendChild(csrfInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('deleteConfirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>

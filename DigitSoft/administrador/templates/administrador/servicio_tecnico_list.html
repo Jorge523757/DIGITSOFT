@@ -1,0 +1,130 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Servicios Técnicos | Digit Soft{% endblock %}
+{% block page_header %}Servicios Técnicos{% endblock %}
+
+{% block list_title %}Catálogo de Servicios Técnicos{% endblock %}
+{% block list_description %}Administra el catálogo de servicios técnicos disponibles{% endblock %}
+
+{% block table_headers %}
+<th>Código</th>
+<th>Nombre</th>
+<th>Categoría</th>
+<th>Precio Base</th>
+<th>Tiempo Est.</th>
+<th>Garantía</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if servicios %}
+    {% for servicio in servicios %}
+    <tr>
+        <td><strong>{{ servicio.codigo }}</strong></td>
+        <td>{{ servicio.nombre }}</td>
+        <td>
+            <span class="badge badge-info">{{ servicio.get_categoria_display }}</span>
+        </td>
+        <td>${{ servicio.precio_base|floatformat:2 }}</td>
+        <td>{{ servicio.tiempo_estimado_horas }}h</td>
+        <td>{{ servicio.garantia_dias }} días</td>
+        <td>
+            {% if servicio.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ servicio.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ servicio.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ servicio.id }}, '{{ servicio.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRecord({{ servicio.id }}, '{{ servicio.nombre }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-tools"></i>
+            <p>No hay servicios técnicos registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Servicio
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Código del Servicio *</label>
+        <input type="text" name="codigo" class="form-control" required placeholder="Ej: SRV-001">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Nombre del Servicio *</label>
+        <input type="text" name="nombre" class="form-control" required placeholder="Ej: Mantenimiento preventivo">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Descripción *</label>
+    <textarea name="descripcion" class="form-control" rows="3" required placeholder="Descripción detallada del servicio..."></textarea>
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Categoría *</label>
+        <select name="categoria" class="form-control" required>
+            <option value="">Seleccione...</option>
+            <option value="HARDWARE">Hardware</option>
+            <option value="SOFTWARE">Software</option>
+            <option value="REDES">Redes</option>
+            <option value="MANTENIMIENTO">Mantenimiento</option>
+            <option value="INSTALACION">Instalación</option>
+            <option value="CONSULTORIA">Consultoría</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Precio Base *</label>
+        <input type="number" name="precio_base" class="form-control" step="0.01" required placeholder="0.00">
+    </div>
+</div>
+
+<div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="form-group">
+        <label class="form-label">Tiempo Estimado (horas) *</label>
+        <input type="number" name="tiempo_estimado_horas" class="form-control" step="0.5" required placeholder="Ej: 2.5">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Garantía (días) *</label>
+        <input type="number" name="garantia_dias" class="form-control" required value="30" min="0">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="form-label">
+        <input type="checkbox" name="requiere_materiales" class="form-check-input" style="margin-right: 0.5rem;">
+        Requiere materiales adicionales
+    </label>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Especificaciones Técnicas</label>
+    <textarea name="especificaciones" class="form-control" rows="3" placeholder="Especificaciones técnicas del servicio (opcional)"></textarea>
+</div>
+{% endblock %}
+

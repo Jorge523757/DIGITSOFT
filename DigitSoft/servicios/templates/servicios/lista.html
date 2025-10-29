@@ -1,0 +1,809 @@
+{% extends 'administrador/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestión de Servicios Técnicos - DigitSoft{% endblock %}
+
+{% block extra_css %}
+<style>
+    .servicios-container {
+        padding: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: #f59e0b;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .filters-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .search-box {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 1rem;
+    }
+
+    .search-input, .filter-select {
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus, .filter-select:focus {
+        outline: none;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .btn-search, .btn-export {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-search {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-export {
+        background: #8b5cf6;
+        color: white;
+    }
+
+    .btn-search:hover, .btn-export:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .stat-card.total {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .stat-card.hardware {
+        border-left: 4px solid #3b82f6;
+    }
+
+    .stat-card.software {
+        border-left: 4px solid #10b981;
+    }
+
+    .stat-card.ordenes {
+        border-left: 4px solid #8b5cf6;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2d3748;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: #2d3748;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .badge-hardware {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .badge-software {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-redes {
+        background: #e9d5ff;
+        color: #581c87;
+    }
+
+    .badge-mantenimiento {
+        background: #fef3c7;
+        color: #78350f;
+    }
+
+    .badge-activo {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-inactivo {
+        background: #fee2e2;
+        color: #7f1d1d;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-view {
+        background: #3b82f6;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem;
+        color: #718096;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .search-box {
+            grid-template-columns: 1fr;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .data-table {
+            min-width: 1000px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="servicios-container">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-tools"></i>
+            Gestión de Servicios Técnicos
+        </h1>
+        <a href="#" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Nuevo Servicio
+        </a>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Buscar servicios...">
+            <select class="filter-select">
+                <option value="">Todas las categorías</option>
+                <option value="HARDWARE">Hardware</option>
+                <option value="SOFTWARE">Software</option>
+                <option value="REDES">Redes</option>
+                <option value="MANTENIMIENTO">Mantenimiento</option>
+            </select>
+            <button class="btn-search">
+                <i class="fas fa-search"></i>
+                Buscar
+            </button>
+            <button class="btn-export">
+                <i class="fas fa-download"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="table-stats">
+                <div class="stat-card total">
+                    <div class="stat-label">Total Servicios</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card hardware">
+                    <div class="stat-label">Hardware</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card software">
+                    <div class="stat-label">Software</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card ordenes">
+                    <div class="stat-label">Órdenes Activas</div>
+                    <div class="stat-value">0</div>
+                </div>
+            </div>
+        </div>
+
+        {% if False %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre del Servicio</th>
+                    <th>Categoría</th>
+                    <th>Precio Base</th>
+                    <th>Tiempo Est.</th>
+                    <th>Garantía</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>SRV-001</td>
+                    <td>Mantenimiento Preventivo PC</td>
+                    <td><span class="badge badge-mantenimiento">Mantenimiento</span></td>
+                    <td>$80,000</td>
+                    <td>2 horas</td>
+                    <td>30 días</td>
+                    <td><span class="badge badge-activo">Activo</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-action btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-tools"></i>
+            <h2>No hay servicios registrados</h2>
+            <p>Comienza agregando tu primer servicio técnico</p>
+            <br>
+            <a href="#" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Crear primer servicio
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+    .search-input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .btn-search, .btn-export {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-search {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-export {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-search:hover, .btn-export:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .stat-card.total {
+        border-left: 4px solid #10b981;
+    }
+
+    .stat-card.equipos {
+        border-left: 4px solid #3b82f6;
+    }
+
+    .stat-card.software {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .stat-card.activos {
+        border-left: 4px solid #8b5cf6;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2d3748;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: #2d3748;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .badge-equipos {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .badge-software {
+        background: #fef3c7;
+        color: #78350f;
+    }
+
+    .badge-componentes {
+        background: #e9d5ff;
+        color: #581c87;
+    }
+
+    .badge-activo {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-inactivo {
+        background: #fee2e2;
+        color: #7f1d1d;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-view {
+        background: #3b82f6;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem;
+        color: #718096;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .search-box {
+            grid-template-columns: 1fr;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .data-table {
+            min-width: 900px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="proveedores-container">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-truck"></i>
+            Gestión de Proveedores
+        </h1>
+        <a href="#" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Nuevo Proveedor
+        </a>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Buscar por nombre, NIT, categoría...">
+            <button class="btn-search">
+                <i class="fas fa-search"></i>
+                Buscar
+            </button>
+            <button class="btn-export">
+                <i class="fas fa-file-pdf"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="table-stats">
+                <div class="stat-card total">
+                    <div class="stat-label">Total Proveedores</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card equipos">
+                    <div class="stat-label">Equipos de Cómputo</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card software">
+                    <div class="stat-label">Software y Licencias</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card activos">
+                    <div class="stat-label">Proveedores Activos</div>
+                    <div class="stat-value">0</div>
+                </div>
+            </div>
+        </div>
+
+        {% if False %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NIT/Documento</th>
+                    <th>Razón Social</th>
+                    <th>Categoría</th>
+                    <th>Contacto</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#001</td>
+                    <td>900123456-1</td>
+                    <td>Tech Solutions S.A.S.</td>
+                    <td><span class="badge badge-equipos">Equipos</span></td>
+                    <td>Carlos Ramírez</td>
+                    <td>ventas@techsolutions.com</td>
+                    <td>+57 601 234 5678</td>
+                    <td><span class="badge badge-activo">Activo</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-action btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-truck-loading"></i>
+            <h2>No hay proveedores registrados</h2>
+            <p>Comienza agregando tu primer proveedor</p>
+            <br>
+            <a href="#" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Crear primer proveedor
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% extends 'administrador/base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestión de Proveedores - DigitSoft{% endblock %}
+
+{% block extra_css %}
+<style>
+    .proveedores-container {
+        padding: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: #10b981;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .filters-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .search-box {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+    }
+
+    .search-input {
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+

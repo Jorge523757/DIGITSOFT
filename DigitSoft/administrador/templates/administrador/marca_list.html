@@ -1,0 +1,142 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Marcas | Digit Soft{% endblock %}
+{% block page_header %}Marcas{% endblock %}
+
+{% block list_title %}Gestión de Marcas{% endblock %}
+{% block list_description %}Administra las marcas de productos del sistema{% endblock %}
+
+{% block table_headers %}
+<th>ID</th>
+<th>Nombre</th>
+<th>Tipo</th>
+<th>País</th>
+<th>Productos</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if marcas %}
+    {% for marca in marcas %}
+    <tr>
+        <td><strong>#{{ marca.id }}</strong></td>
+        <td>{{ marca.nombre }}</td>
+        <td>
+            <span class="badge badge-info">
+                {{ marca.get_tipo_marca_display }}
+            </span>
+        </td>
+        <td>{{ marca.pais_origen|default:"No especificado" }}</td>
+        <td>
+            <span class="badge badge-secondary">
+                {{ marca.producto_set.count }} productos
+            </span>
+        </td>
+        <td>
+            {% if marca.activa %}
+                <span class="badge badge-success">Activa</span>
+            {% else %}
+                <span class="badge badge-danger">Inactiva</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ marca.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ marca.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ marca.id }}, '{{ marca.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ marca.id }}, '{{ marca.nombre }}', '', '', '')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="7" class="empty-state">
+            <i class="fas fa-tags"></i>
+            <p>No hay marcas registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primera Marca
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_nombre">Nombre de la Marca *</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo_marca">Tipo de Marca *</label>
+            {{ form.tipo_marca }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_pais_origen">País de Origen</label>
+            {{ form.pais_origen }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_descripcion">Descripción</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_sitio_web">Sitio Web</label>
+            {{ form.sitio_web }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_logo">Logo de la Marca</label>
+            {{ form.logo }}
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                {{ form.activa }}
+                <label class="form-check-label" for="id_activa">
+                    <strong>Marca Activa</strong>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de marcas
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombre = document.querySelector('[name="nombre"]').value.trim();
+
+    if (!nombre) {
+        e.preventDefault();
+        alert('⚠️ El nombre de la marca es obligatorio');
+        return false;
+    }
+
+    if (nombre.length < 2) {
+        e.preventDefault();
+        alert('⚠️ El nombre de la marca debe tener al menos 2 caracteres');
+        return false;
+    }
+});
+</script>
+{% endblock %}

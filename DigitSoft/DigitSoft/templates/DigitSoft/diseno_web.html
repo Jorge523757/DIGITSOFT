@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseño Web - Digit Soft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #e8eef7 0%, #f5f7fa 100%);
+            color: #2d3748;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #4a6fa5 0%, #5a7eb8 100%);
+            color: white;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.95;
+        }
+
+        .hero-list {
+            list-style: none;
+            margin-top: 2rem;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .hero-list li {
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .hero-list li::before {
+            content: "✓ ";
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #667eea;
+        }
+
+        .pricing-card.featured::before {
+            content: "Más Popular";
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .card-title {
+            color: #5a7eb8;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-price {
+            color: #2d3748;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .features-list li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .features-list li.included {
+            color: #2d3748;
+        }
+
+        .features-list li.excluded {
+            color: #a0aec0;
+            text-decoration: line-through;
+        }
+
+        .check-icon {
+            color: #667eea;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .x-icon {
+            color: #cbd5e0;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .buy-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #4a6fa5 0%, #5a7eb8 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .buy-button:hover {
+            background: linear-gradient(135deg, #3d5a85 0%, #4a6fa5 100%);
+            transform: scale(1.02);
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .card-price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="{% url 'main:pagina_principal' %}" class="logo">
+                <i class="fas fa-laptop-code"></i>
+                Digit Soft
+            </a>
+            <nav>
+                <a href="{% url 'main:pagina_principal' %}">Inicio</a>
+                <a href="{% url 'main:tienda' %}">Tienda</a>
+                <a href="{% url 'main:servicios' %}">Servicios</a>
+                <a href="{% url 'main:diseno_web' %}" style="background: rgba(255,255,255,0.2);">Diseño Web</a>
+                <a href="{% url 'main:nosotros' %}">Nosotros</a>
+                <a href="{% url 'main:contacto' %}">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Diseño Web</h1>
+            <p class="hero-subtitle">Landing Page – Blogs</p>
+            <p class="hero-subtitle">Sitios Web Informativos y Corporativos</p>
+            <p class="hero-subtitle">Tiendas Online</p>
+            <p class="hero-subtitle">Posicionamiento SEO y SEM</p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="pricing-grid">
+            <!-- Landing Page -->
+            <div class="pricing-card">
+                <h3 class="card-title">Landing Page</h3>
+                <div class="card-price">$ 900.000</div>
+                <p class="card-subtitle">Incluye Hosting y Dominio por un Año</p>
+                <ul class="features-list">
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>4 secciones</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>One page y Paralax</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Sección de contacto con formulario</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Seo básico</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Links Redes Sociales</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Widget WhatsApp</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Ubicación en Google Maps</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Configuración de Blog</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Catálogo de Productos o Servicios</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Formularios personalizados</span>
+                    </li>
+                </ul>
+                <button class="buy-button" onclick="window.location.href='{% url 'main:contacto' %}'">
+                    Comprar Ahora
+                </button>
+            </div>
+
+            <!-- Catálogo en Línea -->
+            <div class="pricing-card">
+                <h3 class="card-title">Catálogo en Línea</h3>
+                <div class="card-price">$ 900.000</div>
+                <p class="card-subtitle">Incluye Hosting y Dominio por un Año</p>
+                <ul class="features-list">
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Máximo 50 Productos</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Catálogo personalizado en Woocomerce</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Configuración del proceso de Venta</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Categorías y Productos</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Buscador</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Optimización de la Tienda</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Chat y botón de compra Whatsapp</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Pasarelas de Pago</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Ubicación en Google Maps</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Configuración de Blog</span>
+                    </li>
+                </ul>
+                <button class="buy-button" onclick="window.location.href='{% url 'main:contacto' %}'">
+                    Comprar Ahora
+                </button>
+            </div>
+
+            <!-- Sitio Web Informativo -->
+            <div class="pricing-card featured">
+                <h3 class="card-title">Sitio Web Informativo</h3>
+                <div class="card-price">$1.300.000</div>
+                <p class="card-subtitle">Incluye Hosting y Dominio por un Año</p>
+                <ul class="features-list">
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>6 a 8 secciones</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>One page o multi page</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Sección de contacto con formulario</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Seo básico</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Links Redes Sociales</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Widget WhatsApp</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Ubicación en Google Maps</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Configuración de Blog</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Catálogo de Productos o Servicios</span>
+                    </li>
+                    <li class="excluded">
+                        <i class="fas fa-times-circle x-icon"></i>
+                        <span>Formularios personalizados</span>
+                    </li>
+                </ul>
+                <button class="buy-button" onclick="window.location.href='{% url 'main:contacto' %}'">
+                    Comprar Ahora
+                </button>
+            </div>
+
+            <!-- Sitio Web Corporativo -->
+            <div class="pricing-card">
+                <h3 class="card-title">Sitio Web Corporativo</h3>
+                <div class="card-price">$1.600.000</div>
+                <p class="card-subtitle">Incluye Hosting y Dominio por un Año</p>
+                <ul class="features-list">
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>10 a 12 secciones</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Multi page</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Sección de contacto con formulario</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Seo Avanzado</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Links Redes Sociales</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Widget WhatsApp</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Ubicación en Google Maps</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Configuración de Blog</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Catálogo de Productos o Servicios</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Formularios personalizados</span>
+                    </li>
+                </ul>
+                <button class="buy-button" onclick="window.location.href='{% url 'main:contacto' %}'">
+                    Comprar Ahora
+                </button>
+            </div>
+
+            <!-- Tienda en Línea -->
+            <div class="pricing-card">
+                <h3 class="card-title">Tienda en Línea</h3>
+                <div class="card-price">$ 1.800.000</div>
+                <p class="card-subtitle">Incluye Hosting y Dominio por un Año</p>
+                <ul class="features-list">
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Tienda personalizada en Woocomerce</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Configuración del proceso de Venta</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Categorías y Productos</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Carrito de Compras y Buscador</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Pasarelas de Pago</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Optimización de la Tienda</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Seo y Conexión redes sociales</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Chat y Widget Whatsapp</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Ubicación en Google Maps</span>
+                    </li>
+                    <li class="included">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span>Configuración de Blog</span>
+                    </li>
+                </ul>
+                <button class="buy-button" onclick="window.location.href='{% url 'main:contacto' %}'">
+                    Comprar Ahora
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Digit Soft. Todos los derechos reservados.</p>
+        <p style="margin-top: 1rem;">
+            <a href="{% url 'main:pagina_principal' %}" style="color: white; text-decoration: none; margin: 0 1rem;">Inicio</a>
+            <a href="{% url 'main:servicios' %}" style="color: white; text-decoration: none; margin: 0 1rem;">Servicios</a>
+            <a href="{% url 'main:contacto' %}" style="color: white; text-decoration: none; margin: 0 1rem;">Contacto</a>
+        </p>
+    </footer>
+</body>
+</html>
+

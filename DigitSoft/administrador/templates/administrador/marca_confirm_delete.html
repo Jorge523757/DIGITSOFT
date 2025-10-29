@@ -1,0 +1,47 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-danger">
+                    <h3 class="card-title">{{ titulo }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Advertencia:</strong> ¿Está seguro que desea eliminar la marca <strong>{{ marca.nombre }}</strong>?
+                        <br><br>
+                        Esta acción no se puede deshacer y puede afectar a productos asociados.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre:</strong> {{ marca.nombre }}</p>
+                            <p><strong>Tipo:</strong> {{ marca.get_tipo_marca_display }}</p>
+                            <p><strong>País:</strong> {{ marca.pais_origen|default:"No especificado" }}</p>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, Eliminar
+                            </button>
+                            <a href="{% url 'administrador:marca_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

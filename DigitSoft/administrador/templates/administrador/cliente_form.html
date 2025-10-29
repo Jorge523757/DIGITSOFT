@@ -1,0 +1,230 @@
+{% extends 'administrador/base_admin.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} - DigitSoft{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos generales del formulario */
+    .form-container {
+        padding: 2rem;
+    }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 2rem;
+    }
+    .page-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Tarjetas y Sombreado */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+        background-color: #f7fafc;
+        border-bottom: 1px solid #edf2f7;
+        font-weight: bold;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    /* Controles de formulario */
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        outline: none;
+    }
+    .invalid-feedback {
+        font-size: 0.875rem;
+    }
+
+    /* Botones de acción */
+    .btn-action-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding-top: 1rem;
+    }
+    .btn-save {
+        background: #667eea;
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-save:hover {
+        background: #5a6edb;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-user-plus"></i>
+            {{ titulo }}
+        </h1>
+    </div>
+
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    Detalles del Cliente
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="{{ form.tipo_cliente.id_for_label }}" class="form-label">{{ form.tipo_cliente.label }}</label>
+                                {{ form.tipo_cliente }}
+                                {% for error in form.tipo_cliente.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.tipo_documento.id_for_label }}" class="form-label">{{ form.tipo_documento.label }}</label>
+                                {{ form.tipo_documento }}
+                                {% for error in form.tipo_documento.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.numero_documento.id_for_label }}" class="form-label">{{ form.numero_documento.label }}</label>
+                                {{ form.numero_documento }}
+                                {% for error in form.numero_documento.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div id="natural-fields" class="row mb-4" style="display: none;">
+                            <div class="col-md-6">
+                                <label for="{{ form.nombres.id_for_label }}" class="form-label">{{ form.nombres.label }}</label>
+                                {{ form.nombres }}
+                                {% for error in form.nombres.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.apellidos.id_for_label }}" class="form-label">{{ form.apellidos.label }}</label>
+                                {{ form.apellidos }}
+                                {% for error in form.apellidos.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div id="juridica-fields" class="row mb-4" style="display: none;">
+                            <div class="col-md-12">
+                                <label for="{{ form.razon_social.id_for_label }}" class="form-label">{{ form.razon_social.label }}</label>
+                                {{ form.razon_social }}
+                                {% for error in form.razon_social.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 mt-4 text-muted">Información de Contacto</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                                {{ form.email }}
+                                {% for error in form.email.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label">{{ form.telefono.label }}</label>
+                                {{ form.telefono }}
+                                {% for error in form.telefono.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 mt-4 text-muted">Ubicación</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.departamento.id_for_label }}" class="form-label">{{ form.departamento.label }}</label>
+                                {{ form.departamento }}
+                                {% for error in form.departamento.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.ciudad.id_for_label }}" class="form-label">{{ form.ciudad.label }}</label>
+                                {{ form.ciudad }}
+                                {% for error in form.ciudad.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.direccion.id_for_label }}" class="form-label">{{ form.direccion.label }}</label>
+                            {{ form.direccion }}
+                            {% for error in form.direccion.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                            <div class="form-check">
+                                {{ form.activo }}
+                                <label class="form-check-label" for="{{ form.activo.id_for_label }}">
+                                    {{ form.activo.label }}
+                                </label>
+                                {% for error in form.activo.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="btn-action-group">
+                                <a href="{% url 'clientes:lista' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-save btn-lg">
+                                    <i class="fas fa-save"></i>
+                                    {% if cliente %}Actualizar Cliente{% else %}Crear Cliente{% endif %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoClienteSelect = document.getElementById('{{ form.tipo_cliente.id_for_label }}');
+        const naturalFields = document.getElementById('natural-fields');
+        const juridicaFields = document.getElementById('juridica-fields');
+
+        function toggleFields(tipo) {
+            if (tipo === 'NATURAL') {
+                naturalFields.style.display = 'flex';
+                juridicaFields.style.display = 'none';
+
+            } else if (tipo === 'JURIDICA') {
+                naturalFields.style.display = 'none';
+                juridicaFields.style.display = 'flex';
+            }
+        }
+
+        // Ejecutar al cargar y al cambiar
+        toggleFields(tipoClienteSelect.value);
+        tipoClienteSelect.addEventListener('change', function() {
+            toggleFields(this.value);
+        });
+    });
+</script>
+{% endblock %}

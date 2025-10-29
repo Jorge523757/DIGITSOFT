@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }}</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <header>
+        <a href="{% url 'carrito:mostrar' %}" class="btn-carrito" style="float:right;margin-bottom:20px;">🛒 Ver carrito</a>
+        <h1>{{ titulo }}</h1>
+    </header>
+    <main>
+        <div class="productos-tienda">
+            {% if productos %}
+                <ul>
+                {% for producto in productos %}
+                    <li>
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-width:150px;max-height:150px;" />
+                        {% endif %}
+                        <h3>{{ producto.nombre }}</h3>
+                        <p>{{ producto.descripcion }}</p>
+                        <p>Precio: ${{ producto.precio_venta }}</p>
+                        <p>Stock: {{ producto.stock_actual }}</p>
+                        <form method="post" action="{% url 'carrito:agregar' producto.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Agregar al carrito</button>
+                        </form>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay productos disponibles en este momento.</p>
+            {% endif %}
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Mi Tienda Online</p>
+    </footer>
+</body>
+</html>

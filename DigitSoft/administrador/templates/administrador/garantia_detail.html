@@ -1,0 +1,605 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{{ garantia.numero_garantia }} | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="garantia-detalle-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'administrador:garantia_list' %}"><i class="fas fa-shield-alt"></i> Garantías</a>
+        <span>/</span>
+        <span>{{ garantia.numero_garantia }}</span>
+    </div>
+
+    <!-- Header con estado -->
+    <div class="garantia-header">
+        <div class="header-info">
+            <h1>Garantía {{ garantia.numero_garantia }}</h1>
+            <p class="garantia-tipo">{{ garantia.get_tipo_garantia_display }}</p>
+        </div>
+        <div class="header-estado">
+            {% if garantia.estado == 'VIGENTE' %}
+                {% if garantia.esta_vigente %}
+                    <span class="estado-badge vigente">
+                        <i class="fas fa-check-circle"></i> Vigente
+                    </span>
+                {% else %}
+                    <span class="estado-badge vencida">
+                        <i class="fas fa-times-circle"></i> Vencida
+                    </span>
+                {% endif %}
+            {% elif garantia.estado == 'RECLAMADA' %}
+                <span class="estado-badge reclamada">
+                    <i class="fas fa-file-medical"></i> Reclamada
+                </span>
+            {% elif garantia.estado == 'PROCESANDO' %}
+                <span class="estado-badge procesando">
+                    <i class="fas fa-cog fa-spin"></i> Procesando
+                </span>
+            {% else %}
+                <span class="estado-badge rechazada">
+                    <i class="fas fa-ban"></i> {{ garantia.get_estado_display }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="garantia-content">
+        <!-- Información del Cliente -->
+        <div class="info-card">
+            <h2><i class="fas fa-user"></i> Información del Cliente</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Cliente:</span>
+                    <span class="value">{{ garantia.cliente.nombre_completo }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Documento:</span>
+                    <span class="value">{{ garantia.cliente.numero_documento }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Teléfono:</span>
+                    <span class="value">{{ garantia.cliente.telefono }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ garantia.cliente.email }}</span>
+                </div>
+                <div class="info-item full-width">
+                    <span class="label">Dirección:</span>
+                    <span class="value">{{ garantia.cliente.direccion }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del Producto/Equipo -->
+        <div class="info-card">
+            <h2>
+                {% if garantia.producto %}
+                    <i class="fas fa-box"></i> Producto Garantizado
+                {% else %}
+                    <i class="fas fa-laptop"></i> Equipo Garantizado
+                {% endif %}
+            </h2>
+            <div class="info-grid">
+                {% if garantia.producto %}
+                    <div class="info-item">
+                        <span class="label">Código:</span>
+                        <span class="value">{{ garantia.producto.codigo_producto }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nombre:</span>
+                        <span class="value">{{ garantia.producto.nombre }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Marca:</span>
+                        <span class="value">{{ garantia.producto.marca.nombre }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Categoría:</span>
+                        <span class="value">{{ garantia.producto.get_categoria_display }}</span>
+                    </div>
+                {% elif garantia.equipo %}
+                    <div class="info-item">
+                        <span class="label">Código:</span>
+                        <span class="value">{{ garantia.equipo.codigo_equipo }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nombre:</span>
+                        <span class="value">{{ garantia.equipo.nombre }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Marca:</span>
+                        <span class="value">{{ garantia.equipo.marca.nombre }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Serial:</span>
+                        <span class="value">{{ garantia.equipo.serial }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Información de la Garantía -->
+        <div class="info-card">
+            <h2><i class="fas fa-shield-alt"></i> Detalles de la Garantía</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Fecha de Inicio:</span>
+                    <span class="value">{{ garantia.fecha_inicio|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Fecha de Vencimiento:</span>
+                    <span class="value">{{ garantia.fecha_vencimiento|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Duración:</span>
+                    <span class="value">{{ garantia.duracion_meses }} meses</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Tipo de Garantía:</span>
+                    <span class="value">{{ garantia.get_tipo_garantia_display }}</span>
+                </div>
+                {% if garantia.venta %}
+                <div class="info-item">
+                    <span class="label">Venta Asociada:</span>
+                    <span class="value">
+                        <a href="{% url 'administrador:venta_detail' garantia.venta.id %}">
+                            {{ garantia.venta.numero_venta }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if garantia.condiciones %}
+            <div class="info-section">
+                <h3>Condiciones:</h3>
+                <p>{{ garantia.condiciones }}</p>
+            </div>
+            {% endif %}
+
+            {% if garantia.cobertura %}
+            <div class="info-section">
+                <h3>Cobertura:</h3>
+                <p>{{ garantia.cobertura }}</p>
+            </div>
+            {% endif %}
+
+            {% if garantia.exclusiones %}
+            <div class="info-section">
+                <h3>Exclusiones:</h3>
+                <p>{{ garantia.exclusiones }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="acciones-garantia">
+        <a href="{% url 'administrador:garantia_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Garantías
+        </a>
+
+        {% if garantia.esta_vigente %}
+        <button class="btn btn-warning" onclick="reclamarGarantia()">
+            <i class="fas fa-file-medical"></i> Reclamar Garantía
+        </button>
+        {% endif %}
+
+        <button class="btn btn-primary" onclick="imprimirGarantia()">
+            <i class="fas fa-print"></i> Imprimir
+        </button>
+
+        <button class="btn btn-info" onclick="enviarPorEmail()">
+            <i class="fas fa-envelope"></i> Enviar por Email
+        </button>
+    </div>
+</div>
+
+<style>
+.garantia-detalle-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.breadcrumb {
+    margin-bottom: 2rem;
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.breadcrumb a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+.breadcrumb span {
+    margin: 0 0.5rem;
+}
+
+.garantia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header-info h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin: 0 0 0.5rem 0;
+}
+
+.garantia-tipo {
+    color: #718096;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.estado-badge {
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.estado-badge.vigente {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.estado-badge.vencida {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.estado-badge.reclamada {
+    background: #feebc8;
+    color: #744210;
+}
+
+.estado-badge.procesando {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.estado-badge.rechazada {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.garantia-content {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-card h2 {
+    font-size: 1.3rem;
+    color: #2d3748;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-item .label {
+    color: #718096;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.info-item .value {
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.info-item .value a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+.info-item .value a:hover {
+    text-decoration: underline;
+}
+
+.info-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.info-section h3 {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin: 0 0 0.75rem 0;
+}
+
+.info-section p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.acciones-garantia {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+
+.btn-warning {
+    background: #ed8936;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #dd6b20;
+}
+
+.btn-primary {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3182ce;
+}
+
+.btn-info {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #38a169;
+}
+
+@media (max-width: 768px) {
+    .garantia-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-garantia {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+function reclamarGarantia() {
+    if (confirm('¿Deseas iniciar un reclamo para esta garantía?')) {
+        alert('Reclamo de garantía iniciado. Serás contactado pronto.');
+        // Aquí iría la lógica para reclamar
+    }
+}
+
+function imprimirGarantia() {
+    window.print();
+}
+
+function enviarPorEmail() {
+    const email = '{{ garantia.cliente.email }}';
+    if (confirm(`¿Enviar garantía por email a ${email}?`)) {
+        alert('Garantía enviada por email exitosamente.');
+        // Aquí iría la lógica para enviar email
+    }
+}
+</script>
+{% endblock %}
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Garantías | Digit Soft{% endblock %}
+{% block page_header %}Garantías{% endblock %}
+
+{% block list_title %}Gestión de Garantías{% endblock %}
+{% block list_description %}Administra todas las garantías de productos y equipos{% endblock %}
+
+{% block extra_buttons %}
+<a href="{% url 'administrador:garantia_list' %}?estado=VIGENTE" class="btn btn-success">
+    <i class="fas fa-check-circle"></i> Vigentes
+</a>
+<a href="{% url 'administrador:garantia_list' %}?estado=VENCIDA" class="btn btn-warning">
+    <i class="fas fa-clock"></i> Vencidas
+</a>
+<a href="{% url 'administrador:garantia_list' %}?estado=RECLAMADA" class="btn btn-info">
+    <i class="fas fa-file-medical"></i> Reclamadas
+</a>
+{% endblock %}
+
+{% block table_headers %}
+<th>Número</th>
+<th>Cliente</th>
+<th>Producto/Equipo</th>
+<th>Tipo</th>
+<th>Fecha Inicio</th>
+<th>Fecha Vencimiento</th>
+<th>Duración</th>
+<th>Estado</th>
+<th style="width: 150px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if garantias %}
+    {% for garantia in garantias %}
+    <tr>
+        <td><strong>{{ garantia.numero_garantia }}</strong></td>
+        <td>{{ garantia.cliente.nombre_completo }}</td>
+        <td>
+            {% if garantia.producto %}
+                <i class="fas fa-box"></i> {{ garantia.producto.nombre }}
+            {% elif garantia.equipo %}
+                <i class="fas fa-laptop"></i> {{ garantia.equipo.nombre }}
+            {% else %}
+                N/A
+            {% endif %}
+        </td>
+        <td>
+            <span class="badge badge-info">{{ garantia.get_tipo_garantia_display }}</span>
+        </td>
+        <td>{{ garantia.fecha_inicio|date:"d/m/Y" }}</td>
+        <td>{{ garantia.fecha_vencimiento|date:"d/m/Y" }}</td>
+        <td>{{ garantia.duracion_meses }} meses</td>
+        <td>
+            {% if garantia.estado == 'VIGENTE' %}
+                {% if garantia.esta_vigente %}
+                    <span class="badge badge-success">{{ garantia.get_estado_display }}</span>
+                {% else %}
+                    <span class="badge badge-danger">Vencida</span>
+                {% endif %}
+            {% elif garantia.estado == 'VENCIDA' %}
+                <span class="badge badge-secondary">{{ garantia.get_estado_display }}</span>
+            {% elif garantia.estado == 'RECLAMADA' %}
+                <span class="badge badge-warning">{{ garantia.get_estado_display }}</span>
+            {% elif garantia.estado == 'PROCESANDO' %}
+                <span class="badge badge-info">{{ garantia.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-danger">{{ garantia.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <a href="{% url 'administrador:garantia_detail' garantia.id %}" class="btn btn-info btn-sm" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </a>
+                {% if garantia.esta_vigente %}
+                <button class="btn btn-warning btn-sm" onclick="reclamarGarantia({{ garantia.id }})" title="Reclamar garantía">
+                    <i class="fas fa-file-medical"></i>
+                </button>
+                {% endif %}
+                <button class="btn btn-primary btn-sm" onclick="imprimirGarantia({{ garantia.id }})" title="Imprimir">
+                    <i class="fas fa-print"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="9" class="empty-state">
+            <i class="fas fa-shield-alt"></i>
+            <p>No hay garantías registradas</p>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+function reclamarGarantia(garantiaId) {
+    if (confirm('¿Deseas iniciar un reclamo para esta garantía?')) {
+        showNotification('Procesando reclamo de garantía...', 'info');
+        // Aquí iría la lógica para reclamar la garantía
+        setTimeout(() => {
+            showNotification('Reclamo de garantía iniciado', 'success');
+            location.reload();
+        }, 1500);
+    }
+}
+
+function imprimirGarantia(garantiaId) {
+    window.open(`/administrador/garantias/${garantiaId}/imprimir/`, '_blank');
+}
+</script>
+
+<style>
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.empty-state {
+    padding: 3rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #718096;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}
+

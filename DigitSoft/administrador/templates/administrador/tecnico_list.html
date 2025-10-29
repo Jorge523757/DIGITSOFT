@@ -1,0 +1,140 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Técnicos | Digit Soft{% endblock %}
+{% block page_header %}Técnicos{% endblock %}
+
+{% block list_title %}Gestión de Técnicos{% endblock %}
+{% block list_description %}Administra el personal técnico de la empresa{% endblock %}
+
+{% block table_headers %}
+<th>Documento</th>
+<th>Técnico</th>
+<th>Email</th>
+<th>Teléfono</th>
+<th>Especialidades</th>
+<th>Nivel</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if tecnicos %}
+    {% for tecnico in tecnicos %}
+    <tr>
+        <td><strong>{{ tecnico.numero_documento }}</strong></td>
+        <td>{{ tecnico.nombre }} {{ tecnico.apellido }}</td>
+        <td>{{ tecnico.email }}</td>
+        <td>{{ tecnico.telefono }}</td>
+        <td>{{ tecnico.especialidades|truncatewords:3 }}</td>
+        <td>
+            <span class="badge badge-info">{{ tecnico.get_nivel_experiencia_display }}</span>
+        </td>
+        <td>
+            {% if tecnico.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ tecnico.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ tecnico.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ tecnico.id }}, '{{ tecnico.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ tecnico.id }}, '{{ tecnico.nombre }} {{ tecnico.apellido }}', '', '', '')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-user-cog"></i>
+            <p>No hay técnicos registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Técnico
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_numero_documento">Número de Documento *</label>
+            {{ form.numero_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nombres">Nombres *</label>
+            {{ form.nombres }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_apellidos">Apellidos *</label>
+            {{ form.apellidos }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email *</label>
+            {{ form.email }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_telefono">Teléfono *</label>
+            {{ form.telefono }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nivel_experiencia">Nivel de Experiencia *</label>
+            {{ form.nivel_experiencia }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_especialidades">Especialidades *</label>
+            {{ form.especialidades }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_certificaciones">Certificaciones</label>
+            {{ form.certificaciones }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de técnicos
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const nombres = document.querySelector('[name="nombres"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
+
+    if (!nombres) {
+        e.preventDefault();
+        alert('⚠️ El nombre del técnico es obligatorio');
+        return false;
+    }
+
+    if (!email) {
+        e.preventDefault();
+        alert('⚠️ El email del técnico es obligatorio');
+        return false;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Proveedores | Digit Soft{% endblock %}
+{% block page_header %}Proveedores{% endblock %}
+
+{% block list_title %}Gestión de Proveedores{% endblock %}
+{% block list_description %}Administra los proveedores de productos y servicios{% endblock %}
+
+{% block table_headers %}
+<th>NIT/Documento</th>
+<th>Nombre</th>
+<th>Categoría</th>
+<th>Email</th>
+<th>Teléfono</th>
+<th>Ciudad</th>
+<th>Estado</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if proveedores %}
+    {% for proveedor in proveedores %}
+    <tr>
+        <td><strong>{{ proveedor.numero_documento }}</strong></td>
+        <td>{{ proveedor.nombre }}</td>
+        <td>
+            <span class="badge badge-info">{{ proveedor.get_categoria_principal_display }}</span>
+        </td>
+        <td>{{ proveedor.email }}</td>
+        <td>{{ proveedor.telefono }}</td>
+        <td>{{ proveedor.ciudad }}</td>
+        <td>
+            {% if proveedor.activo %}
+                <span class="badge badge-success">Activo</span>
+            {% else %}
+                <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ proveedor.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ proveedor.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="viewHistory({{ proveedor.id }}, '{{ proveedor.nombre }}')" title="Historial">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ proveedor.id }}, '{{ proveedor.nombre }}', '', '', '')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-building"></i>
+            <p>No hay proveedores registrados</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primer Proveedor
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_tipo_documento">Tipo de Documento *</label>
+            {{ form.tipo_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_numero_documento">Número de Documento *</label>
+            {{ form.numero_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_razon_social">Razón Social *</label>
+            {{ form.razon_social }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_nombre_comercial">Nombre Comercial</label>
+            {{ form.nombre_comercial }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email *</label>
+            {{ form.email }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefono">Teléfono *</label>
+            {{ form.telefono }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_sitio_web">Sitio Web</label>
+            {{ form.sitio_web }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_direccion">Dirección *</label>
+            {{ form.direccion }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_ciudad">Ciudad *</label>
+            {{ form.ciudad }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_departamento">Departamento *</label>
+            {{ form.departamento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_categoria_principal">Categoría Principal *</label>
+            {{ form.categoria_principal }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_contacto_principal">Contacto Principal</label>
+            {{ form.contacto_principal }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefono_contacto">Teléfono Contacto</label>
+            {{ form.telefono_contacto }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email_contacto">Email Contacto</label>
+            {{ form.email_contacto }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="id_condiciones_pago">Condiciones de Pago</label>
+            {{ form.condiciones_pago }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_tiempo_entrega_dias">Tiempo de Entrega (días)</label>
+            {{ form.tiempo_entrega_dias }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Validación del formulario de proveedores
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    const razonSocial = document.querySelector('[name="razon_social"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
+
+    if (!razonSocial) {
+        e.preventDefault();
+        alert('⚠️ La razón social es obligatoria');
+        return false;
+    }
+
+    if (!email) {
+        e.preventDefault();
+        alert('⚠️ El email es obligatorio');
+        return false;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'administrador/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Eliminar Técnico | Digit Soft{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="delete-confirmation-card">
+        <div class="delete-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+
+        <h2>¿Confirmar Eliminación?</h2>
+        <p class="warning-text">
+            Estás a punto de eliminar el siguiente técnico:
+        </p>
+
+        <div class="record-details">
+            <h3>{{ tecnico.nombre }} {{ tecnico.apellido }}</h3>
+            <p><strong>Documento:</strong> {{ tecnico.numero_documento }}</p>
+            <p><strong>Email:</strong> {{ tecnico.email }}</p>
+            <p><strong>Teléfono:</strong> {{ tecnico.telefono }}</p>
+            <p><strong>Especialidades:</strong> {{ tecnico.especialidades }}</p>
+            <p><strong>Nivel:</strong> {{ tecnico.get_nivel_experiencia_display }}</p>
+        </div>
+
+        <div class="warning-message">
+            <i class="fas fa-info-circle"></i>
+            <p>Esta acción no se puede deshacer. Todos los datos asociados a este técnico se eliminarán permanentemente.</p>
+        </div>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <div class="button-group">
+                <a href="{% url 'administrador:tecnico_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Sí, Eliminar Técnico
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.delete-confirmation-card {
+    max-width: 600px;
+    margin: 3rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.delete-icon {
+    font-size: 4rem;
+    color: var(--danger-color);
+    margin-bottom: 1rem;
+}
+
+.warning-text {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.record-details {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--danger-color);
+}
+
+.record-details h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.record-details p {
+    color: var(--text-secondary);
+    margin: 0.5rem 0;
+}
+
+.warning-message {
+    background: rgba(255, 193, 7, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+}
+
+.warning-message i {
+    color: var(--warning-color);
+    font-size: 1.5rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+</style>
+{% endblock %}
+

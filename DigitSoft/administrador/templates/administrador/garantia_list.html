@@ -1,0 +1,151 @@
+{% extends 'administrador/base_list.html' %}
+{% load static %}
+
+{% block title %}Garantías | Digit Soft{% endblock %}
+{% block page_header %}Garantías{% endblock %}
+
+{% block list_title %}Gestión de Garantías{% endblock %}
+{% block list_description %}Administra las garantías de productos y servicios{% endblock %}
+
+{% block table_headers %}
+<th>Código</th>
+<th>Cliente</th>
+<th>Producto/Equipo</th>
+<th>Fecha Inicio</th>
+<th>Fecha Fin</th>
+<th>Estado</th>
+<th>Días Restantes</th>
+<th style="width: 200px;">Acciones</th>
+{% endblock %}
+
+{% block table_body %}
+{% if garantias %}
+    {% for garantia in garantias %}
+    <tr>
+        <td><strong>{{ garantia.codigo_garantia }}</strong></td>
+        <td>{{ garantia.cliente.nombres }} {{ garantia.cliente.apellidos }}</td>
+        <td>
+            {% if garantia.producto %}
+                <i class="fas fa-box"></i> {{ garantia.producto.nombre }}
+            {% elif garantia.equipo %}
+                <i class="fas fa-laptop"></i> {{ garantia.equipo.nombre }}
+            {% else %}
+                <i class="fas fa-wrench"></i> Servicio
+            {% endif %}
+        </td>
+        <td>{{ garantia.fecha_inicio|date:"d/m/Y" }}</td>
+        <td>{{ garantia.fecha_fin|date:"d/m/Y" }}</td>
+        <td>
+            {% if garantia.estado == 'ACTIVA' %}
+                <span class="badge badge-success">{{ garantia.get_estado_display }}</span>
+            {% elif garantia.estado == 'VENCIDA' %}
+                <span class="badge badge-danger">{{ garantia.get_estado_display }}</span>
+            {% elif garantia.estado == 'USADA' %}
+                <span class="badge badge-warning">{{ garantia.get_estado_display }}</span>
+            {% else %}
+                <span class="badge badge-secondary">{{ garantia.get_estado_display }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if garantia.dias_restantes > 30 %}
+                <span class="badge badge-success">{{ garantia.dias_restantes }} días</span>
+            {% elif garantia.dias_restantes > 0 %}
+                <span class="badge badge-warning">{{ garantia.dias_restantes }} días</span>
+            {% else %}
+                <span class="badge badge-danger">Vencida</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="actions-cell">
+                <button class="btn btn-info btn-sm" onclick="viewDetails({{ garantia.id }})" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="editRecord({{ garantia.id }})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-success btn-sm" onclick="generatePDF({{ garantia.id }})" title="Generar PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ garantia.id }}, '{{ garantia.codigo_garantia }}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    <tr>
+        <td colspan="8" class="empty-state">
+            <i class="fas fa-shield-alt"></i>
+            <p>No hay garantías registradas</p>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                <i class="fas fa-plus"></i> Agregar Primera Garantía
+            </button>
+        </td>
+    </tr>
+{% endif %}
+{% endblock %}
+
+{% block form_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_codigo_garantia">Código de Garantía *</label>
+            <input type="text" name="codigo_garantia" id="id_codigo_garantia" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_cliente">Cliente *</label>
+            <select name="cliente" id="id_cliente" class="form-control" required>
+                <option value="">Seleccionar cliente...</option>
+                <!-- Se llenará dinámicamente -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_tipo">Tipo de Garantía *</label>
+            <select name="tipo" id="id_tipo" class="form-control" required>
+                <option value="">Seleccionar tipo...</option>
+                <option value="PRODUCTO">Producto</option>
+                <option value="EQUIPO">Equipo</option>
+                <option value="SERVICIO">Servicio</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_duracion_meses">Duración (meses) *</label>
+            <input type="number" name="duracion_meses" id="id_duracion_meses" class="form-control" min="1" max="60" required>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="id_fecha_inicio">Fecha de Inicio *</label>
+            <input type="date" name="fecha_inicio" id="id_fecha_inicio" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_cobertura">Cobertura</label>
+            <textarea name="cobertura" id="id_cobertura" class="form-control" rows="3" placeholder="Describe qué cubre esta garantía..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="id_terminos">Términos y Condiciones</label>
+            <textarea name="terminos" id="id_terminos" class="form-control" rows="3" placeholder="Términos y condiciones de la garantía..."></textarea>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+function generatePDF(id) {
+    window.open(`/administrador/garantias/${id}/pdf/`, '_blank');
+}
+
+// Establecer fecha actual por defecto
+document.getElementById('id_fecha_inicio').valueAsDate = new Date();
+</script>
+{% endblock %}
+
